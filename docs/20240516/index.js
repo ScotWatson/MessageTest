@@ -48,7 +48,7 @@ function start( [ Interface, Messaging ] ) {
     });
   } else {
     const thisIframe = document.createElement("iframe");
-    document.body.apendChild(thisIframe);
+    document.body.appendChild(thisIframe);
     thisIframe.src = "../index.html";
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
