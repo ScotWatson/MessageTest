@@ -49,7 +49,7 @@ function start( [ Interface, Messaging ] ) {
   } else {
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
-    thisIframe.src = "../index.html";
+    thisIframe.src = "./index.html#sub";
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
