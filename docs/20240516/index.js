@@ -26,7 +26,7 @@ function start( [ Interface, Messaging ] ) {
   console.log("start");
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
-  const subFullURL = new URL(windowURL, subURL);
+  const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
     Messaging.unregisteredSource.next().then(function (evt) {
       const parentSource = Messaging.createMessageSourceForWindowOrigin({
@@ -69,7 +69,6 @@ function start( [ Interface, Messaging ] ) {
     Messaging.unregisteredSource.next().then(function () {
       throw "Received message from unrecognized source";
     });
-//    thisIframe.contentDocument.addEventListener("DOMContentLoaded", function () {
     thisIframe.contentWindow.addEventListener("load", function () {
       console.log("RPC");
       iframeRPC.call({
