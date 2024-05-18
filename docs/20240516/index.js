@@ -12,7 +12,7 @@ const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
 function fail(err) {
-  console.log(err);
+//  console.log(err);
 }
 
 function start( [ Interface, Messaging ] ) {
