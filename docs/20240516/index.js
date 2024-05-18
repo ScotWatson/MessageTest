@@ -41,7 +41,7 @@ function start( [ Interface, Messaging ] ) {
       });
       parentRPC.register({
         functionName: "ping",
-        handler: function (args) {
+        handlerFunc: function (args) {
           return "Hello!";
         },
       });
