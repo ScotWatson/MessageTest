@@ -17,7 +17,7 @@ function project_file(filename) {
 function self_install(e) {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
-    console.log("sw.js: Start Adding Caches");
+//    console.log("sw.js: Start Adding Caches");
     cache.addAll([
       project_file("./"),
       project_file("./index.html"),
@@ -25,23 +25,23 @@ function self_install(e) {
       project_file("./worker_api.js"),
       project_file("./style.css"),
     ])
-    console.log("sw.js: End Adding Caches");
+//    console.log("sw.js: End Adding Caches");
   }
   e.waitUntil(caches.open("store").then(addCaches));
-  console.log("sw.js: End Installing");
+//  console.log("sw.js: End Installing");
 }
 
 function set_as_worker_script(path) {
 }
 
 function self_fetch(e) {
-  console.log("sw.js: Start Handling Fetch");
-  console.log(e);
+//  console.log("sw.js: Start Handling Fetch");
+//  console.log(e);
   function sendResponse(response) {
     return response || fetch(e.request);
   }
   e.respondWith(caches.match(e.request).then(sendResponse));
-  console.log("sw.js: End Handling Fetch");
+//  console.log("sw.js: End Handling Fetch");
 }
 
 self.addEventListener("install", self_install);
