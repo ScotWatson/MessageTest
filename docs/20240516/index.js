@@ -25,6 +25,7 @@ function fail(err) {
 function start( [ Interface, Messaging ] ) {
   console.log("start");
   const windowURL = new URL(window.location);
+  const subURL = "./index.html#sub";
   if (windowURL.hash === "#sub") {
     Messaging.unregisteredSource.next().then(function (evt) {
       const parentSource = Messaging.createMessageSourceForWindowOrigin({
@@ -49,16 +50,16 @@ function start( [ Interface, Messaging ] ) {
   } else {
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
-    thisIframe.src = "./index.html#sub";
+    thisIframe.src = subURL;
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: "../index.html#sub",
+      origin: subURL,
     });
     const iframeSink = Messaging.createMessageSinkForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: "../index.html#sub",
+      origin: subURL,
     });
     const iframeRPC = Messaging.createRemoteCallManager({
       messageSource: iframeSource,
