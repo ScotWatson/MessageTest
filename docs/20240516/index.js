@@ -9,10 +9,17 @@ const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
 const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/WindowMessaging.mjs");
 
+loadInterface.then(function () {
+  console.log("Interface loaded");
+});
+loadMessaging.then(function () {
+  console.log("Messaging loaded");
+});
+
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
 function fail(err) {
-//  console.log(err);
+  console.error(err);
 }
 
 function start( [ Interface, Messaging ] ) {
