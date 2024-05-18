@@ -28,8 +28,14 @@ function start( [ Interface, Messaging ] ) {
         origin: evt.origin,
       });
       const parentRPC = Messaging.createRemoteCallManager({
-        messageSource: iframeSource,
-        messageSink: iframeSink,
+        messageSource: parentSource,
+        messageSink: parentSink,
+      });
+      parentRPC.register({
+        functionName: "ping",
+        handler: function (args) {
+          return "Hello!";
+        },
       });
     });
   } else {
@@ -50,6 +56,12 @@ function start( [ Interface, Messaging ] ) {
     });
     Messaging.unregisteredSource.next().then(function () {
       throw "Received message from unrecognized source";
+    });
+    iframeRPC.call({
+      functionName: "ping",
+      args: {},
+    }).then(function (ret) {
+      console.log(ret);
     });
   }
 }
