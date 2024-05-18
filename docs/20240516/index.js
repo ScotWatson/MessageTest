@@ -28,21 +28,17 @@ function start( [ Interface, Messaging ] ) {
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
-    Messaging.unregisteredSource.next().then(function (evt) {
-      console.log("unregisteredSource");
-      const parentSource = Messaging.createMessageSourceForWindowOrigin({
-        window: evt.source,
-        origin: evt.origin,
+    Messaging.addTrustedOrigin(windowURL.origin);
+    Messaging.untrustedOrigin.next().then(function (info) {
+      console.log("untrustedOrigin");
+      Messaging.addTrustedOrigin(info.origin);
+      const parentSource = Messaging.createMessageSourceForWindow({
+        window: info.source,
       });
       const parentSink = Messaging.createMessageSinkForWindowOrigin({
-        window: evt.source,
-        origin: evt.origin,
+        window: info.source,
+        origin: info.origin,
       });
-      parentSource.message.next().then(function () {
-        parentSink.send({
-          hi: "hi",
-        });
-      })
       const parentRPC = Messaging.createRemoteCallManager({
         messageSource: parentSource,
         messageSink: parentSink,
@@ -53,6 +49,7 @@ function start( [ Interface, Messaging ] ) {
           return "Hello!";
         },
       });
+      Messaging.enqueueWindowMessage(info);
     });
   } else {
     const thisIframe = document.createElement("iframe");
