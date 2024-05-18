@@ -57,7 +57,7 @@ function start( [ Interface, Messaging ] ) {
     thisIframe.src = subURL;
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
-    const iframeSource = Messaging.createMessageSourceForWindowOrigin({
+    const iframeSource = Messaging.createMessageSourceForWindow({
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
     });
