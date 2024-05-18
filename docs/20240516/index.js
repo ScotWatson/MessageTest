@@ -61,11 +61,11 @@ function start( [ Interface, Messaging ] ) {
     console.log(thisIframe.contentWindow);
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: subFullURL,
+      origin: subFullURL.origin,
     });
     const iframeSink = Messaging.createMessageSinkForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: subFullURL,
+      origin: subFullURL.origin,
     });
     const iframeRPC = Messaging.createRemoteCallManager({
       messageSource: iframeSource,
