@@ -68,11 +68,14 @@ function start( [ Interface, Messaging ] ) {
       throw "Received message from unrecognized source";
     });
     thisIframe.contentDocument.addEventListener("load", function () {
+      console.log("RPC");
       iframeRPC.call({
         functionName: "ping",
         args: {},
       }).then(function (ret) {
         console.log(ret);
+      }).catch(function (reason) {
+        console.error(reason);
       });
     });
   }
