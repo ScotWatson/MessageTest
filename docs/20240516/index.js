@@ -48,7 +48,9 @@ function start( [ Interface, Messaging ] ) {
     });
   } else {
     const thisIframe = document.createElement("iframe");
+    document.body.apendChild(thisIframe);
     thisIframe.src = "../index.html";
+    thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
       window: thisIframe.contentWindow,
@@ -65,11 +67,13 @@ function start( [ Interface, Messaging ] ) {
     Messaging.unregisteredSource.next().then(function () {
       throw "Received message from unrecognized source";
     });
-    iframeRPC.call({
-      functionName: "ping",
-      args: {},
-    }).then(function (ret) {
-      console.log(ret);
+    thisIframe.contentDocument.addEventListener("load", function () {
+      iframeRPC.call({
+        functionName: "ping",
+        args: {},
+      }).then(function (ret) {
+        console.log(ret);
+      });
     });
   }
 }
