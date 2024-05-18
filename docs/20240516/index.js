@@ -37,6 +37,11 @@ function start( [ Interface, Messaging ] ) {
         window: evt.source,
         origin: evt.origin,
       });
+      parentSource.message.next().then(function () {
+        parentSink.send({
+          hi: "hi",
+        });
+      })
       const parentRPC = Messaging.createRemoteCallManager({
         messageSource: parentSource,
         messageSink: parentSink,
