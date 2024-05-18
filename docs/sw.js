@@ -17,7 +17,8 @@ function project_file(filename) {
 function self_install(e) {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
-//    console.log("sw.js: Start Adding Caches");
+    /*
+    console.log("sw.js: Start Adding Caches");
     cache.addAll([
       project_file("./"),
       project_file("./index.html"),
@@ -25,7 +26,8 @@ function self_install(e) {
       project_file("./worker_api.js"),
       project_file("./style.css"),
     ])
-//    console.log("sw.js: End Adding Caches");
+    console.log("sw.js: End Adding Caches");
+    */
   }
   e.waitUntil(caches.open("store").then(addCaches));
 //  console.log("sw.js: End Installing");
