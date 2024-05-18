@@ -16,6 +16,7 @@ function fail(err) {
 }
 
 function start( [ Interface, Messaging ] ) {
+  console.log("start");
   const windowURL = new URL(window.location);
   if (windowURL.hash === "#sub") {
     Messaging.unregisteredSource.next().then(function (evt) {
