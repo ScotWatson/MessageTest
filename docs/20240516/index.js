@@ -76,15 +76,19 @@ function start( [ Interface, Messaging ] ) {
     });
 //    thisIframe.contentWindow.addEventListener("load", function () {
     thisIframe.addEventListener("load", function () {
-      console.log("RPC");
-      iframeRPC.call({
-        functionName: "ping",
-        args: {},
-      }).then(function (ret) {
-        console.log(ret);
-      }).catch(function (reason) {
-        console.error(reason);
-      });
+      console.log("iframe Loaded");
+      setTimeout(RPC, 5000);
+      function RPC() {
+        console.log("RPC");
+        iframeRPC.call({
+          functionName: "ping",
+          args: {},
+        }).then(function (ret) {
+          console.log(ret);
+        }).catch(function (reason) {
+          console.error(reason);
+        });
+      }
     });
   }
 }
