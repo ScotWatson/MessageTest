@@ -69,7 +69,8 @@ function start( [ Interface, Messaging ] ) {
     Messaging.unregisteredSource.next().then(function () {
       throw "Received message from unrecognized source";
     });
-    thisIframe.contentWindow.addEventListener("load", function () {
+//    thisIframe.contentWindow.addEventListener("load", function () {
+    thisIframe.addEventListener("load", function () {
       console.log("RPC");
       iframeRPC.call({
         functionName: "ping",
