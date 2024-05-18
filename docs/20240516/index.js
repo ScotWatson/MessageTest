@@ -29,6 +29,7 @@ function start( [ Interface, Messaging ] ) {
   const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
     Messaging.unregisteredSource.next().then(function (evt) {
+      console.log("unregisteredSource");
       const parentSource = Messaging.createMessageSourceForWindowOrigin({
         window: evt.source,
         origin: evt.origin,
