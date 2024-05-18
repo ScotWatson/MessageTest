@@ -26,6 +26,7 @@ function start( [ Interface, Messaging ] ) {
   console.log("start");
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
+  const subFullURL = new URL(windowURL, subURL);
   if (windowURL.hash === "#sub") {
     Messaging.unregisteredSource.next().then(function (evt) {
       const parentSource = Messaging.createMessageSourceForWindowOrigin({
@@ -55,11 +56,11 @@ function start( [ Interface, Messaging ] ) {
     console.log(thisIframe.contentWindow);
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: subURL,
+      origin: subFullURL,
     });
     const iframeSink = Messaging.createMessageSinkForWindowOrigin({
       window: thisIframe.contentWindow,
-      origin: subURL,
+      origin: subFullURL,
     });
     const iframeRPC = Messaging.createRemoteCallManager({
       messageSource: iframeSource,
