@@ -25,15 +25,10 @@ function start( [ Interface, Messaging ] ) {
       const window = info.window;
       const origin = info.origin;
       Messaging.addTrustedOrigin(info.origin);
-      const parentSource = {
-        message: Messaging.createSignal(async function (resolve, reject) {
-          for await (const info of Messaging.trustedOrigin) {
-            if ((info.window === window) && (info.origin === origin)) {
-              resolve(info.data);
-            }
-          }
-        }),
-      };
+      const parentSource = Messaging.createMessageSourceForWindowOrigin({
+        window: info.source,
+        origin: info.origin,
+      });
       const parentSink = Messaging.createMessageSinkForWindowOrigin({
         window: info.source,
         origin: info.origin,
@@ -56,15 +51,10 @@ function start( [ Interface, Messaging ] ) {
     document.body.appendChild(thisIframe);
     thisIframe.src = subURL;
     thisIframe.style.visibility = "none";
-    const iframeSource = {
-      message: Messaging.createSignal(async function (resolve, reject) {
-        for await (const info of Messaging.trustedOrigin) {
-          if ((info.source === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
-            resolve(info.data);
-          }
-        }
-      }),
-    };
+    const iframeSource = Messaging.createMessageSourceForWindowOrigin({
+      window: thisIframe.contentWindow,
+      origin: subFullURL.origin,
+    });
     const iframeSink = Messaging.createMessageSinkForWindowOrigin({
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
