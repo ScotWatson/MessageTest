@@ -30,11 +30,21 @@ function start( [ Interface, Messaging ] ) {
   if (windowURL.hash === "#sub") {
     Messaging.addTrustedOrigin(windowURL.origin);
     Messaging.untrustedOrigin.next().then(function (info) {
+      const origin = info.origin;
       console.log("untrustedOrigin");
       Messaging.addTrustedOrigin(info.origin);
-      const parentSource = Messaging.createMessageSourceForWindow({
+      const parentWindowSource = Messaging.createMessageSourceForWindow({
         window: info.source,
       });
+      const parentSource = {
+        message: Messaging.createSignal(async function (resolve, reject) {
+          for await (const info of parentWindowSource.message) {
+            if (info.origin === origin) {
+              resolve(info.data);
+            }
+          }
+        }),
+      }
       const parentSink = Messaging.createMessageSinkForWindowOrigin({
         window: info.source,
         origin: info.origin,
