@@ -44,7 +44,7 @@ function start( [ Interface, Messaging ] ) {
             }
           }
         }),
-      }
+      };
       const parentSink = Messaging.createMessageSinkForWindowOrigin({
         window: info.source,
         origin: info.origin,
@@ -67,10 +67,19 @@ function start( [ Interface, Messaging ] ) {
     thisIframe.src = subURL;
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
-    const iframeSource = Messaging.createMessageSourceForWindow({
+    const iframeWindowSource = Messaging.createMessageSourceForWindow({
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
     });
+    const iframeSource = {
+      message: Messaging.createSignal(async function (resolve, reject) {
+        for await (const info of iframeWindowSource.message) {
+          if (info.origin === subFullURL.origin) {
+            resolve(info.data);
+          }
+        }
+      }),
+    };
     const iframeSink = Messaging.createMessageSinkForWindowOrigin({
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
@@ -79,7 +88,7 @@ function start( [ Interface, Messaging ] ) {
       messageSource: iframeSource,
       messageSink: iframeSink,
     });
-    Messaging.unregisteredSource.next().then(function () {
+    Messaging.untrustedOrigin.next().then(function () {
       throw "Received message from unrecognized source";
     });
 //    thisIframe.contentWindow.addEventListener("load", function () {
