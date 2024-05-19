@@ -50,7 +50,7 @@ function start( [ Interface, Messaging ] ) {
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
     thisIframe.src = subURL;
-    thisIframe.style.visibility = "none";
+    thisIframe.style.visibility = "hidden";
     const iframeSource = Messaging.createMessageSourceForWindowOrigin({
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
