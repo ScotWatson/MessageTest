@@ -28,9 +28,10 @@ function start( [ Interface, Messaging ] ) {
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
-    Messaging.untrustedOrigin.next().then(function (info) {
-      const window = info.value.window;
-      const origin = info.value.origin;
+    Messaging.untrustedOrigin.next().then(function (iterator) {
+      const info = iterator.value;
+      const window = info.window;
+      const origin = info.origin;
       console.log("untrustedOrigin");
       Messaging.addTrustedOrigin(info.origin);
       const parentSource = {
@@ -46,8 +47,8 @@ function start( [ Interface, Messaging ] ) {
         }),
       };
       const parentSink = Messaging.createMessageSinkForWindowOrigin({
-        window: info.value.source,
-        origin: info.value.origin,
+        window: info.source,
+        origin: info.origin,
       });
       const parentRPC = Messaging.createRemoteCallManager({
         messageSource: parentSource,
@@ -59,7 +60,7 @@ function start( [ Interface, Messaging ] ) {
           return "Hello!";
         },
       });
-      Messaging.enqueueWindowMessage(info.value);
+      Messaging.enqueueWindowMessage(info);
     });
   } else {
     Messaging.addTrustedOrigin(windowURL.origin);
