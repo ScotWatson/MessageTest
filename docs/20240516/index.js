@@ -60,8 +60,7 @@ function start( [ Interface, Messaging ] ) {
       message: Messaging.createSignal(async function (resolve, reject) {
         for await (const info of Messaging.trustedOrigin) {
           console.log(info);
-          console.log((info.window === thisIframe.contentWindow), (info.origin === subFullURL.origin));
-          if ((info.window === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
+          if ((info.source === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
             resolve(info.data);
           }
         }
