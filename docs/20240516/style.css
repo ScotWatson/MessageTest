@@ -1,0 +1,16 @@
+@charset "UTF-8";
+/* Basic Latin */
+@font-face {
+  font-family: "standard";
+  src: url("Latin.ttf");
+  unicode-range: U+0000-007F;
+}
+
+.invisible-scrollbar {
+  scrollbar-width: none;
+}
+
+/* This non-standard prefixed version will eventually not be required. */
+.invisible-scrollbar::-webkit-scrollbar {
+  display: none;
+}
