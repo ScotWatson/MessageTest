@@ -69,16 +69,17 @@ function start( [ Interface, Messaging ] ) {
 //    thisIframe.contentWindow.addEventListener("load", function () {
     thisIframe.addEventListener("load", function () {
       setTimeout(RPC, 5000);
-      function RPC() {
+      async function RPC() {
         console.log("RPC");
-        iframeRPC.call({
-          functionName: "ping",
-          args: {},
-        }).then(function (ret) {
+        try {
+          ret = await iframeRPC.call({
+            functionName: "ping",
+            args: {},
+          });
           console.log(ret);
-        }).catch(function (reason) {
+        } catch (reason) {
           console.error(reason);
-        });
+        }
       }
     });
   }
