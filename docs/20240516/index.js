@@ -59,6 +59,7 @@ function start( [ Interface, Messaging ] ) {
     const iframeSource = {
       message: Messaging.createSignal(async function (resolve, reject) {
         for await (const info of Messaging.trustedOrigin) {
+          console.log(info);
           if ((info.window === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
             resolve(info.data);
           }
