@@ -33,11 +33,11 @@ function start( [ Interface, Messaging ] ) {
         window: info.source,
         origin: info.origin,
       });
-      const parentRPC = Messaging.createRemoteProcedureSocket({
+      const parentRPS = Messaging.createRemoteProcedureSocket({
         messageSource: parentSource,
         messageSink: parentSink,
       });
-      parentRPC.register({
+      parentRPS.register({
         functionName: "ping",
         handlerFunc: function (args) {
           return "Hello!";
@@ -59,7 +59,7 @@ function start( [ Interface, Messaging ] ) {
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
     });
-    const iframeRPC = Messaging.createRemoteProcedureSocket({
+    const iframeRPS = Messaging.createRemoteProcedureSocket({
       messageSource: iframeSource,
       messageSink: iframeSink,
     });
@@ -72,7 +72,7 @@ function start( [ Interface, Messaging ] ) {
       async function RPC() {
         console.log("RPC");
         try {
-          const ret = await iframeRPC.call({
+          const ret = await iframeRPS.call({
             functionName: "ping",
             args: {},
           });
@@ -82,5 +82,28 @@ function start( [ Interface, Messaging ] ) {
         }
       }
     });
+    const thisWorker = new Worker("worker.js");
+    const workerSource = Messaging.createMessageSourceForWorker({
+      worker: thisWorker,
+    });
+    const workerSink = Messaging.createMessageSinkForWorker({
+      worker: thisWorker,
+    });
+    const workerRPS = Messaging.createRemoteProcedureSocket({
+      messageSource: workerSource,
+      messageSink: workerSink,
+    });
+    async function workerRPC() {
+      console.log("worker RPC");
+      try {
+        const ret = await workerRPS.call({
+          functionName: "ping",
+          args: {},
+        });
+        console.log(ret);
+      } catch (reason) {
+        console.error(reason);
+      }
+    }
   }
 }
