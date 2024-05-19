@@ -36,6 +36,7 @@ function start( [ Interface, Messaging ] ) {
       const parentSource = {
         message: Messaging.createSignal(async function (resolve, reject) {
           for await (const info of Messaging.trustedOrigin) {
+            console.log(info, window, origin);
             if ((info.window === window) && (info.origin === origin)) {
               console.log(info);
               resolve(info.data);
