@@ -61,7 +61,7 @@ function start( [ Interface, Messaging ] ) {
         for await (const info of Messaging.trustedOrigin) {
           console.log(info);
           if ((info.source === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
-//            resolve(info.data);
+            resolve(info.data);
           }
         }
       }),
