@@ -68,7 +68,7 @@ function start( [ Interface, Messaging ] ) {
     });
 //    thisIframe.contentWindow.addEventListener("load", function () {
     thisIframe.addEventListener("load", function () {
-      setTimeout(RPC, 5000);
+      setTimeout(RPC, 0);
       async function RPC() {
         console.log("RPC");
         try {
