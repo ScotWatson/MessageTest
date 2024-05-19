@@ -37,6 +37,7 @@ function start( [ Interface, Messaging ] ) {
         message: Messaging.createSignal(async function (resolve, reject) {
           for await (const info of Messaging.trustedOrigin) {
             if ((info.window === window) && (info.origin === origin)) {
+              console.log(info);
               resolve(info.data);
             }
           }
