@@ -30,6 +30,7 @@ function start( [ Interface, Messaging ] ) {
   if (windowURL.hash === "#sub") {
     Messaging.addTrustedOrigin(windowURL.origin);
     Messaging.untrustedOrigin.next().then(function (info) {
+      const window = info.window;
       const origin = info.origin;
       console.log("untrustedOrigin");
       Messaging.addTrustedOrigin(info.origin);
@@ -38,8 +39,8 @@ function start( [ Interface, Messaging ] ) {
       });
       const parentSource = {
         message: Messaging.createSignal(async function (resolve, reject) {
-          for await (const info of parentWindowSource.message) {
-            if (info.origin === origin) {
+          for await (const info of Messaging.trustedOrigin) {
+            if ((info.window === window) && (info.origin === origin)) {
               resolve(info.data);
             }
           }
@@ -68,13 +69,13 @@ function start( [ Interface, Messaging ] ) {
     thisIframe.style.visibility = "none";
     console.log(thisIframe.contentWindow);
     const iframeWindowSource = Messaging.createMessageSourceForWindow({
-      window: thisIframe.contentWindow,
+      window: ,
       origin: subFullURL.origin,
     });
     const iframeSource = {
       message: Messaging.createSignal(async function (resolve, reject) {
-        for await (const info of iframeWindowSource.message) {
-          if (info.origin === subFullURL.origin) {
+        for await (const info of Messaging.trustedOrigin) {
+          if ((info.window === thisIframe.contentWindow) && (info.origin === subFullURL.origin)) {
             resolve(info.data);
           }
         }
