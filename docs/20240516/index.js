@@ -9,13 +9,6 @@ const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
 const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/WindowMessaging.mjs");
 
-loadInterface.then(function () {
-  console.log("Interface loaded");
-});
-loadMessaging.then(function () {
-  console.log("Messaging loaded");
-});
-
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
 function fail(err) {
@@ -23,7 +16,6 @@ function fail(err) {
 }
 
 function start( [ Interface, Messaging ] ) {
-  console.log("start");
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
@@ -32,15 +24,11 @@ function start( [ Interface, Messaging ] ) {
       const info = iterator.value;
       const window = info.window;
       const origin = info.origin;
-      console.log("untrustedOrigin");
       Messaging.addTrustedOrigin(info.origin);
       const parentSource = {
         message: Messaging.createSignal(async function (resolve, reject) {
-          console.log("start loop");
           for await (const info of Messaging.trustedOrigin) {
-            console.log(info, window, origin);
             if ((info.window === window) && (info.origin === origin)) {
-              console.log(info);
               resolve(info.data);
             }
           }
@@ -90,7 +78,6 @@ function start( [ Interface, Messaging ] ) {
     });
 //    thisIframe.contentWindow.addEventListener("load", function () {
     thisIframe.addEventListener("load", function () {
-      console.log("iframe Loaded");
       setTimeout(RPC, 5000);
       function RPC() {
         console.log("RPC");
