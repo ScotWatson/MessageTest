@@ -33,7 +33,7 @@ function start( [ Interface, Messaging ] ) {
         window: info.source,
         origin: info.origin,
       });
-      const parentRPC = Messaging.createRemoteCallManager({
+      const parentRPC = Messaging.createRemoteProcedureSocket({
         messageSource: parentSource,
         messageSink: parentSink,
       });
@@ -59,7 +59,7 @@ function start( [ Interface, Messaging ] ) {
       window: thisIframe.contentWindow,
       origin: subFullURL.origin,
     });
-    const iframeRPC = Messaging.createRemoteCallManager({
+    const iframeRPC = Messaging.createRemoteProcedureSocket({
       messageSource: iframeSource,
       messageSink: iframeSink,
     });
