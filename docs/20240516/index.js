@@ -27,7 +27,6 @@ function start( [ Interface, Messaging ] ) {
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
-  Messaging.addTrustedOrigin(windowURL.origin);
   if (windowURL.hash === "#sub") {
     Messaging.untrustedOrigin.next().then(function (info) {
       const window = info.window;
@@ -60,6 +59,7 @@ function start( [ Interface, Messaging ] ) {
       Messaging.enqueueWindowMessage(info);
     });
   } else {
+    Messaging.addTrustedOrigin(windowURL.origin);
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
     thisIframe.src = subURL;
