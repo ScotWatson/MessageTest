@@ -72,7 +72,7 @@ function start( [ Interface, Messaging ] ) {
       async function RPC() {
         console.log("RPC");
         try {
-          ret = await iframeRPC.call({
+          const ret = await iframeRPC.call({
             functionName: "ping",
             args: {},
           });
