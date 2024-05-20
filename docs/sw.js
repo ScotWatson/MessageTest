@@ -5,47 +5,41 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 importScripts("https://scotwatson.github.io/WebInterface/ServiceWorkerMessaging.js");
 
-const urlSelf = new URL(self.location);
-const urlTestGame = new URL("./TestGame/", urlSelf);
-const urlClasses = new URL("./classes.js", urlSelf);
-const pathnameSegments = urlSelf.pathname.split("/");
-
-function project_file(filename) {
-  // NOTE: This path is hardcoded, as the service worker cannot access window.location
-  const pathname = "/WebInterface/";
-  return pathname + filename;
+(async function () {
+  for await (const info of Messaging.unregisteredClient) {
+    const newSource = Messaging.createClientSource({
+      client: info.source,
+    });
+    const newSink = Messaging.createClientSource({
+      client: info.source,
+    });
+    const newRPS = Messaging.createRemoteProcedureSocket({
+      messageSource: newSource,
+      messageSink: newSink,
+    });
+    newRPS.register({
+      functionName: "ping",
+      handlerFunc: function () {
+        return "Hello from Service Worker!";
+      },
+    });
+  }
 }
+
+const urlSelf = new URL(self.location);
 
 function self_install(e) {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
-    /*
-    console.log("sw.js: Start Adding Caches");
-    cache.addAll([
-      project_file("./"),
-      project_file("./index.html"),
-      project_file("./index.js"),
-      project_file("./worker_api.js"),
-      project_file("./style.css"),
-    ])
-    console.log("sw.js: End Adding Caches");
-    */
   }
   e.waitUntil(caches.open("store").then(addCaches));
-//  console.log("sw.js: End Installing");
-}
-
-function set_as_worker_script(path) {
 }
 
 function self_fetch(e) {
-//  console.log("sw.js: Start Handling Fetch");
-//  console.log(e);
   function sendResponse(response) {
     return response || fetch(e.request);
   }
   e.respondWith(caches.match(e.request).then(sendResponse));
-//  console.log("sw.js: End Handling Fetch");
 }
 
 self.addEventListener("install", self_install);
