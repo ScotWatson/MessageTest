@@ -70,10 +70,11 @@ function start( [ Interface, Messaging ] ) {
     });
 //    thisIframe.contentWindow.addEventListener("load", function () {
     thisIframe.addEventListener("load", function () {
-      setTimeout(RPC, 1000);
+      RPC();
       async function RPC() {
         console.log("RPC");
         function pinging() {
+          console.log("try to ping iframe");
           const ret = iframeRPS.call({
             functionName: "ping",
             args: {},
@@ -95,10 +96,11 @@ function start( [ Interface, Messaging ] ) {
       messageSource: workerSource,
       messageSink: workerSink,
     });
-    setTimeout(workerRPC, 0);
+    workerRPC();
     async function workerRPC() {
       console.log("worker RPC");
       function pinging() {
+        console.log("try to ping worker");
         const ret = workerRPS.call({
           functionName: "ping",
           args: {},
