@@ -96,10 +96,12 @@ function start( [ Interface, Messaging ] ) {
     (async function workerRPC() {
       console.log("worker RPC");
       try {
+        console.log("calling worker...");
         const ret = await workerRPS.call({
           functionName: "ping",
           args: {},
         });
+        console.log("return from worker...");
         console.log(ret);
       } catch (reason) {
         console.error(reason);
