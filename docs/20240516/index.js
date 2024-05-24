@@ -108,7 +108,10 @@ function start( [ Interface, Messaging ] ) {
           args: {},
         });
         ret.then(console.log);
-        ret.catch(pinging);
+        ret.catch(function () {
+          console.log("worker ping failed, retry");
+          return pinging();
+        });
         return ret;
       }
     }
