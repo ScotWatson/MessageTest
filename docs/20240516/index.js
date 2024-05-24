@@ -71,14 +71,14 @@ function start( [ Interface, Messaging ] ) {
       setTimeout(RPC, 1000);
       async function RPC() {
         console.log("RPC");
-        try {
-          const ret = await iframeRPS.call({
+        function pinging() {
+          const ret = iframeRPS.call({
             functionName: "ping",
             args: {},
           });
-          console.log(ret);
-        } catch (reason) {
-          console.error(reason);
+          ret.then(console.log);
+          ret.catch(pinging);
+          return ret;
         }
       }
     });
@@ -96,16 +96,14 @@ function start( [ Interface, Messaging ] ) {
     setTimeout(workerRPC, 0);
     async function workerRPC() {
       console.log("worker RPC");
-      try {
-        console.log("calling worker...");
-        const ret = await workerRPS.call({
+      function pinging() {
+        const ret = workerRPS.call({
           functionName: "ping",
           args: {},
         });
-        console.log("return from worker...");
-        console.log(ret);
-      } catch (reason) {
-        console.error(reason);
+        ret.then(console.log);
+        ret.catch(pinging);
+        return ret;
       }
     }
   }
