@@ -80,8 +80,7 @@ function start( [ Interface, Messaging ] ) {
             functionName: "ping",
             args: {},
           });
-          ret.then(console.log);
-          ret.catch(pinging);
+          ret.then(console.log, pinging);
           return ret;
         }
       }
@@ -108,8 +107,7 @@ function start( [ Interface, Messaging ] ) {
           functionName: "ping",
           args: {},
         });
-        ret.then(console.log);
-        ret.catch(function () {
+        ret.then(console.log, function () {
           console.log("worker ping failed, retry");
           return pinging();
         });
