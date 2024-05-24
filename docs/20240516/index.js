@@ -93,7 +93,8 @@ function start( [ Interface, Messaging ] ) {
       messageSource: workerSource,
       messageSink: workerSink,
     });
-    (async function workerRPC() {
+    setTimeout(workerRPC, 1000);
+    async function workerRPC() {
       console.log("worker RPC");
       try {
         console.log("calling worker...");
@@ -106,6 +107,6 @@ function start( [ Interface, Messaging ] ) {
       } catch (reason) {
         console.error(reason);
       }
-    })();
+    }
   }
 }
