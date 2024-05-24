@@ -20,4 +20,5 @@ import("https://scotwatson.github.io/WebInterface/20240316/worker-messaging.mjs"
       return "Hello from Worker!";
     },
   });
+  console.log("worker ready for ping");
 });
