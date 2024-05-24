@@ -73,6 +73,7 @@ function start( [ Interface, Messaging ] ) {
       RPC();
       async function RPC() {
         console.log("RPC");
+        pinging();
         function pinging() {
           console.log("try to ping iframe");
           const ret = iframeRPS.call({
@@ -99,6 +100,7 @@ function start( [ Interface, Messaging ] ) {
     workerRPC();
     async function workerRPC() {
       console.log("worker RPC");
+      pinging();
       function pinging() {
         console.log("try to ping worker");
         const ret = workerRPS.call({
