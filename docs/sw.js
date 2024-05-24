@@ -27,7 +27,7 @@ const Messaging = (function () {
       },
     });
   }
-}
+})();
 
 const urlSelf = new URL(self.location);
 
