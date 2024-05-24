@@ -96,6 +96,7 @@ function start( [ Interface, Messaging ] ) {
     const workerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: workerSource,
       messageSink: workerSink,
+      timeout: 500,
     });
     workerRPC();
     async function workerRPC() {
