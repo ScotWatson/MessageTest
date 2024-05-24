@@ -90,6 +90,7 @@ function start( [ Interface, Messaging ] ) {
     const workerSink = Messaging.createMessageSinkForWorker({
       worker: thisWorker,
     });
+    console.log(workerSource, workerSink);
     const workerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: workerSource,
       messageSink: workerSink,
