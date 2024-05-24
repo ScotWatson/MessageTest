@@ -16,6 +16,7 @@ const Messaging = (function () {
     const newSink = Messaging.createClientSource({
       client: info.source,
     });
+    console.log(newSource, newSink);
     const newRPS = Messaging.createRemoteProcedureSocket({
       messageSource: newSource,
       messageSink: newSink,
