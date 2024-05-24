@@ -7,34 +7,17 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     -->
     <title>Message Test</title>
-    <script type="module" src="https://scotwatson.github.io/WebInterface/init.js"></script>
+    <!-- init.js must be loaded synchronously to capture events -->
+    <script id="initScript" src="https://scotwatson.github.io/WebInterface/init.js"></script>
     <script>
-const selfURL = new URL(window.location);
+const initScript = document.getElementById("initScript");
+const selfURL = initScript.exports.selfUrl;
 const pathSegments = selfURL.pathname.split("/");
-init({
+initScript.exports.init({
   latestVersion: "20240516",
   siteURI: function () {
     return selfURL.origin + pathSegments[0] + "/index";
   },
-});
-// Obtain initialization info
-const urlSelf = new URL(self.location);
-const urlServiceWorker = new URL("./sw.js", urlSelf);
-const urlServiceWorkerScope = new URL("./", urlSelf);
-// Register the service worker.
-const registrationPromise = window.navigator.serviceWorker.register(urlServiceWorker.href, {
-  scope: urlServiceWorkerScope.href,
-});
-//If there is no controller, wait for one before proceeding
-const controller = new Promise(function (resolve, reject) {
-  if (navigator.serviceWorker.controller !== null) {
-    resolve();
-    return;
-  }
-  navigator.serviceWorker.addEventListener("controllerchange", function (evt) {
-    resolve();
-    return;
-  });
 });
     </script>
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
