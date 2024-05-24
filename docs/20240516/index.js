@@ -7,7 +7,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
-const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/WindowMessaging.mjs");
+const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
 
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
