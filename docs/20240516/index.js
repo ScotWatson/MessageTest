@@ -93,7 +93,7 @@ function start( [ Interface, Messaging ] ) {
       messageSource: workerSource,
       messageSink: workerSink,
     });
-    setTimeout(workerRPC, 5000);
+    workerRPC();
     async function workerRPC() {
       console.log("worker RPC");
       try {
