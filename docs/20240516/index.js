@@ -36,6 +36,7 @@ function start( [ Interface, Messaging ] ) {
       const parentRPS = Messaging.createRemoteProcedureSocket({
         messageSource: parentSource,
         messageSink: parentSink,
+        timeout: 500,
       });
       parentRPS.register({
         functionName: "ping",
@@ -62,6 +63,7 @@ function start( [ Interface, Messaging ] ) {
     const iframeRPS = Messaging.createRemoteProcedureSocket({
       messageSource: iframeSource,
       messageSink: iframeSink,
+      timeout: 500,
     });
     Messaging.untrustedOrigin.next().then(function () {
       throw "Received message from unrecognized source";
