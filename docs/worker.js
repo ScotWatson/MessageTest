@@ -10,7 +10,6 @@ function print() {
 }
 
 import("https://scotwatson.github.io/WebInterface/20240316/worker-messaging.mjs").then(function (Messaging) {
-  console.log(Messaging.parentSource, Messaging.parentSink);
   const parentRPS = Messaging.createRemoteProcedureSocket({
     messageSource: Messaging.parentSource,
     messageSink: Messaging.parentSink,
