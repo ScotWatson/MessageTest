@@ -93,7 +93,7 @@ function start( [ Interface, Messaging ] ) {
       messageSource: workerSource,
       messageSink: workerSink,
     });
-    async function workerRPC() {
+    (async function workerRPC() {
       console.log("worker RPC");
       try {
         const ret = await workerRPS.call({
@@ -104,6 +104,6 @@ function start( [ Interface, Messaging ] ) {
       } catch (reason) {
         console.error(reason);
       }
-    }
+    })();
   }
 }
