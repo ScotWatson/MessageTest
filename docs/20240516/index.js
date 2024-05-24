@@ -33,7 +33,6 @@ function start( [ Interface, Messaging ] ) {
         window: info.source,
         origin: info.origin,
       });
-      console.log(parentSource, parentSink);
       const parentRPS = Messaging.createRemoteProcedureSocket({
         messageSource: parentSource,
         messageSink: parentSink,
@@ -90,7 +89,6 @@ function start( [ Interface, Messaging ] ) {
     const workerSink = Messaging.createMessageSinkForWorker({
       worker: thisWorker,
     });
-    console.log(workerSource, workerSink);
     const workerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: workerSource,
       messageSink: workerSink,
