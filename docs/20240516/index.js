@@ -80,7 +80,10 @@ function start( [ Interface, Messaging ] ) {
             functionName: "ping",
             args: {},
           });
-          ret.then(console.log, pinging);
+          ret.then(console.log, function () {
+            console.log("iframe ping failed, retry");
+            return pinging();
+          });
           return ret;
         }
       }
