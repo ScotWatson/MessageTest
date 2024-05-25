@@ -8,6 +8,8 @@ const Messaging = (function () {
   return exports;
 })();
 
+console.log(self);
+
 (async function () {
   for await (const info of Messaging.unregisteredClient) {
     const newSource = Messaging.createClientSource({
