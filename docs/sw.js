@@ -46,4 +46,3 @@ function self_fetch(e) {
 
 self.addEventListener("install", self_install);
 self.addEventListener("fetch", self_fetch);
-*/
