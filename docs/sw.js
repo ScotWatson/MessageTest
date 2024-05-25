@@ -3,21 +3,9 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-(function () {
-  try {
-    importScripts("https://scotwatson.github.io/MessageTest/test-import.js");
-  } catch (e) {
-    console.error(e);
-  }
-})();
+importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 
-/*
-const Messaging = (function () {
-  importScripts("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
-  return exports;
-})();
-
-console.log(self);
+const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
 (async function () {
   for await (const info of Messaging.unregisteredClient) {
