@@ -115,5 +115,21 @@ function start( [ Interface, Messaging ] ) {
         });
       }
     }
+    serviceWorkerRPC();
+    async function serviceWorkerRPC() {
+      console.log("worker RPC");
+      pinging();
+      function pinging() {
+        console.log("try to ping worker");
+        const ret = workerRPS.call({
+          functionName: "ping",
+          args: {},
+        });
+        return ret.then(console.log, function () {
+          console.log("worker ping failed, retry");
+          return pinging();
+        });
+      }
+    }
   }
 }
