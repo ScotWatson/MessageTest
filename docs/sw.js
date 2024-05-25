@@ -4,10 +4,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 (function () {
-  importScripts("https://scotwatson.github.io/MessageTest/test-import.js");
-  console.log(exports);
+  try {
+    importScripts("https://scotwatson.github.io/MessageTest/test-import.js");
+  } catch (e) {
+    console.error(e);
+  }
 })();
-console.log(exports);
 
 /*
 const Messaging = (function () {
