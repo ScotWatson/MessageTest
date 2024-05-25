@@ -5,7 +5,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 const a = 1;
 console.log(self.a);
+  importScripts("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
+
+/*
 const Messaging = (function () {
   importScripts("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
   return exports;
@@ -52,3 +55,4 @@ function self_fetch(e) {
 
 self.addEventListener("install", self_install);
 self.addEventListener("fetch", self_fetch);
+*/
