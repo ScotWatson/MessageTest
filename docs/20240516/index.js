@@ -80,11 +80,10 @@ function start( [ Interface, Messaging ] ) {
             functionName: "ping",
             args: {},
           });
-          ret.then(console.log, function () {
+          return ret.then(console.log, function () {
             console.log("iframe ping failed, retry");
             return pinging();
           });
-          return ret;
         }
       }
     });
@@ -110,11 +109,10 @@ function start( [ Interface, Messaging ] ) {
           functionName: "ping",
           args: {},
         });
-        ret.then(console.log, function () {
+        return ret.then(console.log, function () {
           console.log("worker ping failed, retry");
           return pinging();
         });
-        return ret;
       }
     }
   }
