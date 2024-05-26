@@ -8,11 +8,11 @@ importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
 (async function () {
-  for await (const info of Messaging.unregisteredClient) {
+  for await (const info of Messaging.newClientMessage) {
     const newSource = Messaging.createClientSource({
       client: info.source,
     });
-    const newSink = Messaging.createClientSource({
+    const newSink = Messaging.createClientSink({
       client: info.source,
     });
     const newRPS = Messaging.createRemoteProcedureSocket({
