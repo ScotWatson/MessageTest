@@ -16,7 +16,6 @@ function fail(err) {
 }
 
 function start( [ Interface, Messaging ] ) {
-  console.log("start main");
   const controllerRPS = Messaging.createRemoteProcedureSocket({
     messageSource: Messaging.controllerSource,
     messageSink: Messaging.controllerSink,
@@ -130,6 +129,7 @@ function start( [ Interface, Messaging ] ) {
           functionName: "ping",
           args: {},
         });
+        console.log(ret);
         return ret.then(console.log, function () {
           console.log("controller ping failed, retry");
           return pinging();
