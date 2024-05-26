@@ -26,6 +26,7 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
       },
     });
     console.log("controller ready for ping");
+    Messaging.enqueueMessage(info);
   }
 })();
 
