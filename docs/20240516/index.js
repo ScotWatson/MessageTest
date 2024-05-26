@@ -16,6 +16,10 @@ function fail(err) {
 }
 
 function start( [ Interface, Messaging ] ) {
+  const controllerRPS = Messaging.createRemoteProcedureSocket({
+    messageSource: Messaging.controllerSource,
+    messageSink: Messaging.controllerSink,
+  });
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
@@ -115,18 +119,18 @@ function start( [ Interface, Messaging ] ) {
         });
       }
     }
-    serviceWorkerRPC();
-    async function serviceWorkerRPC() {
-      console.log("worker RPC");
+    controllerRPC();
+    async function controlerRPC() {
+      console.log("controller RPC");
       pinging();
       function pinging() {
-        console.log("try to ping worker");
-        const ret = workerRPS.call({
+        console.log("try to ping controller");
+        const ret = controllerRPS.call({
           functionName: "ping",
           args: {},
         });
         return ret.then(console.log, function () {
-          console.log("worker ping failed, retry");
+          console.log("controller ping failed, retry");
           return pinging();
         });
       }
