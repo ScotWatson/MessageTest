@@ -49,7 +49,7 @@ function start( [ Interface, Messaging ] ) {
           return "Hello!";
         },
       });
-      Messaging.enqueueWindowMessage(info);
+      Messaging.enqueueMessage(info);
     });
   } else {
     Messaging.addTrustedOrigin(windowURL.origin);
