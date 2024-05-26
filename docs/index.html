@@ -12,14 +12,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <script>
 console.log("start");
 const initScript = document.getElementById("initScript");
+console.log(initScript.exports);
 const selfURL = initScript.exports.selfUrl;
 const pathSegments = selfURL.pathname.split("/");
+console.log("start init");
 initScript.exports.init({
   latestVersion: "20240516",
   siteURI: function () {
     return selfURL.origin + pathSegments[0] + "/index";
   },
 });
+console.log("end init");
     </script>
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
