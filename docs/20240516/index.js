@@ -15,6 +15,8 @@ console.log("loading modules");
 
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
+console.log(loadInterface, loadMessaging);
+
 function fail(err) {
   console.error(err);
 }
