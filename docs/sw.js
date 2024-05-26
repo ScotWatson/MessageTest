@@ -8,7 +8,7 @@ importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
 (async function () {
-  console.log(Messaging.newClientMessage);
+  console.log(Messaging);
   for await (const info of Messaging.newClientMessage) {
     const newSource = Messaging.createClientSource({
       client: info.source,
