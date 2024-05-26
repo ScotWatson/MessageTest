@@ -5,6 +5,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 "use strict";
 
+console.log("start index.js");
+
 const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
 const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
