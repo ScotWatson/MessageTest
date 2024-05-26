@@ -29,22 +29,24 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
   }
 })();
 
-const urlSelf = new URL(self.location);
+const selfUrl = new URL(self.location);
 
-function self_install(e) {
+self.addEventListener("install", function (e) {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
   }
-  clients.claim();
+  self.skipWaiting();
   e.waitUntil(caches.open("store").then(addCaches));
-}
+});
 
-function self_fetch(e) {
+self.addEventListener("activate", function (e) {
+  console.log("sw.js: Start Activating");
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", function (e) {
   function sendResponse(response) {
     return response || fetch(e.request);
   }
   e.respondWith(caches.match(e.request).then(sendResponse));
-}
-
-self.addEventListener("install", self_install);
-self.addEventListener("fetch", self_fetch);
+});
