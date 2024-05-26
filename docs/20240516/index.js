@@ -11,6 +11,8 @@ const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
 const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
 
+console.log("loading modules");
+
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
 
 function fail(err) {
@@ -18,6 +20,7 @@ function fail(err) {
 }
 
 function start( [ Interface, Messaging ] ) {
+  console.log("start main");
   const controllerRPS = Messaging.createRemoteProcedureSocket({
     messageSource: Messaging.controllerSource,
     messageSink: Messaging.controllerSink,
