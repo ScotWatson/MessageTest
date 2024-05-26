@@ -130,7 +130,6 @@ function start( [ Interface, Messaging ] ) {
           functionName: "ping",
           args: {},
         });
-        console.log(ret);
         return ret.then(console.log, function () {
           console.log("controller ping failed, retry");
           return pinging();
