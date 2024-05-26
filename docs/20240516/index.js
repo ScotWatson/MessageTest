@@ -19,6 +19,7 @@ function start( [ Interface, Messaging ] ) {
   const controllerRPS = Messaging.createRemoteProcedureSocket({
     messageSource: Messaging.controllerSource,
     messageSink: Messaging.controllerSink,
+    timeout: 500,
   });
   const windowURL = new URL(window.location);
   const subURL = "./index.html#sub";
