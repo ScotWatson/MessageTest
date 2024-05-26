@@ -12,11 +12,6 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
     const newSource = Messaging.createClientSource({
       client: info.source,
     });
-    (async function () {
-      for await (const data of newSource.message) {
-        console.log(data);
-      }
-    })();
     const newSink = Messaging.createClientSink({
       client: info.source,
     });
