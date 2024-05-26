@@ -5,17 +5,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 "use strict";
 
-console.log("start index.js");
-
 const initPageTime = performance.now();
 const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
 const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
 
-console.log("loading modules");
-
 Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
-
-console.log(loadInterface, loadMessaging);
 
 function fail(err) {
   console.error(err);
@@ -127,7 +121,7 @@ function start( [ Interface, Messaging ] ) {
       }
     }
     controllerRPC();
-    async function controlerRPC() {
+    async function controllerRPC() {
       console.log("controller RPC");
       pinging();
       function pinging() {
