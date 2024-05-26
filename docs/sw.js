@@ -35,6 +35,7 @@ function self_install(e) {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
   }
+  clients.claim();
   e.waitUntil(caches.open("store").then(addCaches));
 }
 
