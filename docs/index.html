@@ -10,29 +10,28 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <!-- init.js must be loaded synchronously to capture page load events (no defer) -->
-    <script id="init" src="https://scotwatson.github.io/WebInterface/init.js"></script>
+    <script id="Init" src="https://scotwatson.github.io/WebInterface/init.js"></script>
+    <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
     <script>
+const Init = document.getElementById("Init").exports;
+const MessageQueue = document.getElementById("MessageQueue").exports;
+// Create MessageQueue for self to capture messages until ready
+const myMessageQueue = new MessageQueue.default(self);
 //IIFE to prevent polluting the global namespace
 (function () {
-  const Init = document.getElementById("init").exports;
   Init.addShortcutIcon(new URL("./favicon.ico", selfUrl));
   Init.addIcon(new URL("./favicon.ico", selfUrl));
-  const registeringServiceWorker = Init.registerServiceWorker({
-    url: new URL("./sw.js", selfUrl),
-    scope: new URL("./", selfUrl),
-  }).then(console.log, console.error);
-  // Load message-queue.js to queue up messages until the application is ready
-  Init.addScript({
-    url: "https://scotwatson.github.io/WebInterface/message-queue.js",
-    defer: false,
-    asModule: false,
-  });
   // Load version.mjs to load the correct version of the application
   Init.addScript({
     url: "https://scotwatson.github.io/WebInterface/version.mjs",
     defer: false,
     asModule: true,
   }).then(loadVersion);
+  const registeringServiceWorker = Init.registerServiceWorker({
+    url: new URL("./sw.js", selfUrl),
+    scope: new URL("./", selfUrl),
+  }).then(console.log, console.error);
+  // Function Definitions
   function loadVersion(Version) {
     const selfURL = Init.exports.selfUrl;
     const pathSegments = selfURL.pathname.split("/");
