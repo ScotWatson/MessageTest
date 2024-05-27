@@ -7,23 +7,50 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     -->
     <title>Message Test</title>
-    <!-- init.js must be loaded synchronously to capture events -->
-    <script id="initScript" src="https://scotwatson.github.io/WebInterface/init.js"></script>
-    <script>
-const initScript = document.getElementById("initScript");
-const selfURL = initScript.exports.selfUrl;
-const pathSegments = selfURL.pathname.split("/");
-initScript.exports.init({
-  latestVersion: "20240516",
-  siteURI: function () {
-    return selfURL.origin + pathSegments[0] + "/index";
-  },
-});
-    </script>
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <!-- init.js must be loaded synchronously to capture page load events (no defer) -->
+    <script id="init" src="https://scotwatson.github.io/WebInterface/init.js"></script>
+    <script>
+//IIFE to prevent polluting the global namespace
+(function () {
+  const Init = document.getElementById("init").exports;
+  Init.addShortcutIcon(new URL("./favicon.ico", selfUrl));
+  Init.addIcon(new URL("./favicon.ico", selfUrl));
+  const registeringServiceWorker = Init.registerServiceWorker({
+    url: new URL("./sw.js", selfUrl),
+    scope: new URL("./", selfUrl),
+  }).then(console.log, console.error);
+  // Load message-queue.js to queue up messages until the application is ready
+  Init.addScript({
+    url: "https://scotwatson.github.io/WebInterface/message-queue.js",
+    defer: false,
+    asModule: false,
+  });
+  // Load version.mjs to load the correct version of the application
+  Init.addScript({
+    url: "https://scotwatson.github.io/WebInterface/version.mjs",
+    defer: false,
+    asModule: true,
+  }).then(loadVersion);
+  function loadVersion(Version) {
+    const selfURL = Init.exports.selfUrl;
+    const pathSegments = selfURL.pathname.split("/");
+    const versionBaseUrl = Version.exports.getVersionBaseUrl({
+      latestVersion: "20240516",
+      siteURI: function () {
+        return selfURL.origin + pathSegments[0] + "/index";
+      },
+    });
+    Init.addStyleSheet(new URL("./style.css", versionBaseUrl));
+    Init.addScript({
+      url: new URL("./index.js", versionBaseUrl),
+      defer: true,
+      asModule: false,
+    });
+  }
+})();
+    </script>
   </head>
   <body>
   </body>
