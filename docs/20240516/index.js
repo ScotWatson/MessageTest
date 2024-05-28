@@ -6,10 +6,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 "use strict";
 
 const initPageTime = performance.now();
-const loadInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
-const loadMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
+const loadingInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
+const loadingMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
 
-Promise.all( [ loadInterface, loadMessaging ] ).then(start, fail);
+Promise.all( [ loadingInterface, loadingMessaging ] ).then(start, fail);
 
 function fail(err) {
   console.error(err);
