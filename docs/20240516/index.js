@@ -6,16 +6,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 "use strict";
 
 const initPageTime = performance.now();
-const loadingInterface = import("https://scotwatson.github.io/WebInterface/20240316/interface.mjs");
-const loadingMessaging = import("https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs");
+import * as Interface from "https://scotwatson.github.io/WebInterface/20240316/interface.mjs";
+import * as Messaging from "https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs";
 
-Promise.all( [ loadingInterface, loadingMessaging ] ).then(start, fail);
-
-function fail(err) {
-  console.error(err);
-}
-
-function start( [ Interface, Messaging ] ) {
+function start() {
   const controllerRPS = Messaging.createRemoteProcedureSocket({
     messageSource: Messaging.controllerSource,
     messageSink: Messaging.controllerSink,
