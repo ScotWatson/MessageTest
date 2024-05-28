@@ -25,6 +25,8 @@ function start( [ Interface, Messaging ] ) {
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
+    myMessageQueue.addEventListener(Messaging.messageHandler);
+    myMessageQueue.start();
     Messaging.untrustedOrigin.next().then(function (iterator) {
       const info = iterator.value;
       const window = info.window;
