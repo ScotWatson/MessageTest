@@ -44,8 +44,8 @@ if (windowURL.hash === "#sub") {
     });
     Messaging.enqueueMessage(info);
   });
-  myMessageQueue.addEventListener(Messaging.messageHandler);
-  myMessageQueue.addEventListener(console.log);
+  myMessageQueue.addEventListener("message", Messaging.messageHandler);
+  myMessageQueue.addEventListener("message", console.log);
   myMessageQueue.start();
 } else {
   Messaging.addTrustedOrigin(windowURL.origin);
@@ -88,8 +88,8 @@ if (windowURL.hash === "#sub") {
       }
     }
   });
-  myMessageQueue.addEventListener(Messaging.messageHandler);
-  myMessageQueue.addEventListener(console.log);
+  myMessageQueue.addEventListener("message", Messaging.messageHandler);
+  myMessageQueue.addEventListener("message", console.log);
   myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
   const workerSource = Messaging.createMessageSourceForWorker({
