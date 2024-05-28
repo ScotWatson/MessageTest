@@ -21,8 +21,8 @@ console.log(MessageQueue.default);
 const myMessageQueue = new MessageQueue.default(self);
 //IIFE to prevent polluting the global namespace
 (function () {
-  Init.addShortcutIcon(new URL("./favicon.ico", selfUrl));
-  Init.addIcon(new URL("./favicon.ico", selfUrl));
+  Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
+  Init.addIcon(new URL("./favicon.ico", Init.selfUrl));
   // Load version.mjs to load the correct version of the application
   Init.addScript({
     url: "https://scotwatson.github.io/WebInterface/version.mjs",
@@ -30,12 +30,12 @@ const myMessageQueue = new MessageQueue.default(self);
     asModule: true,
   }).then(loadVersion);
   const registeringServiceWorker = Init.registerServiceWorker({
-    url: new URL("./sw.js", selfUrl),
-    scope: new URL("./", selfUrl),
+    url: new URL("./sw.js", Init.selfUrl),
+    scope: new URL("./", Init.selfUrl),
   }).then(console.log, console.error);
   // Function Definitions
   function loadVersion(Version) {
-    const selfURL = Init.exports.selfUrl;
+    const selfURL = Init.selfUrl;
     const pathSegments = selfURL.pathname.split("/");
     const versionBaseUrl = Version.exports.getVersionBaseUrl({
       latestVersion: "20240516",
