@@ -30,10 +30,10 @@ const myMessageQueue = new MessageQueue.default(self);
   }).loading.then(loadVersion);
   */
   import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
-  const registeringServiceWorker = Init.registerServiceWorker({
+  Init.registerServiceWorker({
     url: new URL("./sw.js", Init.selfUrl),
     scope: new URL("./", Init.selfUrl),
-  }).then(console.log, console.error);
+  });
   // Function Definitions
   function loadVersion(Version) {
     const selfURL = Init.selfUrl;
@@ -44,6 +44,7 @@ const myMessageQueue = new MessageQueue.default(self);
         return selfURL.origin + pathSegments[0] + "/index";
       },
     });
+    console.log(versionBaseUrl);
     Init.addStyleSheet(new URL("./style.css", versionBaseUrl));
     Init.addScript({
       url: new URL("./index.js", versionBaseUrl),
