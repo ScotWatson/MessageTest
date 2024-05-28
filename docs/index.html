@@ -37,7 +37,7 @@ const myMessageQueue = new MessageQueue.default(self);
   function loadVersion(Version) {
     const selfURL = Init.selfUrl;
     const pathSegments = selfURL.pathname.split("/");
-    const versionBaseUrl = Version.exports.getVersionBaseUrl({
+    const versionBaseUrl = Version.getVersionBaseUrl({
       latestVersion: "20240516",
       siteURI: function () {
         return selfURL.origin + pathSegments[0] + "/index";
