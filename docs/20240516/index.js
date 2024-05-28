@@ -19,8 +19,6 @@ function start() {
   const subURL = "./index.html#sub";
   const subFullURL = new URL(subURL, windowURL);
   if (windowURL.hash === "#sub") {
-    myMessageQueue.addEventListener(Messaging.messageHandler);
-    myMessageQueue.start();
     Messaging.untrustedOrigin.next().then(function (iterator) {
       const info = iterator.value;
       const window = info.window;
@@ -47,9 +45,10 @@ function start() {
       });
       Messaging.enqueueMessage(info);
     });
-  } else {
     myMessageQueue.addEventListener(Messaging.messageHandler);
+    myMessageQueue.addEventListener(console.log);
     myMessageQueue.start();
+  } else {
     Messaging.addTrustedOrigin(windowURL.origin);
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
@@ -90,6 +89,9 @@ function start() {
         }
       }
     });
+    myMessageQueue.addEventListener(Messaging.messageHandler);
+    myMessageQueue.addEventListener(console.log);
+    myMessageQueue.start();
     const thisWorker = new Worker("worker.js");
     const workerSource = Messaging.createMessageSourceForWorker({
       worker: thisWorker,
