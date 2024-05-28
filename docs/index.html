@@ -28,7 +28,7 @@ const myMessageQueue = new MessageQueue.default(self);
     url: "https://scotwatson.github.io/WebInterface/version.mjs",
     defer: false,
     asModule: true,
-  }).then(loadVersion);
+  }).loading.then(loadVersion);
   const registeringServiceWorker = Init.registerServiceWorker({
     url: new URL("./sw.js", Init.selfUrl),
     scope: new URL("./", Init.selfUrl),
