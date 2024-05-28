@@ -24,11 +24,14 @@ const myMessageQueue = new MessageQueue.default(self);
   Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
   Init.addIcon(new URL("./favicon.ico", Init.selfUrl));
   // Load version.mjs to load the correct version of the application
+  /*
   Init.addScript({
     url: "https://scotwatson.github.io/WebInterface/version.mjs",
     defer: false,
     asModule: true,
   }).loading.then(loadVersion);
+  */
+  import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
   const registeringServiceWorker = Init.registerServiceWorker({
     url: new URL("./sw.js", Init.selfUrl),
     scope: new URL("./", Init.selfUrl),
