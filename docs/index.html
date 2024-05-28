@@ -49,7 +49,7 @@ const myMessageQueue = new MessageQueue.default(self);
     Init.addScript({
       url: new URL("./index.js", versionBaseUrl),
       defer: true,
-      asModule: false,
+      asModule: true,
     });
   }
 })();
