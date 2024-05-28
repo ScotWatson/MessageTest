@@ -16,6 +16,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 const Init = document.getElementById("Init").exports;
 const MessageQueue = document.getElementById("MessageQueue").exports;
 // Create MessageQueue for self to capture messages until ready
+console.log(MessageQueue);
+console.log(MessageQueue.default);
 const myMessageQueue = new MessageQueue.default(self);
 //IIFE to prevent polluting the global namespace
 (function () {
