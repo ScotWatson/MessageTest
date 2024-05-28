@@ -48,6 +48,8 @@ function start() {
       Messaging.enqueueMessage(info);
     });
   } else {
+    myMessageQueue.addEventListener(Messaging.messageHandler);
+    myMessageQueue.start();
     Messaging.addTrustedOrigin(windowURL.origin);
     const thisIframe = document.createElement("iframe");
     document.body.appendChild(thisIframe);
