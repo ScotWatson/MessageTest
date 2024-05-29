@@ -17,6 +17,10 @@ const Init = document.getElementById("Init").exports;
 const MessageQueue = document.getElementById("MessageQueue").exports;
 // Create MessageQueue for self to capture messages until ready
 const myMessageQueue = new MessageQueue.default(self);
+const registeringServiceWorker = Init.registerServiceWorker({
+  url: new URL("./sw.js", Init.selfUrl),
+  scope: new URL("./", Init.selfUrl),
+});
 //IIFE to prevent polluting the global namespace
 (function () {
   Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
@@ -30,10 +34,6 @@ const myMessageQueue = new MessageQueue.default(self);
   }).loading.then(loadVersion);
   */
   import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
-  Init.registerServiceWorker({
-    url: new URL("./sw.js", Init.selfUrl),
-    scope: new URL("./", Init.selfUrl),
-  });
   // Function Definitions
   function loadVersion(Version) {
     const selfURL = Init.selfUrl;
