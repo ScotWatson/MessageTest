@@ -10,6 +10,7 @@ console.log("worker start");
 self.importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js")
 const MessageQueue = self.importScript("https://scotwatson.github.io/WebInterface/MessageQueue.js").default;
 const myMessageQueue = new MessageQueue(self);
+self.addEventListener("message", console.log)
 
 setInterval(print, 1000);
 
