@@ -25,7 +25,7 @@ import("https://scotwatson.github.io/WebInterface/20240316/worker-messaging.mjs"
       console.log(info);
     }
   })();
-  const parentSink = Messaging.createMessageSinkForMessagePort(myMessageQueue);
+  const parentSink = Messaging.createMessageSinkForMessagePort(self);
   const parentRPS = Messaging.createRemoteProcedureSocket({
     messageSource: parentSource,
     messageSink: parentSink,
