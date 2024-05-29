@@ -9,11 +9,6 @@ const initPageTime = performance.now();
 import * as Interface from "https://scotwatson.github.io/WebInterface/20240316/interface.mjs";
 import * as Messaging from "https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs";
 
-const controllerRPS = Messaging.createRemoteProcedureSocket({
-  messageSource: Messaging.controllerSource,
-  messageSink: Messaging.controllerSink,
-  timeout: 500,
-});
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
@@ -117,9 +112,54 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
+  registeringServiceWorker.then((registration) => {
+    const skipWaitingBtn = document.createElement("button");
+    skipWaitingBtn.innerHTML = "Skip Waiting";
+    skipWaitingBtn.addEventListener("click", function () {
+      registration.waiting.postMessage("skipWaiting");
+    });
+    document.appendChild(skipWaitingBtn);
+    const claimClientsBtn = document.createElement("button");
+    claimClientsBtn.innerHTML = "Claim Clients";
+    claimClientsBtn.addEventListener("click", function () {
+      registration.active.postMessage("claimClients");
+    });
+    document.appendChild(claimClientsBtn);
+    setInterval(refreshButtons, 250);
+    function refreshButtons() {
+      if (registration.installed) {
+        console.log("registration.installed present");
+      } else {
+        console.log("registration.installed not present");
+      }
+      if (registration.waiting) {
+        console.log("registration.waiting present");
+        skipWaitingBtn.disabled = false;
+      } else {
+        console.log("registration.waiting not present");
+        skipWaitingBtn.disabled = true;
+      }
+      if (registration.active) {
+        console.log("registration.active present");
+        claimClientsBtn.disabled = false;
+      } else {
+        console.log("registration.active not present");
+        claimClientsBtn.disabled = true;
+      }
+      registration.addEventListener("updateFound", () => {
+        console.log("updateFound");
+        refreshButtons();
+      });
+    }
+  });
   Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
+    const controllerRPS = Messaging.createRemoteProcedureSocket({
+      messageSource: Messaging.controllerSource,
+      messageSink: Messaging.controllerSink,
+      timeout: 500,
+    });
     pinging();
     function pinging() {
       console.log("try to ping controller");
