@@ -39,13 +39,12 @@ if (windowURL.hash === "#sub") {
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
-        return "Hello!";
+        return "Hello from iframe!";
       },
     });
     Messaging.enqueueMessage(info);
   });
   myMessageQueue.addEventListener("message", Messaging.messageHandler);
-  myMessageQueue.addEventListener("message", console.log);
   myMessageQueue.start();
 } else {
   Messaging.addTrustedOrigin(windowURL.origin);
@@ -89,7 +88,6 @@ if (windowURL.hash === "#sub") {
     }
   });
   myMessageQueue.addEventListener("message", Messaging.messageHandler);
-  myMessageQueue.addEventListener("message", console.log);
   myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
   const workerSource = Messaging.createMessageSourceForWorker({
@@ -119,7 +117,7 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
-  controllerRPC();
+  Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
     pinging();
