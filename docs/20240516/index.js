@@ -113,18 +113,30 @@ if (windowURL.hash === "#sub") {
     }
   }
   registeringServiceWorker.then((registration) => {
+    const unregisterBtn = document.createElement("button");
+    unregisterBtn.innerHTML = "Unregister";
+    unregisterBtn.addEventListener("click", function () {
+      registration.unregister().then(() => { console.log("Unregistered"); }, console.error);
+    });
+    document.body.appendChild(unregisterBtn);
+    const updateBtn = document.createElement("button");
+    updateBtn.innerHTML = "Update";
+    updateBtn.addEventListener("click", function () {
+      registration.update().then(() => { console.log("Updated"); }, console.error);
+    });
+    document.body.appendChild(updateBtn);
     const skipWaitingBtn = document.createElement("button");
     skipWaitingBtn.innerHTML = "Skip Waiting";
     skipWaitingBtn.addEventListener("click", function () {
       registration.waiting.postMessage("skipWaiting");
     });
-    document.appendChild(skipWaitingBtn);
+    document.body.appendChild(skipWaitingBtn);
     const claimClientsBtn = document.createElement("button");
     claimClientsBtn.innerHTML = "Claim Clients";
     claimClientsBtn.addEventListener("click", function () {
       registration.active.postMessage("claimClients");
     });
-    document.appendChild(claimClientsBtn);
+    document.body.appendChild(claimClientsBtn);
     setInterval(refreshButtons, 250);
     function refreshButtons() {
       if (registration.installed) {
