@@ -20,6 +20,11 @@ function print() {
 
 import("https://scotwatson.github.io/WebInterface/20240316/worker-messaging.mjs").then(function (Messaging) {
   const parentSource = Messaging.createMessageSourceForMessagePort(myMessageQueue);
+  (async function () {
+    for await (const info of parentSource.message) {
+      console.log(info);
+    }
+  })();
   const parentSink = Messaging.createMessageSinkForMessagePort(myMessageQueue);
   const parentRPS = Messaging.createRemoteProcedureSocket({
     messageSource: parentSource,
