@@ -7,8 +7,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 console.log("worker start");
 
-self.importScripts("https://scotwatson.github.io/WebInterface/20240316/worker-import-script.js")
-const MessageQueue = self.importScript("https://scotwatson.github.io/WebInterface/20240316/MessageQueue.js").default;
+self.importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js")
+const MessageQueue = self.importScript("https://scotwatson.github.io/WebInterface/MessageQueue.js").default;
 const myMessageQueue = new MessageQueue(self);
 
 setInterval(print, 1000);
