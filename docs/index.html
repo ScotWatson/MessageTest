@@ -17,10 +17,8 @@ const Init = document.getElementById("Init").exports;
 const MessageQueue = document.getElementById("MessageQueue").exports;
 // Create MessageQueue for self to capture messages until ready
 const myMessageQueue = new MessageQueue.default(self);
-const registeringServiceWorker = Init.registerServiceWorker({
-  url: new URL("./sw.js", Init.selfUrl),
-  scope: new URL("./", Init.selfUrl),
-});
+const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
+const serviceWorkerScope = new URL("./", Init.selfUrl);
 //IIFE to prevent polluting the global namespace
 (function () {
   Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
