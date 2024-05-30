@@ -143,7 +143,7 @@ if (windowURL.hash === "#sub") {
         refreshButtons();
       });
       refreshButtons();
-    });
+    }, console.error);
     registerBtn.disabled = true;
   });
   unregisterBtn.addEventListener("click", function () {
