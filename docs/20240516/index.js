@@ -187,6 +187,11 @@ if (windowURL.hash === "#sub") {
       claimClientsBtn.disabled = true;
     }
   }
+  const controllerPara = document.createElement("p");
+  document.body.appendChild(controllerPara);
+  controllerPara.append("Controller");
+  const controllerState = document.createElement("p");
+  controllerPara.appendChild(controllerState);
   Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
