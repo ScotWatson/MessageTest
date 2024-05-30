@@ -112,6 +112,8 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
+
+  let serviceWorkerRegistration = null;
   const registerBtn = document.createElement("button");
   registerBtn.innerHTML = "Register";
   registerBtn.disabled = false;
