@@ -112,58 +112,79 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
-  registeringServiceWorker.then((registration) => {
-    const unregisterBtn = document.createElement("button");
-    unregisterBtn.innerHTML = "Unregister";
-    unregisterBtn.addEventListener("click", function () {
-      registration.unregister().then(() => { console.log("Unregistered"); }, console.error);
-    });
-    document.body.appendChild(unregisterBtn);
-    const updateBtn = document.createElement("button");
-    updateBtn.innerHTML = "Update";
-    updateBtn.addEventListener("click", function () {
-      registration.update().then(() => { console.log("Updated"); }, console.error);
-    });
-    document.body.appendChild(updateBtn);
-    const skipWaitingBtn = document.createElement("button");
-    skipWaitingBtn.innerHTML = "Skip Waiting";
-    skipWaitingBtn.addEventListener("click", function () {
-      registration.waiting.postMessage("skipWaiting");
-    });
-    document.body.appendChild(skipWaitingBtn);
-    const claimClientsBtn = document.createElement("button");
-    claimClientsBtn.innerHTML = "Claim Clients";
-    claimClientsBtn.addEventListener("click", function () {
-      registration.active.postMessage("claimClients");
-    });
-    document.body.appendChild(claimClientsBtn);
-    setInterval(refreshButtons, 250);
-    function refreshButtons() {
-      if (registration.installed) {
-        console.log("registration.installed present");
-      } else {
-        console.log("registration.installed not present");
-      }
-      if (registration.waiting) {
-        console.log("registration.waiting present");
-        skipWaitingBtn.disabled = false;
-      } else {
-        console.log("registration.waiting not present");
-        skipWaitingBtn.disabled = true;
-      }
-      if (registration.active) {
-        console.log("registration.active present");
-        claimClientsBtn.disabled = false;
-      } else {
-        console.log("registration.active not present");
-        claimClientsBtn.disabled = true;
-      }
-      registration.addEventListener("updateFound", () => {
+  const registerBtn = document.createElement("button");
+  registerBtn.innerHTML = "Register";
+  registerBtn.disabled = false;
+  document.body.appendChild(registerBtn);
+  const unregisterBtn = document.createElement("button");
+  unregisterBtn.innerHTML = "Unregister";
+  unregisterBtn.disabled = true;
+  document.body.appendChild(unregisterBtn);
+  const updateBtn = document.createElement("button");
+  updateBtn.innerHTML = "Update";
+  document.body.appendChild(updateBtn);
+  const skipWaitingBtn = document.createElement("button");
+  skipWaitingBtn.innerHTML = "Skip Waiting";
+  document.body.appendChild(skipWaitingBtn);
+  const claimClientsBtn = document.createElement("button");
+  claimClientsBtn.innerHTML = "Claim Clients";
+  document.body.appendChild(claimClientsBtn);
+  
+  registerBtn.addEventListener("click", function () {
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl,
+      scope: serviceWorkerScope,
+    }).then((x) => {
+      serviceWorkerRegistration = x;
+      serviceWorkerRegistration.addEventListener("updateFound", () => {
         console.log("updateFound");
         refreshButtons();
       });
-    }
+      refreshButtons();
+    });
+    registerBtn.disabled = true;
   });
+  unregisterBtn.addEventListener("click", function () {
+    serviceWorkerRegistration.unregister().then(() => {
+      console.log("Unregistered");
+      serviceWorkerRegistration = null;
+      refreshButtons();
+    }, console.error);
+  });
+  registerBtn.click();
+  updateBtn.addEventListener("click", function () {
+    serviceWorkerRegistration.update().then(() => {
+      console.log("Updated");
+      refreshButtons();
+    }, console.error);
+  });
+  skipWaitingBtn.addEventListener("click", function () {
+    serviceWorkerRegistration.waiting.postMessage("skipWaiting");
+  });
+  claimClientsBtn.addEventListener("click", function () {
+    serviceWorkerRegistration.active.postMessage("claimClients");
+  });
+  function refreshButtons() {
+    if (serviceWorkerRegistration.installed) {
+      console.log("registration.installed present");
+    } else {
+      console.log("registration.installed not present");
+    }
+    if (serviceWorkerRegistration.waiting) {
+      console.log("registration.waiting present");
+      skipWaitingBtn.disabled = false;
+    } else {
+      console.log("registration.waiting not present");
+      skipWaitingBtn.disabled = true;
+    }
+    if (serviceWorkerRegistration.active) {
+      console.log("registration.active present");
+      claimClientsBtn.disabled = false;
+    } else {
+      console.log("registration.active not present");
+      claimClientsBtn.disabled = true;
+    }
+  }
   Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
