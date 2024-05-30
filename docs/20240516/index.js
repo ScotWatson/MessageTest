@@ -195,6 +195,10 @@ if (windowURL.hash === "#sub") {
   Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
+    controllerState.innerHTML = self.navigator.serviceWorker.controller.state;
+    self.navigator.serviceWorker.controller.addEventListener("statechange", (newState) => {
+      controllerState.innerHTML = newState;
+    });
     const controllerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: Messaging.controllerSource,
       messageSink: Messaging.controllerSink,
