@@ -188,7 +188,7 @@ if (windowURL.hash === "#sub") {
       messageSink: Messaging.createMessageSinkForServiceWorker(navigator.serviceWorker.controller),
       timeout: 500,
     });
-  });
+  }
   if (navigator.serviceWorker.controller !== null) {
     newController();
     registerBtn.disabled = true;
