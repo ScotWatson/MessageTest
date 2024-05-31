@@ -128,9 +128,6 @@ if (windowURL.hash === "#sub") {
       return;
     }
     const paragraph = document.createElement("p");
-    const idSpan = document.createElement("span");
-    idSpan.innerHTML = serviceWorker.id;
-    paragraph.appendChild(idSpan);
     const stateSpan = document.createElement("span");
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
@@ -147,6 +144,11 @@ if (windowURL.hash === "#sub") {
     const updateBtn = document.createElement("button");
     updateBtn.innerHTML = "Update";
     paragraph.appendChild(updateBtn);
+    /*
+    const sendPortBtn = document.createElement("button");
+    sendPortBtn.innerHTML = "Send Port";
+    paragraph.appendChild(sendPortBtn);
+    */
     document.body.appendChild(paragraph);
     skipWaitingBtn.addEventListener("click", (evt) => {
       serviceWorker.postMessage("skipWaiting");
