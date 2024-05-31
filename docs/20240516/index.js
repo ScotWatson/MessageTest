@@ -113,7 +113,7 @@ if (windowURL.hash === "#sub") {
     }
   }
   let serviceWorkerRegistration = null;
-  const serviceWorkers = [];
+  const serviceWorkerFunctions = [];
   const registerBtn = document.createElement("button");
   registerBtn.innerHTML = "Register";
   document.body.appendChild(registerBtn);
@@ -124,6 +124,9 @@ if (windowURL.hash === "#sub") {
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
   function addServiceWorker(serviceWorker) {
+    if (serviceWorkerFunctions.some((value) => { return value === serviceWorker; })) {
+      return;
+    }
     const paragraph = document.createElement("p");
     const stateSpan = document.createElement("span");
     paragraph.appendChild(stateSpan);
@@ -159,13 +162,14 @@ if (windowURL.hash === "#sub") {
     });
     stateSpan.innerHTML = serviceWorker.state;
     const ret = {
+      serviceWorker,
       checkController() {
         const match = (serviceWorker === navigator.serviceWorker.controller);
         controllerSpan.innerHTML = match ? "*" : "";
         return match;
       },
     };
-    serviceWorkers.push(ret);
+    serviceWorkerFunctions.push(ret);
     return ret;
   }
   navigator.serviceWorker.addEventListener("controllerchange", (evt) => {
@@ -174,15 +178,10 @@ if (windowURL.hash === "#sub") {
   });
   let controllerRPS = null;
   function newController() {
-    let found = false;
     for (const serviceWorker of serviceWorkers) {
-      if (serviceWorker.checkController()) {
-        found = true;
-      }
+      serviceWorker.checkController();
     }
-    if (!found) {
-      addServiceWorker(navigator.serviceWorker.controller).checkController();
-    }
+    addServiceWorker(navigator.serviceWorker.controller).checkController();
     const controllerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: Messaging.controllerSource,
       messageSink: Messaging.createMessageSinkForServiceWorker(navigator.serviceWorker.controller),
@@ -203,6 +202,15 @@ if (windowURL.hash === "#sub") {
     serviceWorkerRegistration.addEventListener("updateFound", () => {
       console.log("updateFound");
     });
+    if (serviceWorkerRegistration.installed) {
+      addServiceWorker(serviceWorkerRegistration.installed);
+    }
+    if (serviceWorkerRegistration.waiting) {
+      addServiceWorker(serviceWorkerRegistration.waiting);
+    }
+    if (serviceWorkerRegistration.active) {
+      addServiceWorker(serviceWorkerRegistration.active);
+    }
   }
   registerBtn.addEventListener("click", function () {
     Init.registerServiceWorker({
