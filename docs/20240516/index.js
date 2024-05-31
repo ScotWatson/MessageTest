@@ -212,13 +212,16 @@ if (windowURL.hash === "#sub") {
     registerBtn.disabled = true;
   });
   unregisterBtn.addEventListener("click", function () {
-    serviceWorkerRegistration.unregister().then(() => {
-      console.log("Unregistered");
-      serviceWorkerRegistration = null;
-      refreshButtons();
+    serviceWorkerRegistration.unregister().then((success) => {
+      if (success) {
+        console.log("Unregistered");
+        newRegistration(null);
+        refreshButtons();
+      } else {
+        console.log("Unable to unregister");
+      }
     }, console.error);
   });
-  registerBtn.click();
   updateBtn.addEventListener("click", function () {
     serviceWorkerRegistration.update().then((registration) => {
       newRegistration(registration);
@@ -226,6 +229,8 @@ if (windowURL.hash === "#sub") {
       refreshButtons();
     }, console.error);
   });
+  unregisterBtn.disabled = true;
+  updateBtn.disabled = true;
   function refreshButtons() {
     if (serviceWorkerRegistration.installed) {
       console.log("registration.installed present");
