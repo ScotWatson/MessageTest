@@ -178,11 +178,11 @@ if (windowURL.hash === "#sub") {
   });
   let controllerRPS = null;
   function newController() {
-    for (const serviceWorker of serviceWorkers) {
+    for (const serviceWorker of serviceWorkerFunctions) {
       serviceWorker.checkController();
     }
     addServiceWorker(navigator.serviceWorker.controller).checkController();
-    const controllerRPS = Messaging.createRemoteProcedureSocket({
+    controllerRPS = Messaging.createRemoteProcedureSocket({
       messageSource: Messaging.controllerSource,
       messageSink: Messaging.createMessageSinkForServiceWorker(navigator.serviceWorker.controller),
       timeout: 500,
