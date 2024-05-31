@@ -128,6 +128,9 @@ if (windowURL.hash === "#sub") {
       return;
     }
     const paragraph = document.createElement("p");
+    const idSpan = document.createElement("span");
+    idSpan.innerHTML = serviceWorker.id;
+    paragraph.appendChild(idSpan);
     const stateSpan = document.createElement("span");
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
