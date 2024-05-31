@@ -221,7 +221,7 @@ if (windowURL.hash === "#sub") {
   registerBtn.click();
   updateBtn.addEventListener("click", function () {
     serviceWorkerRegistration.update().then((registration) => {
-      serviceWorkerRegistration = registration;
+      newRegistration(registration);
       console.log("Updated");
       refreshButtons();
     }, console.error);
