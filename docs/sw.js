@@ -14,6 +14,14 @@ self.addEventListener("message", (evt) => {
         self.clients.claim();
       }
         break;
+      case "unregister": {
+        self.registration.unregister();
+      }
+        break;
+      case "update": {
+        self.registration.update();
+      }
+        break;
       default:
         console.error("Unrecognized command");
     }
