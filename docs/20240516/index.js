@@ -112,38 +112,103 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
-
   let serviceWorkerRegistration = null;
+  const serviceWorkers = [];
   const registerBtn = document.createElement("button");
   registerBtn.innerHTML = "Register";
-  registerBtn.disabled = false;
   document.body.appendChild(registerBtn);
   const unregisterBtn = document.createElement("button");
   unregisterBtn.innerHTML = "Unregister";
-  unregisterBtn.disabled = true;
   document.body.appendChild(unregisterBtn);
   const updateBtn = document.createElement("button");
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
-  const skipWaitingBtn = document.createElement("button");
-  skipWaitingBtn.innerHTML = "Skip Waiting";
-  document.body.appendChild(skipWaitingBtn);
-  const claimClientsBtn = document.createElement("button");
-  claimClientsBtn.innerHTML = "Claim Clients";
-  document.body.appendChild(claimClientsBtn);
-  
+  function addServiceWorker(serviceWorker) {
+    const paragraph = document.createElement("p");
+    const stateSpan = document.createElement("span");
+    paragraph.appendChild(stateSpan);
+    const controllerSpan = document.createElement("span");
+    paragraph.appendChild(controllerSpan);
+    const skipWaitingBtn = document.createElement("button");
+    skipWaitingBtn.innerHTML = "Skip Waiting";
+    paragraph.appendChild(skipWaitingBtn);
+    const claimClientsBtn = document.createElement("button");
+    claimClientsBtn.innerHTML = "Claim Clients";
+    paragraph.appendChild(claimClientsBtn);
+    const unregisterBtn = document.createElement("button");
+    unregisterBtn.innerHTML = "Unregister";
+    paragraph.appendChild(unregisterBtn);
+    const updateBtn = document.createElement("button");
+    updateBtn.innerHTML = "Update";
+    paragraph.appendChild(updateBtn);
+    document.body.appendChild(paragraph);
+    skipWaitingBtn.addEventListener("click", (evt) => {
+      serviceWorker.postMessage("skipWaiting");
+    });
+    claimClientsBtn.addEventListener("click", (evt) => {
+      serviceWorker.postMessage("claimClients");
+    });
+    unregisterBtn.addEventListener("click", (evt) => {
+      serviceWorker.postMessage("unregister");
+    });
+    updateBtn.addEventListener("click", (evt) => {
+      serviceWorker.postMessage("update");
+    });
+    serviceWorker.addEventListener("statechange", (evt) => {
+      stateSpan.innerHTML = serviceWorker.state;
+    });
+    stateSpan.innerHTML = serviceWorker.state;
+    const ret = {
+      checkController() {
+        const match = (serviceWorker === navigator.serviceWorker.controller);
+        controllerSpan.innerHTML = match ? "*" : "";
+        return match;
+      },
+    };
+    serviceWorkers.push(ret);
+    return ret;
+  }
+  navigator.serviceWorker.addEventListener("controllerchange", (evt) => {
+    console.log("controllerchange", evt);
+    newController();
+  });
+  let controllerRPS = null;
+  function newController() {
+    let found = false;
+    for (const serviceWorker of serviceWorkers) {
+      if (serviceWorker.checkController()) {
+        found = true;
+      }
+    }
+    if (!found) {
+      addServiceWorker(navigator.serviceWorker.controller).checkController();
+    }
+    const controllerRPS = Messaging.createRemoteProcedureSocket({
+      messageSource: Messaging.controllerSource,
+      messageSink: Messaging.createMessageSinkForServiceWorker(navigator.serviceWorker.controller),
+      timeout: 500,
+    });
+  });
+  if (navigator.serviceWorker.controller !== null) {
+    newController();
+    registerBtn.disabled = true;
+  } else {
+    registerBtn.disabled = false;
+  }
+  function newRegistration(registration) {
+    serviceWorkerRegistration = registration;
+    registerBtn.disabled = false;
+    unregisterBtn.disabled = !registration;
+    updateBtn.disabled = !registration;
+    serviceWorkerRegistration.addEventListener("updateFound", () => {
+      console.log("updateFound");
+    });
+  }
   registerBtn.addEventListener("click", function () {
     Init.registerServiceWorker({
       url: serviceWorkerUrl,
       scope: serviceWorkerScope,
-    }).then((x) => {
-      serviceWorkerRegistration = x;
-      serviceWorkerRegistration.addEventListener("updateFound", () => {
-        console.log("updateFound");
-        refreshButtons();
-      });
-      refreshButtons();
-    }, console.error);
+    }).then(newRegistration);
     registerBtn.disabled = true;
   });
   unregisterBtn.addEventListener("click", function () {
@@ -160,12 +225,6 @@ if (windowURL.hash === "#sub") {
       refreshButtons();
     }, console.error);
   });
-  skipWaitingBtn.addEventListener("click", function () {
-    serviceWorkerRegistration.waiting.postMessage("skipWaiting");
-  });
-  claimClientsBtn.addEventListener("click", function () {
-    serviceWorkerRegistration.active.postMessage("claimClients");
-  });
   function refreshButtons() {
     if (serviceWorkerRegistration.installed) {
       console.log("registration.installed present");
@@ -174,37 +233,18 @@ if (windowURL.hash === "#sub") {
     }
     if (serviceWorkerRegistration.waiting) {
       console.log("registration.waiting present");
-      skipWaitingBtn.disabled = false;
     } else {
       console.log("registration.waiting not present");
-      skipWaitingBtn.disabled = true;
     }
     if (serviceWorkerRegistration.active) {
       console.log("registration.active present");
-      claimClientsBtn.disabled = false;
     } else {
       console.log("registration.active not present");
-      claimClientsBtn.disabled = true;
     }
   }
-  const controllerPara = document.createElement("p");
-  document.body.appendChild(controllerPara);
-  controllerPara.append("Controller");
-  const controllerState = document.createElement("p");
-  controllerPara.appendChild(controllerState);
   Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
-    controllerState.innerHTML = self.navigator.serviceWorker.controller.state;
-    self.navigator.serviceWorker.controller.addEventListener("statechange", (evt) => {
-      console.log(evt);
-      controllerState.innerHTML = self.navigator.serviceWorker.controller.state;
-    });
-    const controllerRPS = Messaging.createRemoteProcedureSocket({
-      messageSource: Messaging.controllerSource,
-      messageSink: Messaging.controllerSink,
-      timeout: 500,
-    });
     pinging();
     function pinging() {
       console.log("try to ping controller");
