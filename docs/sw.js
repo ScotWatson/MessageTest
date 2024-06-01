@@ -11,74 +11,78 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 
 let rps = null;
 self.addEventListener("message", (evt) => {
-  if (typeof evt.data.action === "string") {
-    switch (evt.data.action) {
-      case "skipWaiting": {
-        self.skipWaiting();
-      }
-        break;
-      case "claimClients": {
-        self.clients.claim();
-      }
-        break;
-      case "unregister": {
-        self.registration.unregister();
-      }
-        break;
-      case "update": {
-        self.registration.update();
-      }
-        break;
-      case "port": {
-        console.log("Creating rps...");
-        rps = Messaging.createRemoteProcedureSocket({
-          messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
-          messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
-        });
-        rps.register({
-          functionName: "skipWaiting",
-          handlerFunc: async () => {
-            await self.skipWaiting();
-          },
-        });
-        rps.register({
-          functionName: "claimClients",
-          handlerFunc: async () => {
-            await self.clients.claim();
-          },
-        });
-        rps.register({
-          functionName: "unregister",
-          handlerFunc: async () => {
-            const success = await self.registration.unregister();
-            return success;
-          }
-        });
-        rps.register({
-          functionName: "update",
-          handlerFunc: async () => {
-            const newRegistration = await self.registration.update();
-          }
-        });
-        rps.register({
-          functionName: "ping",
-          handlerFunc: async () => {
-            return "Hello through port!";
-          }
-        });
-        console.log("All Registered");
-        evt.data.port.start();
-        setInterval(() => {
-          rps.call({
-            functionName: "ping",
-            args: "Ping through Port!",
-          });
-        }, 2000);
-      }
-        break;
-      default:
-        console.error("Unrecognized command", evt);
+  if (evt.data.packetId) {
+    return;
+  }
+  if (evt.data.action) {
+    return;
+  }
+  switch (evt.data.action) {
+    case "skipWaiting": {
+      self.skipWaiting();
     }
+      break;
+    case "claimClients": {
+      self.clients.claim();
+    }
+      break;
+    case "unregister": {
+      self.registration.unregister();
+    }
+      break;
+    case "update": {
+      self.registration.update();
+    }
+      break;
+    case "port": {
+      console.log("Creating rps...");
+      rps = Messaging.createRemoteProcedureSocket({
+        messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
+        messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
+      });
+      rps.register({
+        functionName: "skipWaiting",
+        handlerFunc: async () => {
+          await self.skipWaiting();
+        },
+      });
+      rps.register({
+        functionName: "claimClients",
+        handlerFunc: async () => {
+          await self.clients.claim();
+        },
+      });
+      rps.register({
+        functionName: "unregister",
+        handlerFunc: async () => {
+          const success = await self.registration.unregister();
+          return success;
+        }
+      });
+      rps.register({
+        functionName: "update",
+        handlerFunc: async () => {
+          const newRegistration = await self.registration.update();
+        }
+      });
+      rps.register({
+        functionName: "ping",
+        handlerFunc: async () => {
+          return "Hello through port!";
+        }
+      });
+      console.log("All Registered");
+      evt.data.port.start();
+      setInterval(() => {
+        rps.call({
+          functionName: "ping",
+          args: "Ping through Port!",
+        });
+      }, 2000);
+    }
+      break;
+    default:
+      console.error("Unrecognized command", evt);
   }
 });
 
