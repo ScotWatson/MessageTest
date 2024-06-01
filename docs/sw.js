@@ -9,8 +9,15 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 //Throws exception on Firefox
 //self.serviceWorker.id = self.crypto.randomUUID();
 
+let heartbeatInterval = self.setInterval(() => {
+  self.serviceWorker.postMessage("heartbeat");
+}, 5000);
+
 let rps = null;
 self.addEventListener("message", (evt) => {
+  if (evt.data === "heartbeat") {
+    console.log("internal keep-alive");
+  }
   if (evt.data.packetId) {
     return;
   }
@@ -18,10 +25,6 @@ self.addEventListener("message", (evt) => {
     return;
   }
   switch (evt.data.action) {
-    case "ping": {
-      console.log("ping to keep alive...");
-    }
-      break;
     case "port": {
       console.log("Creating rps...");
       rps = Messaging.createRemoteProcedureSocket({
