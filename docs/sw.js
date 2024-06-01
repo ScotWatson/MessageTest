@@ -3,11 +3,16 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-self.serviceWorker.id = self.crypto.randomUUID();
+importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
+const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
+//Throws exception on Firefox
+//self.serviceWorker.id = self.crypto.randomUUID();
+
+let rps = null;
 self.addEventListener("message", (evt) => {
-  if (typeof evt.data === "string") {
-    switch (evt.data) {
+  if (typeof evt.data.action === "string") {
+    switch (evt.data.action) {
       case "skipWaiting": {
         self.skipWaiting();
       }
@@ -24,17 +29,47 @@ self.addEventListener("message", (evt) => {
         self.registration.update();
       }
         break;
+      case "port": {
+        rps = Messaging.createRemoteProcedureSocket({
+          messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
+          messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
+        });
+        rps.register({
+          functionName: "skipWaiting",
+          handler: async () => {
+            await self.skipWaiting();
+          },
+        });
+        rps.register({
+          functionName: "claimClients",
+          handler: async () => {
+            await self.clients.claim();
+          },
+        });
+        rps.register({
+          functionName: "unregister",
+          handler: async () => {
+            const success = await self.registration.unregister();
+            return success;
+          }
+        });
+        rps.register({
+          functionName: "update",
+          handler: async () => {
+            const newRegistration = await self.registration.update();
+          }
+        });
+        evt.data.port.start();
+      }
+        break;
       default:
         console.error("Unrecognized command");
     }
   }
 });
 
-importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 
-const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
-
-(async function () {
+(async () => {
   for await (const info of Messaging.newClientMessage) {
     const newSource = Messaging.createClientSource({
       client: info.source,
@@ -59,18 +94,18 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 
 const selfUrl = new URL(self.location);
 
-self.addEventListener("install", function (e) {
+self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
   function addCaches(cache) {
   }
   e.waitUntil(caches.open("store").then(addCaches));
 });
 
-self.addEventListener("activate", function (e) {
+self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
 });
 
-self.addEventListener("fetch", function (e) {
+self.addEventListener("fetch", (e) => {
   function sendResponse(response) {
     return response || fetch(e.request);
   }
