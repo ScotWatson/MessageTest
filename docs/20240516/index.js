@@ -244,6 +244,7 @@ if (windowURL.hash === "#sub") {
     serviceWorkerRegistration.addEventListener("updateFound", () => {
       console.log("updateFound");
     });
+    refreshButtons();
     if (serviceWorkerRegistration.installed) {
       addServiceWorker(serviceWorkerRegistration.installed);
     }
@@ -266,7 +267,6 @@ if (windowURL.hash === "#sub") {
       if (success) {
         console.log("Unregistered");
         newRegistration(null);
-        refreshButtons();
       } else {
         console.log("Unable to unregister");
       }
@@ -274,9 +274,8 @@ if (windowURL.hash === "#sub") {
   });
   updateBtn.addEventListener("click", function () {
     serviceWorkerRegistration.update().then((registration) => {
-      newRegistration(registration);
       console.log("Updated");
-      refreshButtons();
+      newRegistration(registration);
     }, console.error);
   });
   unregisterBtn.disabled = true;
