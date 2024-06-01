@@ -30,6 +30,7 @@ self.addEventListener("message", (evt) => {
       }
         break;
       case "port": {
+        console.log("Creating rps...");
         rps = Messaging.createRemoteProcedureSocket({
           messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
           messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
