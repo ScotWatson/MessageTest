@@ -150,6 +150,10 @@ if (windowURL.hash === "#sub") {
       messageSink: port.messageSink,
       timeout: 1000,
     });
+    rps.register({
+      functionName: "ping",
+      handlerFunc: console.log,
+    });
     port.start();
     const skipWaitingBtn = document.createElement("button");
     skipWaitingBtn.innerHTML = "Skip Waiting";
