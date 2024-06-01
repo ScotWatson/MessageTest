@@ -255,7 +255,7 @@ if (windowURL.hash === "#sub") {
   registerBtn.disabled = false;
   function newRegistration(registration) {
     serviceWorkerRegistration = registration;
-    if (registration) {
+    if (!registration) {
       registerBtn.disabled = true;
       unregisterBtn.disabled = true;
       updateBtn.disabled = true;
