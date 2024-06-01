@@ -132,6 +132,24 @@ if (windowURL.hash === "#sub") {
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
     paragraph.appendChild(controllerSpan);
+    const port = (() => {
+      const channel = new MessageChannel();
+      const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
+      const messageSink = Messaging.createMessageSinkForMessagePort(channel.port1);
+      serviceWorker.postMessage({ action: "port", port: channel.port2 }, channel.port2);
+      return {
+        messageSource,
+        messageSink,
+        start() {
+          channel.port1.start();
+        },
+      }
+    })();
+    const rps = Messaging.createRemoteProcedureSocket({
+      messageSource: port.messageSource,
+      messageSink: port.messageSink,
+    });
+    port.start();
     const skipWaitingBtn = document.createElement("button");
     skipWaitingBtn.innerHTML = "Skip Waiting";
     paragraph.appendChild(skipWaitingBtn);
@@ -151,21 +169,34 @@ if (windowURL.hash === "#sub") {
     */
     document.body.appendChild(paragraph);
     skipWaitingBtn.addEventListener("click", (evt) => {
-      serviceWorker.postMessage("skipWaiting");
+      rps.call({
+        functionName: "skipWaiting",
+        args: {},
+      });
     });
     claimClientsBtn.addEventListener("click", (evt) => {
-      serviceWorker.postMessage("claimClients");
+      rps.call({
+        functionName: "claimClients",
+        args: {},
+      });
     });
     unregisterBtn.addEventListener("click", (evt) => {
-      serviceWorker.postMessage("unregister");
+      rps.call({
+        functionName: "unregister",
+        args: {},
+      });
     });
     updateBtn.addEventListener("click", (evt) => {
-      serviceWorker.postMessage("update");
+      rps.call({
+        functionName: "update",
+        args: {},
+      });
     });
     serviceWorker.addEventListener("statechange", (evt) => {
       stateSpan.innerHTML = serviceWorker.state;
     });
     stateSpan.innerHTML = serviceWorker.state;
+    serviceWorker.addEventListener("error", console.error);
     const ret = {
       serviceWorker,
       checkController() {
