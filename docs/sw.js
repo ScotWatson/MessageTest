@@ -59,6 +59,12 @@ self.addEventListener("message", (evt) => {
             const newRegistration = await self.registration.update();
           }
         });
+        rps.register({
+          functionName: "ping",
+          handler: async () => {
+            return "Hello through port!";
+          }
+        });
         evt.data.port.start();
       }
         break;
