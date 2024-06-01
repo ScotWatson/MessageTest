@@ -315,10 +315,10 @@ if (windowURL.hash === "#sub") {
   unregisterBtn.disabled = true;
   updateBtn.disabled = true;
   function refreshButtons() {
-    if (serviceWorkerRegistration.installed) {
-      console.log("registration.installed present");
+    if (serviceWorkerRegistration.installing) {
+      console.log("registration.installing present");
     } else {
-      console.log("registration.installed not present");
+      console.log("registration.installing not present");
     }
     if (serviceWorkerRegistration.waiting) {
       console.log("registration.waiting present");
