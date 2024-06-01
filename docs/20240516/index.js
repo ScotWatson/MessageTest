@@ -162,35 +162,39 @@ if (windowURL.hash === "#sub") {
     const updateBtn = document.createElement("button");
     updateBtn.innerHTML = "Update";
     paragraph.appendChild(updateBtn);
-    /*
-    const sendPortBtn = document.createElement("button");
-    sendPortBtn.innerHTML = "Send Port";
-    paragraph.appendChild(sendPortBtn);
-    */
+    const pingBtn = document.createElement("button");
+    pingBtn.innerHTML = "Ping";
+    paragraph.appendChild(pingBtn);
     document.body.appendChild(paragraph);
     skipWaitingBtn.addEventListener("click", (evt) => {
       rps.call({
         functionName: "skipWaiting",
         args: {},
-      });
+      }).then(console.log, console.error);
     });
     claimClientsBtn.addEventListener("click", (evt) => {
       rps.call({
         functionName: "claimClients",
         args: {},
-      });
+      }).then(console.log, console.error);
     });
     unregisterBtn.addEventListener("click", (evt) => {
       rps.call({
         functionName: "unregister",
         args: {},
-      });
+      }).then(console.log, console.error);
     });
     updateBtn.addEventListener("click", (evt) => {
       rps.call({
         functionName: "update",
         args: {},
-      });
+      }).then(console.log, console.error);
+    });
+    pingBtn.addEventListener("click", (evt) => {
+      rps.call({
+        functionName: "ping",
+        args: {},
+      }).then(console.log, console.error);
     });
     serviceWorker.addEventListener("statechange", (evt) => {
       stateSpan.innerHTML = serviceWorker.state;
