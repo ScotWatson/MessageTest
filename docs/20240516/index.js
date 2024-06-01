@@ -133,6 +133,10 @@ if (windowURL.hash === "#sub") {
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
     paragraph.appendChild(controllerSpan);
+    setInterval(() => {
+      console.log("send ping to keep alive");
+      serviceWorker.postMessage({ action: "ping" });
+    }, 5000);
     const port = (() => {
       const channel = new MessageChannel();
       const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
