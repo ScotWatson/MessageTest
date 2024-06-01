@@ -148,6 +148,7 @@ if (windowURL.hash === "#sub") {
     const rps = Messaging.createRemoteProcedureSocket({
       messageSource: port.messageSource,
       messageSink: port.messageSink,
+      timeout: 1000,
     });
     port.start();
     const skipWaitingBtn = document.createElement("button");
@@ -191,6 +192,7 @@ if (windowURL.hash === "#sub") {
       }).then(console.log, console.error);
     });
     pingBtn.addEventListener("click", (evt) => {
+      console.log("ping");
       rps.call({
         functionName: "ping",
         args: {},
