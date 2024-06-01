@@ -73,7 +73,7 @@ self.addEventListener("message", (evt) => {
             functionName: "ping",
             args: "Ping through Port!",
           });
-        }//, 2000);
+//        }, 2000);
       }
         break;
       default:
