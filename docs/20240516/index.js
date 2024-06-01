@@ -133,12 +133,6 @@ if (windowURL.hash === "#sub") {
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
     paragraph.appendChild(controllerSpan);
-    /*
-    setInterval(() => {
-      console.log("send ping to keep alive");
-      serviceWorker.postMessage({ action: "ping" });
-    }, 5000);
-    */
     const port = (() => {
       const channel = new MessageChannel();
       const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
@@ -225,26 +219,9 @@ if (windowURL.hash === "#sub") {
     serviceWorkerFunctions.push(ret);
     return ret;
   }
-  const controllerchange = Common.createSignal((resolve, reject) => {
-    navigator.serviceWorker.addEventListener("controllerchange", (evt) => {
-      console.log("controllerchange", evt);
-      resolve({
-        serviceWorker: self.navigator.serviceWorker.controller,
-        messageSource: Messaging.controllerSource,
-        messageSink: Messaging.createMessageSinkForServiceWorker(self.navigator.serviceWorker.controller),
-      });
-    });
-    if (navigator.serviceWorker.controller !== null) {
-      resolve({
-        serviceWorker: self.navigator.serviceWorker.controller,
-        messageSource: Messaging.controllerSource,
-        messageSink: Messaging.createMessageSinkForServiceWorker(self.navigator.serviceWorker.controller),
-      });
-    }
-  });
   let controllerRPS = null;
   (async () => {
-    for await (const controller of controllerchange) {
+    for await (const controller of Messaging.controllerchange) {
       for (const serviceWorker of serviceWorkerFunctions) {
         serviceWorker.checkController();
       }
