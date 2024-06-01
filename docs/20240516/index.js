@@ -255,13 +255,12 @@ if (windowURL.hash === "#sub") {
   registerBtn.disabled = false;
   function newRegistration(registration) {
     serviceWorkerRegistration = registration;
+    registerBtn.disabled = !!self.navigator.serviceWorker.controller;
     if (!registration) {
-      registerBtn.disabled = true;
       unregisterBtn.disabled = true;
       updateBtn.disabled = true;
       return;
     }
-    registerBtn.disabled = false;
     unregisterBtn.disabled = !registration;
     updateBtn.disabled = !registration;
     serviceWorkerRegistration.addEventListener("updateFound", () => {
