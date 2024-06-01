@@ -238,6 +238,7 @@ if (windowURL.hash === "#sub") {
   let controllerRPS = null;
   (async () => {
     for await (const controller of Messaging.controllerchange) {
+      console.log("controllerchange");
       for (const serviceWorker of serviceWorkerFunctions) {
         serviceWorker.checkController();
       }
