@@ -146,10 +146,12 @@ if (windowURL.hash === "#sub") {
         },
       }
     })();
+    /*
     Messaging.setServiceWorkerHeartbeat({
       serviceWorker,
       interval: 5000,
     });
+    */
     const rps = Messaging.createRemoteProcedureSocket({
       messageSource: port.messageSource,
       messageSink: port.messageSink,
