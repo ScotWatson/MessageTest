@@ -18,20 +18,8 @@ self.addEventListener("message", (evt) => {
     return;
   }
   switch (evt.data.action) {
-    case "skipWaiting": {
-      self.skipWaiting();
-    }
-      break;
-    case "claimClients": {
-      self.clients.claim();
-    }
-      break;
-    case "unregister": {
-      self.registration.unregister();
-    }
-      break;
-    case "update": {
-      self.registration.update();
+    case "ping": {
+      console.log("ping to keep alive...");
     }
       break;
     case "port": {
