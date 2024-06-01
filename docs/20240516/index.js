@@ -115,9 +115,12 @@ if (windowURL.hash === "#sub") {
   }
   let serviceWorkerRegistration = null;
   const serviceWorkerFunctions = [];
-  const registerBtn = document.createElement("button");
-  registerBtn.innerHTML = "Register";
-  document.body.appendChild(registerBtn);
+  const register1Btn = document.createElement("button");
+  register1Btn.innerHTML = "Register 1";
+  document.body.appendChild(register1Btn);
+  const register2Btn = document.createElement("button");
+  register2Btn.innerHTML = "Register 2";
+  document.body.appendChild(register2Btn);
   const unregisterBtn = document.createElement("button");
   unregisterBtn.innerHTML = "Unregister";
   document.body.appendChild(unregisterBtn);
@@ -244,14 +247,18 @@ if (windowURL.hash === "#sub") {
         messageSink: controller.messageSink,
         timeout: 500,
       });
-      registerBtn.disabled = true;
+      register1Btn.disabled = true;
+      register2Btn.disabled = true;
       controllerRPC();
     }
   })();
-  registerBtn.disabled = false;
+  register1Btn.disabled = false;
+  register2Btn.disabled = false;
   function newRegistration(registration) {
+    console.log("New Registration");
     serviceWorkerRegistration = registration;
-    registerBtn.disabled = !!self.navigator.serviceWorker.controller;
+    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
+    register2Btn.disabled = !!self.navigator.serviceWorker.controller;
     if (!registration) {
       unregisterBtn.disabled = true;
       updateBtn.disabled = true;
@@ -275,12 +282,19 @@ if (windowURL.hash === "#sub") {
   }
   self.navigator.serviceWorker.getRegistration().then(newRegistration);
   self.navigator.serviceWorker.ready.then(newRegistration);
-  registerBtn.addEventListener("click", function () {
+  register1Btn.addEventListener("click", function () {
     Init.registerServiceWorker({
-      url: serviceWorkerUrl,
+      url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
-    }).then(newRegistration);
-    registerBtn.disabled = true;
+    }).then(newRegistration, console.error);
+    register1Btn.disabled = true;
+  });
+  register2Btn.addEventListener("click", function () {
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?v=2",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error);
+    register2Btn.disabled = true;
   });
   unregisterBtn.addEventListener("click", function () {
     serviceWorkerRegistration.unregister().then((success) => {
