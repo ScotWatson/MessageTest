@@ -9,10 +9,6 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 //Throws exception on Firefox
 //self.serviceWorker.id = self.crypto.randomUUID();
 
-let heartbeatInterval = self.setInterval(() => {
-  self.serviceWorker.postMessage("heartbeat");
-}, 5000);
-
 let rps = null;
 self.addEventListener("message", (evt) => {
   if (evt.data === "heartbeat") {
