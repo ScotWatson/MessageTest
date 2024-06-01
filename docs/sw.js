@@ -72,7 +72,7 @@ self.addEventListener("message", (evt) => {
           rps.call({
             functionName: "ping",
             args: "Ping through Port!",
-          });
+          }).then(console.log, console.error);
 //        }, 2000);
       }
         break;
