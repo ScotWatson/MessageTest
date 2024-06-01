@@ -77,7 +77,7 @@ self.addEventListener("message", (evt) => {
       }
         break;
       default:
-        console.error("Unrecognized command", evt.data.action);
+        console.error("Unrecognized command", evt);
     }
   }
 });
