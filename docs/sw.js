@@ -65,6 +65,7 @@ self.addEventListener("message", (evt) => {
             return "Hello through port!";
           }
         });
+        console.log("All Registered");
         evt.data.port.start();
       }
         break;
