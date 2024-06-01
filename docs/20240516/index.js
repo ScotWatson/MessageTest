@@ -152,7 +152,7 @@ if (windowURL.hash === "#sub") {
     });
     rps.register({
       functionName: "ping",
-      handlerFunc: console.log,
+      handlerFunc: (args) => { console.log(args); },
     });
     port.start();
     const skipWaitingBtn = document.createElement("button");
