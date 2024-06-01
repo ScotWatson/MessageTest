@@ -278,6 +278,7 @@ if (windowURL.hash === "#sub") {
     }
   }
   self.navigator.serviceWorker.getRegistration().then(newRegistration);
+  self.navigator.serviceWorker.ready().then(newRegistration);
   registerBtn.addEventListener("click", function () {
     Init.registerServiceWorker({
       url: serviceWorkerUrl,
