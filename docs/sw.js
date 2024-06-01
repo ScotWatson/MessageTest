@@ -37,32 +37,32 @@ self.addEventListener("message", (evt) => {
         });
         rps.register({
           functionName: "skipWaiting",
-          handler: async () => {
+          handlerFunc: async () => {
             await self.skipWaiting();
           },
         });
         rps.register({
           functionName: "claimClients",
-          handler: async () => {
+          handlerFunc: async () => {
             await self.clients.claim();
           },
         });
         rps.register({
           functionName: "unregister",
-          handler: async () => {
+          handlerFunc: async () => {
             const success = await self.registration.unregister();
             return success;
           }
         });
         rps.register({
           functionName: "update",
-          handler: async () => {
+          handlerFunc: async () => {
             const newRegistration = await self.registration.update();
           }
         });
         rps.register({
           functionName: "ping",
-          handler: async () => {
+          handlerFunc: async () => {
             return "Hello through port!";
           }
         });
