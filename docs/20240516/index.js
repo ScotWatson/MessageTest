@@ -136,7 +136,7 @@ if (windowURL.hash === "#sub") {
       const channel = new MessageChannel();
       const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
       const messageSink = Messaging.createMessageSinkForMessagePort(channel.port1);
-      serviceWorker.postMessage({ action: "port", port: channel.port2 }, channel.port2);
+      serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
       return {
         messageSource,
         messageSink,
