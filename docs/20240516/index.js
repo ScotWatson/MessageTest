@@ -175,6 +175,9 @@ if (windowURL.hash === "#sub") {
     const pingBtn = document.createElement("button");
     pingBtn.innerHTML = "Ping";
     paragraph.appendChild(pingBtn);
+    const heartbeatBtn = document.createElement("button");
+    heartbeatBtn.innerHTML = "Heartbeat";
+    paragraph.appendChild(heartbeatBtn);
     document.body.appendChild(paragraph);
     skipWaitingBtn.addEventListener("click", (evt) => {
       rps.call({
@@ -206,6 +209,10 @@ if (windowURL.hash === "#sub") {
         functionName: "ping",
         args: {},
       }).then(console.log, console.error);
+    });
+    heartbeatBtn.addEventListener("click", (evt) => {
+      console.log("send heartbeat");
+      serviceWorker.postMessage("heartbeat");
     });
     serviceWorker.addEventListener("statechange", (evt) => {
       stateSpan.innerHTML = serviceWorker.state;
