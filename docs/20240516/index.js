@@ -218,30 +218,47 @@ if (windowURL.hash === "#sub") {
     serviceWorkerFunctions.push(ret);
     return ret;
   }
-  navigator.serviceWorker.addEventListener("controllerchange", (evt) => {
-    console.log("controllerchange", evt);
-    newController();
+  const controllerchange = Common.createSignal((resolve, reject) => {
+    navigator.serviceWorker.addEventListener("controllerchange", (evt) => {
+      console.log("controllerchange", evt);
+      resolve({
+        serviceWorker: self.navigator.serviceWorker.controller,
+        messageSource: Messaging.controllerSource,
+        messageSink: Messaging.createMessageSinkForServiceWorker(self.navigator.serviceWorker.controller),
+      });
+    });
+    if (navigator.serviceWorker.controller !== null) {
+      resolve({
+        serviceWorker: self.navigator.serviceWorker.controller,
+        messageSource: Messaging.controllerSource,
+        messageSink: Messaging.createMessageSinkForServiceWorker(self.navigator.serviceWorker.controller),
+      });
+    }
   });
   let controllerRPS = null;
-  function newController() {
-    for (const serviceWorker of serviceWorkerFunctions) {
-      serviceWorker.checkController();
+  (async () => {
+    for await (const controller of controllerchange) {
+      for (const serviceWorker of serviceWorkerFunctions) {
+        serviceWorker.checkController();
+      }
+      addServiceWorker(controller.serviceWorker).checkController();
+      controllerRPS = Messaging.createRemoteProcedureSocket({
+        messageSource: controller.messageSource,
+        messageSink: controller.messageSink,
+        timeout: 500,
+      });
+      registerBtn.disabled = true;
     }
-    addServiceWorker(navigator.serviceWorker.controller).checkController();
-    controllerRPS = Messaging.createRemoteProcedureSocket({
-      messageSource: Messaging.controllerSource,
-      messageSink: Messaging.createMessageSinkForServiceWorker(navigator.serviceWorker.controller),
-      timeout: 500,
-    });
-  }
-  if (navigator.serviceWorker.controller !== null) {
-    newController();
-    registerBtn.disabled = true;
-  } else {
-    registerBtn.disabled = false;
-  }
+  })();
+  registerBtn.disabled = false;
   function newRegistration(registration) {
     serviceWorkerRegistration = registration;
+    if (registration === null) {
+      registerBtn.disabled = true;
+      unregisterBtn.disabled = true;
+      updateBtn.disabled = true;
+      return;
+    }
     registerBtn.disabled = false;
     unregisterBtn.disabled = !registration;
     updateBtn.disabled = !registration;
@@ -259,6 +276,7 @@ if (windowURL.hash === "#sub") {
       addServiceWorker(serviceWorkerRegistration.active);
     }
   }
+  self.navigator.serviceWorker.getRegistration().then(newRegistration);
   registerBtn.addEventListener("click", function () {
     Init.registerServiceWorker({
       url: serviceWorkerUrl,
