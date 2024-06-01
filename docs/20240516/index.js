@@ -249,6 +249,7 @@ if (windowURL.hash === "#sub") {
         timeout: 500,
       });
       registerBtn.disabled = true;
+      controllerRPC();
     }
   })();
   registerBtn.disabled = false;
@@ -321,7 +322,6 @@ if (windowURL.hash === "#sub") {
       console.log("registration.active not present");
     }
   }
-  Init.controller.then(controllerRPC);
   async function controllerRPC() {
     console.log("controller RPC");
     pinging();
