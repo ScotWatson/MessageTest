@@ -146,7 +146,7 @@ if (windowURL.hash === "#sub") {
         },
       }
     })();
-    setServiceWorkerHeartbeat({
+    Messaging.setServiceWorkerHeartbeat({
       serviceWorker,
       interval: 5000,
     });
