@@ -6,6 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 "use strict";
 
 const initPageTime = performance.now();
+import * as Common from "https://scotwatson.github.io/WebInterface/common.mjs";
 import * as Interface from "https://scotwatson.github.io/WebInterface/20240316/interface.mjs";
 import * as Messaging from "https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs";
 
