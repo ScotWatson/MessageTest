@@ -67,6 +67,12 @@ self.addEventListener("message", (evt) => {
           }
         });
         console.log("All Registered");
+        setInterval(() => {
+          rps.call({
+            functionName: "ping",
+            args: "Ping through Port!",
+          });
+        }, 2000);
         evt.data.port.start();
       }
         break;
