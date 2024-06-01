@@ -14,7 +14,7 @@ self.addEventListener("message", (evt) => {
   if (evt.data.packetId) {
     return;
   }
-  if (evt.data.action) {
+  if (!evt.data.action) {
     return;
   }
   switch (evt.data.action) {
