@@ -337,6 +337,7 @@ if (windowURL.hash === "#sub") {
         }).then(console.log, console.error);
       });
     };
+    return obj;
   }
   let controllerRPS = null;
   (async () => {
