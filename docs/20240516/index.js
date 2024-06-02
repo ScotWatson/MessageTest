@@ -291,7 +291,7 @@ if (windowURL.hash === "#sub") {
         functionName: "ping",
         handlerFunc: (args) => { console.log(args); },
       });
-      port.start();
+      obj.port.start();
       const skipWaitingBtn = document.createElement("button");
       skipWaitingBtn.innerHTML = "Skip Waiting";
       portBtnsSpan.appendChild(skipWaitingBtn);
