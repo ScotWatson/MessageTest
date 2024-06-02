@@ -156,27 +156,6 @@ if (windowURL.hash === "#sub") {
     }
     if (serviceWorkerRegistration.installing) {
       console.log("has installing");
-      installing.serviceWorker.addEventListener("statechange", () => {
-        switch (installing.serviceWorker.state) {
-          case "installing": {
-            installing.remove();
-          }
-            break;
-          case "installed": { // waiting
-            waiting = obj;
-          }
-            break;
-          case "activating":
-          case "activated": { // active
-            active = obj;
-          }
-            break;
-          default: {
-            // other
-          }
-            break;
-        }
-      });
     } else {
       console.log("no installing");
     }
@@ -234,6 +213,27 @@ if (windowURL.hash === "#sub") {
         otherServiceWorkerDiv.appendChild(p);
       }
     }
+    if (installing) {
+      installing.serviceWorker.addEventListener("statechange", update);
+    }
+    if (waiting) {
+      waiting.serviceWorker.addEventListener("statechange", update);
+    }
+    if (active) {
+      active.serviceWorker.addEventListener("statechange", update);
+    }
+  }
+  function update() {
+    if (installing) {
+      installing.serviceWorker.removeEventListener("statechange", update);
+    }
+    if (waiting) {
+      waiting.serviceWorker.removeEventListener("statechange", update);
+    }
+    if (active) {
+      active.serviceWorker.removeEventListener("statechange", update);
+    }
+    scanForServiceWorkers();
   }
   const register1Btn = document.createElement("button");
   register1Btn.innerHTML = "Register 1";
@@ -402,7 +402,7 @@ if (windowURL.hash === "#sub") {
     scanForServiceWorkers();
   }
   self.navigator.serviceWorker.getRegistration().then(newRegistration);
-  self.navigator.serviceWorker.ready.then(newRegistration);
+//  self.navigator.serviceWorker.ready.then(newRegistration);
   register1Btn.addEventListener("click", () => {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=1",
