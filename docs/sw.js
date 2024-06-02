@@ -6,7 +6,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 console.log("sw.js: Start Parsing");
 
 //const searchParams = (new URL(self.serviceWorker.scriptURL)).searchParams;
-const scriptURL = self.serviceWorker.scriptURL;
 const searchParams = new Map();
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
@@ -32,6 +31,12 @@ self.addEventListener("message", (evt) => {
       rps = Messaging.createRemoteProcedureSocket({
         messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
         messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
+      });
+      rps.register({
+        functionName: "serviceWorkerExists",
+        handlerFunc: () => {
+          return !!self.serviceWorker;
+        },
       });
       rps.register({
         functionName: "skipWaiting",
