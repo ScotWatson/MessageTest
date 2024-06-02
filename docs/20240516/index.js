@@ -252,10 +252,10 @@ if (windowURL.hash === "#sub") {
   document.body.appendChild(registerParseFailBtn);
   const registerInstallFailBtn = document.createElement("button");
   registerInstallFailBtn.innerHTML = "Register Install Fail";
-  document.body.appendChild(register2Btn);
+  document.body.appendChild(registerInstallFailBtn);
   const registerActivateFailBtn = document.createElement("button");
   registerActivateFailBtn.innerHTML = "Register Activate Fail";
-  document.body.appendChild(register2Btn);
+  document.body.appendChild(registerActivateFailBtn);
   const unregisterBtn = document.createElement("button");
   unregisterBtn.innerHTML = "Unregister";
   document.body.appendChild(unregisterBtn);
