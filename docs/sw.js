@@ -5,7 +5,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 console.log("sw.js: Start Parsing");
 
-const searchParams = (new URL(self.serviceWorker.scriptURL)).searchParams;
+//const searchParams = (new URL(self.serviceWorker.scriptURL)).searchParams;
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
