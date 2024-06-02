@@ -209,6 +209,7 @@ if (windowURL.hash === "#sub") {
       activePara.append("<none>");
     }
     for (const obj of serviceWorkerObjects) {
+      obj.checkController();
       if ((obj !== installing) && (obj !== waiting) && (obj !== active)) {
         const p = document.createElement("p");
         p.appendChild(obj.dom);
