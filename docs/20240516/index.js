@@ -130,12 +130,12 @@ if (windowURL.hash === "#sub") {
           installing = obj;
         }
           break;
-        case "installed":
-        case "activating": { // waiting
+        case "installed": { // waiting
           waiting = obj;
         }
           break;
-        case "activated": {
+        case "activating":
+        case "activated": { // active
           active = obj;
         }
           break;
@@ -287,7 +287,7 @@ if (windowURL.hash === "#sub") {
         messageSink: obj.port.messageSink,
         timeout: 1000,
       });
-      rps.register({
+      obj.rps.register({
         functionName: "ping",
         handlerFunc: (args) => { console.log(args); },
       });
@@ -308,32 +308,32 @@ if (windowURL.hash === "#sub") {
       portBtnsSpan.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
       skipWaitingBtn.addEventListener("click", (evt) => {
-        rps.call({
+        obj.rps.call({
           functionName: "skipWaiting",
           args: {},
         }).then(console.log, console.error);
       });
       claimClientsBtn.addEventListener("click", (evt) => {
-        rps.call({
+        obj.rps.call({
           functionName: "claimClients",
           args: {},
         }).then(console.log, console.error);
       });
       unregisterBtn.addEventListener("click", (evt) => {
-        rps.call({
+        obj.rps.call({
           functionName: "unregister",
           args: {},
         }).then(console.log, console.error);
       });
       updateBtn.addEventListener("click", (evt) => {
-        rps.call({
+        obj.rps.call({
           functionName: "update",
           args: {},
         }).then(console.log, console.error);
       });
       pingBtn.addEventListener("click", (evt) => {
         console.log("ping");
-        rps.call({
+        obj.rps.call({
           functionName: "ping",
           args: {},
         }).then(console.log, console.error);
