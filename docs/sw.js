@@ -3,6 +3,8 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+console.log("sw.js: Start Parsing");
+
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
@@ -101,13 +103,18 @@ const selfUrl = new URL(self.location);
 
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
-  function addCaches(cache) {
-  }
-  e.waitUntil(caches.open("store").then(addCaches));
+  const installing = new Promise((resolve) => { setTimeout(resolve, 1000); });
+  e.waitUntil(installing.then(() => {
+    console.log("sw.js: End Installing");
+  }));
 });
 
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
+  const activating = new Promise((resolve) => { setTimeout(resolve, 1000); });
+  e.waitUntil(activating.then(() => {
+    console.log("sw.js: End Activating");
+  }));
 });
 
 self.addEventListener("fetch", (e) => {
@@ -116,3 +123,5 @@ self.addEventListener("fetch", (e) => {
   }
   e.respondWith(caches.match(e.request).then(sendResponse));
 });
+
+console.log("sw.js: End Parsing");
