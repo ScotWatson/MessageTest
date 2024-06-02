@@ -6,6 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 console.log("sw.js: Start Parsing");
 
 //const searchParams = (new URL(self.serviceWorker.scriptURL)).searchParams;
+const scriptURL = self.serviceWorker.scriptURL;
 const searchParams = new Map();
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
