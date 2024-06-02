@@ -226,15 +226,15 @@ if (windowURL.hash === "#sub") {
   function update() {
     if (installing) {
       installing.serviceWorker.removeEventListener("statechange", update);
-      console.log("installing new state: ", installing.state);
+      console.log("installing new state: ", installing.serviceWorker.state);
     }
     if (waiting) {
       waiting.serviceWorker.removeEventListener("statechange", update);
-      console.log("waiting new state: ", waiting.state);
+      console.log("waiting new state: ", waiting.serviceWorker.state);
     }
     if (active) {
       active.serviceWorker.removeEventListener("statechange", update);
-      console.log("active new state: ", active.state);
+      console.log("active new state: ", active.serviceWorker.state);
     }
     scanForServiceWorkers();
   }
