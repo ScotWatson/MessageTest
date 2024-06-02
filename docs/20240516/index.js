@@ -300,8 +300,8 @@ if (windowURL.hash === "#sub") {
       register2Btn.disabled = false;
     });
   });
-  registerFailParseBtn.disabled = false;
-  registerFailParseBtn.addEventListener("click", () => {
+  registerParseFailBtn.disabled = false;
+  registerParseFailBtn.addEventListener("click", () => {
     registerFailParseBtn.disabled = true;
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=parse",
@@ -310,8 +310,8 @@ if (windowURL.hash === "#sub") {
       registerFailParseBtn.disabled = false;
     });
   });
-  registerFailInstallBtn.disabled = false;
-  registerFailInstallBtn.addEventListener("click", () => {
+  registerInstallFailBtn.disabled = false;
+  registerInstallFailBtn.addEventListener("click", () => {
     registerFailInstallBtn.disabled = true;
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=install",
@@ -320,8 +320,8 @@ if (windowURL.hash === "#sub") {
       registerFailInstallBtn.disabled = false;
     });
   });
-  registerFailActivateBtn.disabled = false;
-  registerFailActivateBtn.addEventListener("click", () => {
+  registerActivateFailBtn.disabled = false;
+  registerActivateFailBtn.addEventListener("click", () => {
     registerFailActivateBtn.disabled = true;
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=activate",
