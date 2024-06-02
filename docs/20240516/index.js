@@ -123,8 +123,10 @@ if (windowURL.hash === "#sub") {
   let active = null;
   function scanForServiceWorkers() {
     console.log("scanForServiceWorkers");
+    installing = null;
+    waiting = null;
+    active = null;
     for (const obj of serviceWorkerObjects) {
-      console.log(obj.serviceWorker.state);
       switch (obj.serviceWorker.state) {
         case "installing": {
           installing = obj;
