@@ -124,12 +124,14 @@ if (windowURL.hash === "#sub") {
     let waiting = null;
     let active = null;
     for (const obj of serviceWorkerObjects) {
+      console.log(obj.serviceWorker.state);
       switch (obj.serviceWorker.state) {
         case "installing": {
           installing = obj;
         }
           break;
-        case "installed": { // waiting
+        case "installed":
+        case "activating": { // waiting
           waiting = obj;
         }
           break;
@@ -281,8 +283,8 @@ if (windowURL.hash === "#sub") {
         }
       })();
       obj.rps = Messaging.createRemoteProcedureSocket({
-        messageSource: port.messageSource,
-        messageSink: port.messageSink,
+        messageSource: obj.port.messageSource,
+        messageSink: obj.port.messageSink,
         timeout: 1000,
       });
       rps.register({
