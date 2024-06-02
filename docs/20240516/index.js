@@ -197,11 +197,13 @@ if (windowURL.hash === "#sub") {
     } else {
       installingSpan.append("<none>");
     }
+    waitingSpan.innerHTML = "";
     if (waiting) {
       waitingPara.appendChild(waiting.dom);
     } else {
       waitingPara.append("<none>");
     }
+    activeSpan.innerHTML = "";
     if (active) {
       activePara.appendChild(active.dom);
     } else {
