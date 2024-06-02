@@ -119,6 +119,7 @@ if (windowURL.hash === "#sub") {
   const serviceWorkerDiv = document.createElement("div");
   document.body.appendChild(serviceWorkerDiv);
   function scanForServiceWorkers() {
+    console.log("scanForServiceWorkers");
     let installing = null;
     let waiting = null;
     let active = null;
@@ -141,6 +142,21 @@ if (windowURL.hash === "#sub") {
         }
           break;
       }
+    }
+    if (serviceWorkerRegistration.installing) {
+      console.log("has installing");
+    } else {
+      console.log("no installing");
+    }
+    if (serviceWorkerRegistration.waiting) {
+      console.log("has waiting");
+    } else {
+      console.log("no waiting");
+    }
+    if (serviceWorkerRegistration.active) {
+      console.log("has active");
+    } else {
+      console.log("no active");
     }
     if (serviceWorkerRegistration.installing && !installing) {
       installing = addServiceWorker(serviceWorkerRegistration.installing);
