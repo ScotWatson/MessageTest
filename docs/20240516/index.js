@@ -117,6 +117,23 @@ if (windowURL.hash === "#sub") {
   let serviceWorkerRegistration = null;
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
+  const installingPara = document.createElement("p");
+  installingPara.append("installing: ");
+  const installingSpan = document.createElement("span");
+  installingPara.appendChild(installingSpan);
+  serviceWorkerDiv.appendChild(installingPara);
+  const waitingPara = document.createElement("p");
+  waitingPara.append("waiting: ");
+  const waitingSpan = document.createElement("span");
+  waitingPara.appendChild(waitingSpan);
+  serviceWorkerDiv.appendChild(waitingPara);
+  const activePara = document.createElement("p");
+  activePara.append("active: ");
+  const activeSpan = document.createElement("span");
+  activePara.appendChild(activeSpan);
+  serviceWorkerDiv.appendChild(activePara);
+  const otherServiceWorkerDiv = document.createElement("div");
+  serviceWorkerDiv.appendChild(otherServiceWorkerDiv);
   document.body.appendChild(serviceWorkerDiv);
   let installing = null;
   let waiting = null;
@@ -171,24 +188,6 @@ if (windowURL.hash === "#sub") {
     } else {
       console.log("no active");
     }
-    serviceWorkerDiv.innerHTML = "";
-    const installingPara = document.createElement("p");
-    installingPara.append("installing: ");
-    const installingSpan = document.createElement("span");
-    installingPara.appendChild(installingSpan);
-    serviceWorkerDiv.appendChild(installingPara);
-    const waitingPara = document.createElement("p");
-    waitingPara.append("waiting: ");
-    const waitingSpan = document.createElement("span");
-    waitingPara.appendChild(waitingSpan);
-    serviceWorkerDiv.appendChild(waitingPara);
-    const activePara = document.createElement("p");
-    activePara.append("active: ");
-    const activeSpan = document.createElement("span");
-    activePara.appendChild(activeSpan);
-    serviceWorkerDiv.appendChild(activePara);
-    const otherServiceWorkerDiv = document.createElement("div");
-    serviceWorkerDiv.appendChild(otherServiceWorkerDiv);
     for (const obj of serviceWorkerObjects) {
       obj.dom.remove();
     }
