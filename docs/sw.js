@@ -51,7 +51,11 @@ self.addEventListener("message", (evt) => {
       rps.register({
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
-          return analyzeObject(self);
+          try {
+            return analyzeObject(self);
+          } catch (e) {
+            return "Error: " + e.message;
+          }
         },
       });
       rps.register({
