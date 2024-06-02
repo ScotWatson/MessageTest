@@ -103,7 +103,7 @@ const selfUrl = new URL(self.location);
 
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
-  const installing = new Promise((resolve) => { setTimeout(resolve, 1000); });
+  const installing = new Promise((resolve) => { setTimeout(resolve, 3000); });
   e.waitUntil(installing.then(() => {
     console.log("sw.js: End Installing");
   }));
@@ -111,7 +111,7 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
-  const activating = new Promise((resolve) => { setTimeout(resolve, 1000); });
+  const activating = new Promise((resolve) => { setTimeout(resolve, 3000); });
   e.waitUntil(activating.then(() => {
     console.log("sw.js: End Activating");
   }));
