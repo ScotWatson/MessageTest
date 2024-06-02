@@ -114,7 +114,83 @@ if (windowURL.hash === "#sub") {
     }
   }
   let serviceWorkerRegistration = null;
-  const serviceWorkerFunctions = [];
+  const serviceWorkerObjects = [];
+  const serviceWorkerDiv = document.createElement("div");
+  document.body.appendChild(serviceWorkerDiv);
+  function scanForServiceWorkers() {
+    let installing = null;
+    let waiting = null;
+    let active = null;
+    for (const obj of serviceWorkerObjects) {
+      switch (obj.serviceWorker.state) {
+        case "installing": {
+          installing = obj;
+        }
+          break;
+        case "installed": { // waiting
+          waiting = obj;
+        }
+          break;
+        case "activated": {
+          active = obj;
+        }
+          break;
+        default: {
+          // other
+        }
+          break;
+      }
+    }
+    if (serviceWorkerRegistration.installing && !installing) {
+      installing = addServiceWorker(serviceWorkerRegistration.installing);
+    }
+    if (serviceWorkerRegistration.waiting && !waiting) {
+      waiting = addServiceWorker(serviceWorkerRegistration.waiting);
+    }
+    if (serviceWorkerRegistration.active && !active) {
+      active = addServiceWorker(serviceWorkerRegistration.active);
+    }
+    serviceWorkerDiv.innerHTML = "";
+    const installingPara = document.createElement("p");
+    serviceWorkerDiv.appendChild(installingPara);
+    const waitingPara = document.createElement("p");
+    serviceWorkerDiv.appendChild(waitingPara);
+    const activePara = document.createElement("p");
+    serviceWorkerDiv.appendChild(activePara);
+    const otherServiceWorkerDiv = document.createElement("div");
+    serviceWorkerDiv.appendChild(otherServiceWorkerDiv);
+    installingPara.innerHTML = "";
+    installingPara.append("installing: ");
+    waitingPara.innerHTML = "";
+    waitingPara.append("waiting: ");
+    activePara.innerHTML = "";
+    activePara.append("active: ");
+    for (const obj of serviceWorkerObjects) {
+      obj.dom.remove();
+    }
+    if (installing) {
+      installingPara.appendChild(installing.dom);
+    } else {
+      installingPara.append("<none>");
+    }
+    if (waiting) {
+      waitingPara.appendChild(waiting.dom);
+    } else {
+      waitingPara.append("<none>");
+    }
+    if (active) {
+      activePara.appendChild(active.dom);
+    } else {
+      activePara.append("<none>");
+    }
+    for (const obj of serviceWorkerObjects) {
+      if ((obj !== installing) && (obj !== waiting) && (obj !== active)) {
+        const p = document.createElement("p");
+        p.appendChild(obj.dom);
+        otherServiceWorkerDiv.appendChild(p);
+      }
+    }
+  }
   const register1Btn = document.createElement("button");
   register1Btn.innerHTML = "Register 1";
   document.body.appendChild(register1Btn);
@@ -127,122 +203,126 @@ if (windowURL.hash === "#sub") {
   const updateBtn = document.createElement("button");
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
-  function addServiceWorker(serviceWorker) {
-    if (serviceWorkerFunctions.some((value) => { return value === serviceWorker; })) {
-      return;
-    }
-    const paragraph = document.createElement("p");
-    const stateSpan = document.createElement("span");
-    paragraph.appendChild(stateSpan);
-    const controllerSpan = document.createElement("span");
-    paragraph.appendChild(controllerSpan);
-    const port = (() => {
-      const channel = new MessageChannel();
-      const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
-      const messageSink = Messaging.createMessageSinkForMessagePort(channel.port1);
-      serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
-      return {
-        messageSource,
-        messageSink,
-        start() {
-          channel.port1.start();
-        },
-      }
-    })();
     /*
     Messaging.setServiceWorkerHeartbeat({
       serviceWorker,
       interval: 5000,
     });
     */
-    const rps = Messaging.createRemoteProcedureSocket({
-      messageSource: port.messageSource,
-      messageSink: port.messageSink,
-      timeout: 1000,
-    });
-    rps.register({
-      functionName: "ping",
-      handlerFunc: (args) => { console.log(args); },
-    });
-    port.start();
-    const skipWaitingBtn = document.createElement("button");
-    skipWaitingBtn.innerHTML = "Skip Waiting";
-    paragraph.appendChild(skipWaitingBtn);
-    const claimClientsBtn = document.createElement("button");
-    claimClientsBtn.innerHTML = "Claim Clients";
-    paragraph.appendChild(claimClientsBtn);
-    const unregisterBtn = document.createElement("button");
-    unregisterBtn.innerHTML = "Unregister";
-    paragraph.appendChild(unregisterBtn);
-    const updateBtn = document.createElement("button");
-    updateBtn.innerHTML = "Update";
-    paragraph.appendChild(updateBtn);
-    const pingBtn = document.createElement("button");
-    pingBtn.innerHTML = "Ping";
-    paragraph.appendChild(pingBtn);
+  function addServiceWorker(serviceWorker) {
+    const obj = {
+      serviceWorker,
+    };
+    serviceWorkerObjects.push(obj);
+    obj.dom = document.createElement("span");
+    const paragraph = obj.dom;
+    const idSpan = document.createElement("span");
+    idSpan.append(self.crypto.randomUUID());
+    paragraph.appendChild(idSpan);
+    const stateSpan = document.createElement("span");
+    paragraph.appendChild(stateSpan);
+    const controllerSpan = document.createElement("span");
+    paragraph.appendChild(controllerSpan);
     const heartbeatBtn = document.createElement("button");
     heartbeatBtn.innerHTML = "Heartbeat";
     paragraph.appendChild(heartbeatBtn);
-    document.body.appendChild(paragraph);
-    skipWaitingBtn.addEventListener("click", (evt) => {
-      rps.call({
-        functionName: "skipWaiting",
-        args: {},
-      }).then(console.log, console.error);
-    });
-    claimClientsBtn.addEventListener("click", (evt) => {
-      rps.call({
-        functionName: "claimClients",
-        args: {},
-      }).then(console.log, console.error);
-    });
-    unregisterBtn.addEventListener("click", (evt) => {
-      rps.call({
-        functionName: "unregister",
-        args: {},
-      }).then(console.log, console.error);
-    });
-    updateBtn.addEventListener("click", (evt) => {
-      rps.call({
-        functionName: "update",
-        args: {},
-      }).then(console.log, console.error);
-    });
-    pingBtn.addEventListener("click", (evt) => {
-      console.log("ping");
-      rps.call({
-        functionName: "ping",
-        args: {},
-      }).then(console.log, console.error);
-    });
-    heartbeatBtn.addEventListener("click", (evt) => {
-      console.log("send heartbeat");
-      serviceWorker.postMessage("heartbeat");
-    });
+    const portBtn = document.createElement("button");
+    portBtn.innerHTML = "Port";
+    paragraph.appendChild(portBtn);
+    const portBtnsSpan = document.createElement("span");
+    paragraph.appendChild(controllerSpan);
     serviceWorker.addEventListener("statechange", (evt) => {
       stateSpan.innerHTML = serviceWorker.state;
     });
     stateSpan.innerHTML = serviceWorker.state;
-    serviceWorker.addEventListener("error", console.error);
-    const ret = {
-      serviceWorker,
-      checkController() {
-        const match = (serviceWorker === navigator.serviceWorker.controller);
-        controllerSpan.innerHTML = match ? "*" : "";
-        return match;
-      },
+    obj.checkController = () => {
+      const match = (serviceWorker === navigator.serviceWorker.controller);
+      controllerSpan.innerHTML = match ? "*" : "";
+      return match;
     };
-    serviceWorkerFunctions.push(ret);
-    return ret;
+    heartbeatBtn.addEventListener("click", (evt) => {
+      console.log("send heartbeat");
+      serviceWorker.postMessage("heartbeat");
+    });
+    serviceWorker.addEventListener("error", console.error);
+    obj.addPort = () => {
+      portBtnsSpan.innerHTML = "";
+      obj.port = (() => {
+        const channel = new MessageChannel();
+        const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
+        const messageSink = Messaging.createMessageSinkForMessagePort(channel.port1);
+        obj.serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
+        return {
+          messageSource,
+          messageSink,
+          start() {
+            channel.port1.start();
+          },
+        }
+      })();
+      obj.rps = Messaging.createRemoteProcedureSocket({
+        messageSource: port.messageSource,
+        messageSink: port.messageSink,
+        timeout: 1000,
+      });
+      rps.register({
+        functionName: "ping",
+        handlerFunc: (args) => { console.log(args); },
+      });
+      port.start();
+      const skipWaitingBtn = document.createElement("button");
+      skipWaitingBtn.innerHTML = "Skip Waiting";
+      portBtnsSpan.appendChild(skipWaitingBtn);
+      const claimClientsBtn = document.createElement("button");
+      claimClientsBtn.innerHTML = "Claim Clients";
+      portBtnsSpan.appendChild(claimClientsBtn);
+      const unregisterBtn = document.createElement("button");
+      unregisterBtn.innerHTML = "Unregister";
+      portBtnsSpan.appendChild(unregisterBtn);
+      const updateBtn = document.createElement("button");
+      updateBtn.innerHTML = "Update";
+      portBtnsSpan.appendChild(updateBtn);
+      const pingBtn = document.createElement("button");
+      portBtnsSpan.innerHTML = "Ping";
+      portBtnsSpan.appendChild(pingBtn);
+      skipWaitingBtn.addEventListener("click", (evt) => {
+        rps.call({
+          functionName: "skipWaiting",
+          args: {},
+        }).then(console.log, console.error);
+      });
+      claimClientsBtn.addEventListener("click", (evt) => {
+        rps.call({
+          functionName: "claimClients",
+          args: {},
+        }).then(console.log, console.error);
+      });
+      unregisterBtn.addEventListener("click", (evt) => {
+        rps.call({
+          functionName: "unregister",
+          args: {},
+        }).then(console.log, console.error);
+      });
+      updateBtn.addEventListener("click", (evt) => {
+        rps.call({
+          functionName: "update",
+          args: {},
+        }).then(console.log, console.error);
+      });
+      pingBtn.addEventListener("click", (evt) => {
+        console.log("ping");
+        rps.call({
+          functionName: "ping",
+          args: {},
+        }).then(console.log, console.error);
+      });
+    };
   }
   let controllerRPS = null;
   (async () => {
     for await (const controller of Messaging.controllerchange) {
       console.log("controllerchange");
-      for (const serviceWorker of serviceWorkerFunctions) {
-        serviceWorker.checkController();
-      }
-      addServiceWorker(controller.serviceWorker).checkController();
+      scanForServiceWorkers();
       controllerRPS = Messaging.createRemoteProcedureSocket({
         messageSource: controller.messageSource,
         messageSink: controller.messageSink,
@@ -271,33 +351,25 @@ if (windowURL.hash === "#sub") {
       console.log("updateFound");
     });
     refreshButtons();
-    if (serviceWorkerRegistration.installed) {
-      addServiceWorker(serviceWorkerRegistration.installed);
-    }
-    if (serviceWorkerRegistration.waiting) {
-      addServiceWorker(serviceWorkerRegistration.waiting);
-    }
-    if (serviceWorkerRegistration.active) {
-      addServiceWorker(serviceWorkerRegistration.active);
-    }
+    scanForServiceWorkers();
   }
   self.navigator.serviceWorker.getRegistration().then(newRegistration);
   self.navigator.serviceWorker.ready.then(newRegistration);
-  register1Btn.addEventListener("click", function () {
+  register1Btn.addEventListener("click", () => {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then(newRegistration, console.error);
     register1Btn.disabled = true;
   });
-  register2Btn.addEventListener("click", function () {
+  register2Btn.addEventListener("click", () => {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then(newRegistration, console.error);
     register2Btn.disabled = true;
   });
-  unregisterBtn.addEventListener("click", function () {
+  unregisterBtn.addEventListener("click", () => {
     serviceWorkerRegistration.unregister().then((success) => {
       if (success) {
         console.log("Unregistered");
@@ -307,7 +379,7 @@ if (windowURL.hash === "#sub") {
       }
     }, console.error);
   });
-  updateBtn.addEventListener("click", function () {
+  updateBtn.addEventListener("click", () => {
     serviceWorkerRegistration.update().then((registration) => {
       console.log("Updated");
       newRegistration(registration);
