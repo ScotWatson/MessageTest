@@ -11,8 +11,24 @@ const searchParams = new Map();
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
-//Throws exception on Firefox
-//self.serviceWorker.id = self.crypto.randomUUID();
+// On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
+
+function analyzeObject(obj) {
+  let ret = {};
+  for (const propName in obj) {
+    const type = typeof obj[propName];
+    if (type === "object") {
+      if (obj[propName] === null) {
+        ret[propName] = "null";
+      } else {
+        ret[propName] = analyzeObject(obj[propName]);
+      }
+    } else {
+      ret[propName] = type;
+    }
+  }
+  return ret;
+}
 
 let rps = null;
 self.addEventListener("message", (evt) => {
@@ -35,7 +51,7 @@ self.addEventListener("message", (evt) => {
       rps.register({
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
-          return !!self.serviceWorker;
+          return analyzeObject(self);
         },
       });
       rps.register({
