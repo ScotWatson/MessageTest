@@ -199,15 +199,15 @@ if (windowURL.hash === "#sub") {
     }
     waitingSpan.innerHTML = "";
     if (waiting) {
-      waitingPara.appendChild(waiting.dom);
+      waitingSpan.appendChild(waiting.dom);
     } else {
-      waitingPara.append("<none>");
+      waitingSpan.append("<none>");
     }
     activeSpan.innerHTML = "";
     if (active) {
-      activePara.appendChild(active.dom);
+      activeSpan.appendChild(active.dom);
     } else {
-      activePara.append("<none>");
+      activeSpan.append("<none>");
     }
     for (const obj of serviceWorkerObjects) {
       obj.checkController();
