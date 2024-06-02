@@ -269,6 +269,9 @@ if (windowURL.hash === "#sub") {
     const idSpan = document.createElement("span");
     idSpan.append(self.crypto.randomUUID());
     paragraph.appendChild(idSpan);
+    const querySpan = document.createElement("span");
+    querySpan.append((new URL(serviceWorker.scriptUrl)).searchParams);
+    paragraph.appendChild(querySpan);
     const stateSpan = document.createElement("span");
     paragraph.appendChild(stateSpan);
     const controllerSpan = document.createElement("span");
