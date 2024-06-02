@@ -455,6 +455,9 @@ if (windowURL.hash === "#sub") {
       const pingBtn = document.createElement("button");
       pingBtn.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
+      const serviceWorkerExistsBtn = document.createElement("button");
+      serviceWorkerExistsBtn.innerHTML = "serviceWorkerExists";
+      portBtnsSpan.appendChild(serviceWorkerExistsBtn);
       skipWaitingBtn.addEventListener("click", (evt) => {
         obj.rps.call({
           functionName: "skipWaiting",
@@ -483,6 +486,13 @@ if (windowURL.hash === "#sub") {
         console.log("ping");
         obj.rps.call({
           functionName: "ping",
+          args: {},
+        }).then(console.log, console.error);
+      });
+      serviceWorkerExistsBtn.addEventListener("click", (evt) => {
+        console.log("serviceWorkerExists");
+        obj.rps.call({
+          functionName: "serviceWorkerExists",
           args: {},
         }).then(console.log, console.error);
       });
