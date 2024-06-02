@@ -247,12 +247,125 @@ if (windowURL.hash === "#sub") {
   const register2Btn = document.createElement("button");
   register2Btn.innerHTML = "Register 2";
   document.body.appendChild(register2Btn);
+  const registerParseFailBtn = document.createElement("button");
+  registerParseFailBtn.innerHTML = "Register Parse Fail";
+  document.body.appendChild(registerParseFailBtn);
+  const registerInstallFailBtn = document.createElement("button");
+  registerInstallFailBtn.innerHTML = "Register Install Fail";
+  document.body.appendChild(register2Btn);
+  const registerActivateFailBtn = document.createElement("button");
+  registerActivateFailBtn.innerHTML = "Register Activate Fail";
+  document.body.appendChild(register2Btn);
   const unregisterBtn = document.createElement("button");
   unregisterBtn.innerHTML = "Unregister";
   document.body.appendChild(unregisterBtn);
   const updateBtn = document.createElement("button");
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
+  function newRegistration(registration) {
+    console.log("New Registration");
+    if (serviceWorkerRegistration === registration) {
+      console.log("Same as previous registration");
+    }
+    serviceWorkerRegistration = registration;
+    if (!registration) {
+      unregisterBtn.disabled = true;
+      updateBtn.disabled = true;
+      return;
+    }
+    unregisterBtn.disabled = !registration;
+    updateBtn.disabled = !registration;
+    serviceWorkerRegistration.addEventListener("updateFound", () => {
+      console.log("updateFound");
+    });
+    scanForServiceWorkers();
+  }
+  self.navigator.serviceWorker.getRegistration().then(newRegistration);
+  register1Btn.disabled = false;
+  register1Btn.addEventListener("click", () => {
+    register1Btn.disabled = true;
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?v=1",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error).finally(() => {
+      register1Btn.disabled = false;
+    });
+  });
+  register2Btn.disabled = false;
+  register2Btn.addEventListener("click", () => {
+    register2Btn.disabled = true;
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?v=2",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error).finally(() => {
+      register2Btn.disabled = false;
+    });
+  });
+  registerFailParseBtn.disabled = false;
+  registerFailParseBtn.addEventListener("click", () => {
+    registerFailParseBtn.disabled = true;
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?fail=parse",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error).finally(() => {
+      registerFailParseBtn.disabled = false;
+    });
+  });
+  registerFailInstallBtn.disabled = false;
+  registerFailInstallBtn.addEventListener("click", () => {
+    registerFailInstallBtn.disabled = true;
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?fail=install",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error).finally(() => {
+      registerFailInstallBtn.disabled = false;
+    });
+  });
+  registerFailActivateBtn.disabled = false;
+  registerFailActivateBtn.addEventListener("click", () => {
+    registerFailActivateBtn.disabled = true;
+    Init.registerServiceWorker({
+      url: serviceWorkerUrl + "?fail=activate",
+      scope: serviceWorkerScope,
+    }).then(newRegistration, console.error).finally(() => {
+      registerFailActivateBtn.disabled = false;
+    });
+  });
+  unregisterBtn.addEventListener("click", () => {
+    serviceWorkerRegistration.unregister().then((success) => {
+      if (success) {
+        console.log("Unregistered");
+        newRegistration(null);
+      } else {
+        console.log("Unable to unregister");
+      }
+    }, console.error);
+  });
+  updateBtn.addEventListener("click", () => {
+    serviceWorkerRegistration.update().then((registration) => {
+      console.log("Updated");
+      newRegistration(registration);
+    }, console.error);
+  });
+  unregisterBtn.disabled = true;
+  updateBtn.disabled = true;
+  function refreshButtons() {
+    if (serviceWorkerRegistration.installing) {
+      console.log("registration.installing present");
+    } else {
+      console.log("registration.installing not present");
+    }
+    if (serviceWorkerRegistration.waiting) {
+      console.log("registration.waiting present");
+    } else {
+      console.log("registration.waiting not present");
+    }
+    if (serviceWorkerRegistration.active) {
+      console.log("registration.active present");
+    } else {
+      console.log("registration.active not present");
+    }
+  }
     /*
     Messaging.setServiceWorkerHeartbeat({
       serviceWorker,
@@ -385,84 +498,9 @@ if (windowURL.hash === "#sub") {
         messageSink: controller.messageSink,
         timeout: 500,
       });
-//      register1Btn.disabled = true;
-//      register2Btn.disabled = true;
       controllerRPC();
     }
   })();
-  register1Btn.disabled = false;
-  register2Btn.disabled = false;
-  function newRegistration(registration) {
-    console.log("New Registration");
-    serviceWorkerRegistration = registration;
-    register1Btn.disabled = false;
-    register2Btn.disabled = false;
-//    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
-//    register2Btn.disabled = !!self.navigator.serviceWorker.controller;
-    if (!registration) {
-      unregisterBtn.disabled = true;
-      updateBtn.disabled = true;
-      return;
-    }
-    unregisterBtn.disabled = !registration;
-    updateBtn.disabled = !registration;
-    serviceWorkerRegistration.addEventListener("updateFound", () => {
-      console.log("updateFound");
-    });
-    refreshButtons();
-    scanForServiceWorkers();
-  }
-  self.navigator.serviceWorker.getRegistration().then(newRegistration);
-//  self.navigator.serviceWorker.ready.then(newRegistration);
-  register1Btn.addEventListener("click", () => {
-    Init.registerServiceWorker({
-      url: serviceWorkerUrl + "?v=1",
-      scope: serviceWorkerScope,
-    }).then(newRegistration, console.error);
-    register1Btn.disabled = true;
-  });
-  register2Btn.addEventListener("click", () => {
-    Init.registerServiceWorker({
-      url: serviceWorkerUrl + "?v=2",
-      scope: serviceWorkerScope,
-    }).then(newRegistration, console.error);
-    register2Btn.disabled = true;
-  });
-  unregisterBtn.addEventListener("click", () => {
-    serviceWorkerRegistration.unregister().then((success) => {
-      if (success) {
-        console.log("Unregistered");
-        newRegistration(null);
-      } else {
-        console.log("Unable to unregister");
-      }
-    }, console.error);
-  });
-  updateBtn.addEventListener("click", () => {
-    serviceWorkerRegistration.update().then((registration) => {
-      console.log("Updated");
-      newRegistration(registration);
-    }, console.error);
-  });
-  unregisterBtn.disabled = true;
-  updateBtn.disabled = true;
-  function refreshButtons() {
-    if (serviceWorkerRegistration.installing) {
-      console.log("registration.installing present");
-    } else {
-      console.log("registration.installing not present");
-    }
-    if (serviceWorkerRegistration.waiting) {
-      console.log("registration.waiting present");
-    } else {
-      console.log("registration.waiting not present");
-    }
-    if (serviceWorkerRegistration.active) {
-      console.log("registration.active present");
-    } else {
-      console.log("registration.active not present");
-    }
-  }
   async function controllerRPC() {
     console.log("controller RPC");
     pinging();
