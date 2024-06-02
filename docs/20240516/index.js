@@ -245,6 +245,9 @@ if (windowURL.hash === "#sub") {
       console.log("send heartbeat");
       serviceWorker.postMessage("heartbeat");
     });
+    portBtn.addEventListener("click", (evt) => {
+      obj.addPort();
+    });
     serviceWorker.addEventListener("error", console.error);
     obj.addPort = () => {
       portBtnsSpan.innerHTML = "";
@@ -286,9 +289,6 @@ if (windowURL.hash === "#sub") {
       const pingBtn = document.createElement("button");
       portBtnsSpan.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
-      portBtn.addEventListener("click", (evt) => {
-        obj.addPort();
-      });
       skipWaitingBtn.addEventListener("click", (evt) => {
         rps.call({
           functionName: "skipWaiting",
