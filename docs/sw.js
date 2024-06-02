@@ -5,6 +5,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 console.log("sw.js: Start Parsing");
 
+const searchParams = (new URL(self.serviceWorker.scriptURL)).searchParams;
+
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
 const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
 
@@ -103,7 +105,12 @@ const selfUrl = new URL(self.location);
 
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
-  const installing = new Promise((resolve) => { setTimeout(resolve, 3000); });
+  const installing = (() => {
+    if (searchParams.get("fail") === "install") {
+      return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 3000); });
+    }
+    return new Promise((resolve) => { setTimeout(resolve, 3000); });
+  })();
   e.waitUntil(installing.then(() => {
     console.log("sw.js: End Installing");
   }));
@@ -111,7 +118,12 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
-  const activating = new Promise((resolve) => { setTimeout(resolve, 3000); });
+  const activating = (() => {
+    if (searchParams.get("fail") === "activate") {
+      return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
+    }
+    return new Promise((resolve) => { setTimeout(resolve, 3000); });
+  })();
   e.waitUntil(activating.then(() => {
     console.log("sw.js: End Activating");
   }));
@@ -123,5 +135,9 @@ self.addEventListener("fetch", (e) => {
   }
   e.respondWith(caches.match(e.request).then(sendResponse));
 });
+
+if (searchParams.get("fail") === "parse") {
+  throw "parse fail";
+}
 
 console.log("sw.js: End Parsing");
