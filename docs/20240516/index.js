@@ -47,6 +47,7 @@ if (windowURL.hash === "#sub") {
   const thisIframe = document.createElement("iframe");
   document.body.appendChild(thisIframe);
   thisIframe.src = subURL;
+  thisIframe.style.display = "block";
   thisIframe.style.visibility = "hidden";
   const iframeSource = Messaging.createMessageSourceForWindowOrigin({
     window: thisIframe.contentWindow,
@@ -285,6 +286,9 @@ if (windowURL.hash === "#sub") {
       const pingBtn = document.createElement("button");
       portBtnsSpan.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
+      portBtn.addEventListener("click", (evt) => {
+        obj.addPort();
+      });
       skipWaitingBtn.addEventListener("click", (evt) => {
         rps.call({
           functionName: "skipWaiting",
