@@ -249,7 +249,7 @@ if (windowURL.hash === "#sub") {
     portBtn.innerHTML = "Port";
     paragraph.appendChild(portBtn);
     const portBtnsSpan = document.createElement("span");
-    paragraph.appendChild(controllerSpan);
+    paragraph.appendChild(portBtnsSpan);
     serviceWorker.addEventListener("statechange", (evt) => {
       stateSpan.innerHTML = serviceWorker.state;
     });
