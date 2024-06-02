@@ -305,7 +305,7 @@ if (windowURL.hash === "#sub") {
       updateBtn.innerHTML = "Update";
       portBtnsSpan.appendChild(updateBtn);
       const pingBtn = document.createElement("button");
-      portBtnsSpan.innerHTML = "Ping";
+      pingBtn.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
       skipWaitingBtn.addEventListener("click", (evt) => {
         obj.rps.call({
