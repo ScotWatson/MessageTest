@@ -392,7 +392,7 @@ if (windowURL.hash === "#sub") {
   function newRegistration(registration) {
     console.log("New Registration");
     serviceWorkerRegistration = registration;
-//    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
+    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
     register2Btn.disabled = !!self.navigator.serviceWorker.controller;
     if (!registration) {
       unregisterBtn.disabled = true;
