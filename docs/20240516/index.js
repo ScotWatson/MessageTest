@@ -381,8 +381,8 @@ if (windowURL.hash === "#sub") {
         messageSink: controller.messageSink,
         timeout: 500,
       });
-      register1Btn.disabled = true;
-      register2Btn.disabled = true;
+//      register1Btn.disabled = true;
+//      register2Btn.disabled = true;
       controllerRPC();
     }
   })();
@@ -391,7 +391,7 @@ if (windowURL.hash === "#sub") {
   function newRegistration(registration) {
     console.log("New Registration");
     serviceWorkerRegistration = registration;
-    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
+//    register1Btn.disabled = !!self.navigator.serviceWorker.controller;
     register2Btn.disabled = !!self.navigator.serviceWorker.controller;
     if (!registration) {
       unregisterBtn.disabled = true;
