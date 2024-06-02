@@ -118,11 +118,11 @@ if (windowURL.hash === "#sub") {
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
   document.body.appendChild(serviceWorkerDiv);
+  let installing = null;
+  let waiting = null;
+  let active = null;
   function scanForServiceWorkers() {
     console.log("scanForServiceWorkers");
-    let installing = null;
-    let waiting = null;
-    let active = null;
     for (const obj of serviceWorkerObjects) {
       console.log(obj.serviceWorker.state);
       switch (obj.serviceWorker.state) {
@@ -145,8 +145,38 @@ if (windowURL.hash === "#sub") {
           break;
       }
     }
+    if (serviceWorkerRegistration.installing && !installing) {
+      installing = addServiceWorker(serviceWorkerRegistration.installing);
+    }
+    if (serviceWorkerRegistration.waiting && !waiting) {
+      waiting = addServiceWorker(serviceWorkerRegistration.waiting);
+    }
+    if (serviceWorkerRegistration.active && !active) {
+      active = addServiceWorker(serviceWorkerRegistration.active);
+    }
     if (serviceWorkerRegistration.installing) {
       console.log("has installing");
+      installing.serviceWorker.addEventListener("statechange", () => {
+        switch (installing.serviceWorker.state) {
+          case "installing": {
+            installing.remove();
+          }
+            break;
+          case "installed": { // waiting
+            waiting = obj;
+          }
+            break;
+          case "activating":
+          case "activated": { // active
+            active = obj;
+          }
+            break;
+          default: {
+            // other
+          }
+            break;
+        }
+      });
     } else {
       console.log("no installing");
     }
@@ -160,37 +190,32 @@ if (windowURL.hash === "#sub") {
     } else {
       console.log("no active");
     }
-    if (serviceWorkerRegistration.installing && !installing) {
-      installing = addServiceWorker(serviceWorkerRegistration.installing);
-    }
-    if (serviceWorkerRegistration.waiting && !waiting) {
-      waiting = addServiceWorker(serviceWorkerRegistration.waiting);
-    }
-    if (serviceWorkerRegistration.active && !active) {
-      active = addServiceWorker(serviceWorkerRegistration.active);
-    }
     serviceWorkerDiv.innerHTML = "";
     const installingPara = document.createElement("p");
+    installingPara.append("installing: ");
+    const installingSpan = document.createElement("span");
+    installingPara.appendChild(installingSpan);
     serviceWorkerDiv.appendChild(installingPara);
     const waitingPara = document.createElement("p");
+    waitingPara.append("waiting: ");
+    const waitingSpan = document.createElement("span");
+    waitingPara.appendChild(waitingSpan);
     serviceWorkerDiv.appendChild(waitingPara);
     const activePara = document.createElement("p");
+    activePara.append("active: ");
+    const activeSpan = document.createElement("span");
+    activePara.appendChild(activeSpan);
     serviceWorkerDiv.appendChild(activePara);
     const otherServiceWorkerDiv = document.createElement("div");
     serviceWorkerDiv.appendChild(otherServiceWorkerDiv);
-    installingPara.innerHTML = "";
-    installingPara.append("installing: ");
-    waitingPara.innerHTML = "";
-    waitingPara.append("waiting: ");
-    activePara.innerHTML = "";
-    activePara.append("active: ");
     for (const obj of serviceWorkerObjects) {
       obj.dom.remove();
     }
+    installingSpan.innerHTML = "";
     if (installing) {
-      installingPara.appendChild(installing.dom);
+      installingSpan.appendChild(installing.dom);
     } else {
-      installingPara.append("<none>");
+      installingSpan.append("<none>");
     }
     if (waiting) {
       waitingPara.appendChild(waiting.dom);
