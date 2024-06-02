@@ -14,14 +14,18 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 // On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
 
 function analyzeObject(obj) {
-  let ret = {};
+  const ret = {};
   for (const propName in obj) {
     const type = typeof obj[propName];
     if (type === "object") {
       if (obj[propName] === null) {
         ret[propName] = "null";
       } else {
-        ret[propName] = analyzeObject(obj[propName]);
+        if (obj === obj[propName]) {
+          ret[propName] = "self";
+        } else {
+          ret[propName] = analyzeObject(obj[propName]);
+        }
       }
     } else {
       ret[propName] = type;
