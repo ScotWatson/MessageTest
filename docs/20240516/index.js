@@ -290,7 +290,10 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
-    }).then(newRegistration, console.error).finally(() => {
+    }).then(newRegistration, (e) => {
+      console.log("register 1 error");
+      console.error(e);
+    }).finally(() => {
       register1Btn.disabled = false;
     });
   });
@@ -300,7 +303,10 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
-    }).then(newRegistration, console.error).finally(() => {
+    }).then(newRegistration, (e) => {
+      console.log("register 2 error");
+      console.error(e);
+    }).finally(() => {
       register2Btn.disabled = false;
     });
   });
@@ -310,7 +316,10 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
-    }).then(newRegistration, console.error).finally(() => {
+    }).then(newRegistration, (e) => {
+      console.log("register parse fail error");
+      console.error(e);
+    }).finally(() => {
       registerParseFailBtn.disabled = false;
     });
   });
@@ -320,7 +329,10 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
-    }).then(newRegistration, console.error).finally(() => {
+    }).then(newRegistration, (e) => {
+      console.log("register install fail error");
+      console.error(e);
+    }).finally(() => {
       registerInstallFailBtn.disabled = false;
     });
   });
@@ -330,7 +342,10 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
-    }).then(newRegistration, console.error).finally(() => {
+    }).then(newRegistration, (e) => {
+      console.log("register activate fail error");
+      console.error(e);
+    }).finally(() => {
       registerActivateFailBtn.disabled = false;
     });
   });
