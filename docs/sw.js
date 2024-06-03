@@ -35,6 +35,14 @@ function analyzeObject(obj) {
 
 let rps = null;
 self.addEventListener("message", (evt) => {
+  if (evt.data === "ping") {
+    console.log("ping");
+    let ret = analyzeObject(evt);
+    console.log(ret);
+    if (evt.source) {
+      evt.source.postMessage(ret);
+    }
+  }
   if (evt.data === "heartbeat") {
     console.log("internal keep-alive");
   }
