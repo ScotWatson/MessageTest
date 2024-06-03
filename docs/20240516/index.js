@@ -164,29 +164,31 @@ if (windowURL.hash === "#sub") {
           break;
       }
     }
-    if (serviceWorkerRegistration.installing && !installing) {
-      installing = addServiceWorker(serviceWorkerRegistration.installing);
-    }
-    if (serviceWorkerRegistration.waiting && !waiting) {
-      waiting = addServiceWorker(serviceWorkerRegistration.waiting);
-    }
-    if (serviceWorkerRegistration.active && !active) {
-      active = addServiceWorker(serviceWorkerRegistration.active);
-    }
-    if (serviceWorkerRegistration.installing) {
-      console.log("has installing");
-    } else {
-      console.log("no installing");
-    }
-    if (serviceWorkerRegistration.waiting) {
-      console.log("has waiting");
-    } else {
-      console.log("no waiting");
-    }
-    if (serviceWorkerRegistration.active) {
-      console.log("has active");
-    } else {
-      console.log("no active");
+    if (serviceWorkerRegistration !== null) {
+      if (serviceWorkerRegistration.installing && !installing) {
+        installing = addServiceWorker(serviceWorkerRegistration.installing);
+      }
+      if (serviceWorkerRegistration.waiting && !waiting) {
+        waiting = addServiceWorker(serviceWorkerRegistration.waiting);
+      }
+      if (serviceWorkerRegistration.active && !active) {
+        active = addServiceWorker(serviceWorkerRegistration.active);
+      }
+      if (serviceWorkerRegistration.installing) {
+        console.log("has installing");
+      } else {
+        console.log("no installing");
+      }
+      if (serviceWorkerRegistration.waiting) {
+        console.log("has waiting");
+      } else {
+        console.log("no waiting");
+      }
+      if (serviceWorkerRegistration.active) {
+        console.log("has active");
+      } else {
+        console.log("no active");
+      }
     }
     for (const obj of serviceWorkerObjects) {
       obj.dom.remove();
@@ -286,7 +288,7 @@ if (windowURL.hash === "#sub") {
   register1Btn.addEventListener("click", () => {
     register1Btn.disabled = true;
     Init.registerServiceWorker({
-      url: serviceWorkerUrl + "?v=1#test",
+      url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then(newRegistration, console.error).finally(() => {
       register1Btn.disabled = false;
