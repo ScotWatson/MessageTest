@@ -171,8 +171,8 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(caches.match(e.request).then(sendResponse));
 });
 
-//if (searchParams.get("fail") === "parse") {
-//  throw "parse fail";
-//}
+if (searchParams.get("fail") === "parse") {
+  throw "parse fail";
+}
 
 console.log("sw.js: End Parsing");
