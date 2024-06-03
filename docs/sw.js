@@ -39,7 +39,7 @@ self.addEventListener("message", (evt) => {
   if (evt.data === "ping") {
     console.log("ping");
     pingObj = analyzeObject(evt);
-    console.log(ret);
+    console.log(pingObj);
     if (evt.source) {
       evt.source.postMessage(pingObj);
     }
