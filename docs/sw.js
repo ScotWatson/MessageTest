@@ -67,6 +67,9 @@ self.addEventListener("message", (evt) => {
       rps.register({
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
+          if (pingSource) {
+            pingSource.postMessage({ stage: "activate", pingObj });
+          }
           return pingObj;
         },
       });
