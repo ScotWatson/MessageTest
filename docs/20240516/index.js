@@ -286,7 +286,7 @@ if (windowURL.hash === "#sub") {
   register1Btn.addEventListener("click", () => {
     register1Btn.disabled = true;
     Init.registerServiceWorker({
-      url: serviceWorkerUrl + "?v=1",
+      url: serviceWorkerUrl + "?v=1#test",
       scope: serviceWorkerScope,
     }).then(newRegistration, console.error).finally(() => {
       register1Btn.disabled = false;
