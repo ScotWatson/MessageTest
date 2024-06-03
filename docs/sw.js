@@ -55,10 +55,15 @@ self.addEventListener("message", (evt) => {
       rps.register({
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
-          try {
-            return analyzeObject(self);
-          } catch (e) {
-            return "Error: " + e.message;
+          if (self.serviceWorker) {
+            return {
+              location: self.location.toString(),
+              scriptUrl: serviceWorker.scriptURL,
+            };
+          } else {
+            return {
+              location: self.location.toString(),
+            };
           }
         },
       });
