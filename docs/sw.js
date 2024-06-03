@@ -13,34 +13,35 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 // On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
 
 function analyzeObject(obj) {
-  const ret = {};
-  for (const propName in obj) {
-    const type = typeof obj[propName];
-    if (type === "object") {
-      if (obj[propName] === null) {
-        ret[propName] = "null";
+  switch (typeof obj) {
+    case "object": {
+      if (obj === null) {
+        return "null";
       } else {
-        if (obj === obj[propName]) {
-          ret[propName] = "self";
-        } else {
-          ret[propName] = analyzeObject(obj[propName]);
+        let ret = {};
+        for (const propName in obj) {
+          if (obj[propName] === obj) {
+            ret[propName] = "self";
+          } else {
+            ret[propName] = analyzeObject(obj[propName]);
+          }
         }
       }
-    } else {
-      ret[propName] = type;
     }
-  }
-  return ret;
+    default:
+      return typeof obj;
+  };
 }
 
+let pingObj = null;
 let rps = null;
 self.addEventListener("message", (evt) => {
   if (evt.data === "ping") {
     console.log("ping");
-    let ret = analyzeObject(evt);
+    pingObj = analyzeObject(evt);
     console.log(ret);
     if (evt.source) {
-      evt.source.postMessage(ret);
+      evt.source.postMessage(pingObj);
     }
   }
   if (evt.data === "heartbeat") {
@@ -63,10 +64,7 @@ self.addEventListener("message", (evt) => {
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
           if (self.serviceWorker) {
-            return {
-              location: self.location.toString(),
-              scriptUrl: serviceWorker.scriptURL,
-            };
+            return pingObj;
           } else {
             return {
               location: self.location.toString(),
