@@ -63,13 +63,7 @@ self.addEventListener("message", (evt) => {
       rps.register({
         functionName: "serviceWorkerExists",
         handlerFunc: () => {
-          if (self.serviceWorker) {
-            return pingObj;
-          } else {
-            return {
-              location: self.location.toString(),
-            };
-          }
+          return pingObj;
         },
       });
       rps.register({
