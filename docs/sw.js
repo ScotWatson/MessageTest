@@ -26,6 +26,7 @@ function analyzeObject(obj) {
             ret[propName] = analyzeObject(obj[propName]);
           }
         }
+        return ret;
       }
     }
     default:
