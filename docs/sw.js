@@ -19,7 +19,7 @@ function analyzeObject(obj) {
         return "null";
       } else {
         let ret = {};
-        ret[_constructor_name] = obj.constructor.name;
+        ret["_constructor_name"] = obj.constructor.name;
         for (const propName in obj) {
           if (obj[propName] === obj) {
             ret[propName] = "self";
