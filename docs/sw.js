@@ -36,14 +36,16 @@ function analyzeObject(obj) {
 }
 
 let pingObj = null;
+let pingSource = null;
 let rps = null;
 self.addEventListener("message", (evt) => {
   if (evt.data === "ping") {
     console.log("ping");
     pingObj = analyzeObject(evt);
     console.log(pingObj);
-    if (evt.source) {
-      evt.source.postMessage(pingObj);
+    pingSource = evt.source;
+    if (pingSource) {
+      pingSource.postMessage(pingObj);
     }
   }
   if (evt.data === "heartbeat") {
@@ -142,6 +144,9 @@ const selfUrl = new URL(self.location);
 
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
+  if (pingSource) {
+    pingSource.postMessage({ stage: "install", pingObj });
+  }
   const installing = (() => {
     if (searchParams.get("fail") === "install") {
       return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 3000); });
@@ -155,6 +160,9 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
+  if (pingSource) {
+    pingSource.postMessage({ stage: "activate", pingObj });
+  }
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
       return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
