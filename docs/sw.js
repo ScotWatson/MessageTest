@@ -35,10 +35,21 @@ function analyzeObject(obj) {
   };
 }
 
-let pingObj = null;
-let pingSource = null;
+let initPort = null;
+let initSocket = null;
+let registeringClientId;
 let rps = null;
 self.addEventListener("message", (evt) => {
+  if (initPort === null) {
+    // First message must be a message port sent from the registering window
+    registeringClientId = evt.source.id;
+    initPort = evt.data;
+    initSocket = Messaging.MessageSocket.forMessagePort(initPort);
+    initSocket.send({
+      data: { state: self.state },
+    });
+    return;
+  }
   if (evt.data === "ping") {
     console.log("ping");
     pingObj = analyzeObject(evt);
