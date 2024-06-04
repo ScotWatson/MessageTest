@@ -12,6 +12,8 @@ const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/s
 
 // On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
 
+const clientInfo = new Map();
+
 function analyzeObject(obj) {
   switch (typeof obj) {
     case "object": {
@@ -35,54 +37,73 @@ function analyzeObject(obj) {
   };
 }
 
-let initPort = null;
-let initSocket = null;
-let registeringClientId;
 let rps = null;
+function newClientInfo() {
+  return {
+    ports: new Set(),
+    sockets: new Set(),
+  };
+}
 self.addEventListener("message", (evt) => {
-  if (initPort === null) {
-    // First message must be a message port sent from the registering window
-    registeringClientId = evt.source.id;
-    initPort = evt.data;
-    initSocket = Messaging.MessageSocket.forMessagePort(initPort);
-    initSocket.send({
-      data: { state: self.state },
-    });
-    return;
-  }
-  if (evt.data === "ping") {
-    console.log("ping");
-    pingObj = analyzeObject(evt);
-    console.log(pingObj);
-    pingSource = evt.source;
-    if (pingSource) {
-      pingSource.postMessage(pingObj);
+  switch (typeof evt.data) {
+    case "object": {
+      if (evt.data === null) {
+        // No response
+      } else {
+        switch (evt.data.constructor.name) {
+          case "Object": {
+            // No response
+          }
+            break;
+          case "MessagePort": {
+            let thisClientInfo = clientInfo.get(evt.source.id);
+            if (!thisClientInfo) {
+              thisClientInfo = newClientInfo();
+              clientInfo.set(evt.source.id, thisClientInfo);
+            }
+            thisClientInfo.ports.add(evt.data);
+            const socket = Messaging.MessageSocket.forMessagePort(evt.data);
+            thisClientInfo.sockets.add(socket);
+            socket.send({
+              data: "newClient",
+              transfer: [],
+            });
+          }
+            break;
+          default: {
+            // No response
+          }
+        }
+      }
+    }
+      break;
+    case "string": {
+      if (evt.data === "ping") {
+        console.log("ping");
+      }
+      if (evt.data === "heartbeat") {
+        console.log("internal keep-alive");
+      }
+    }
+      break;
+    default: {
+      // No response
     }
   }
-  if (evt.data === "heartbeat") {
-    console.log("internal keep-alive");
-  }
-  if (evt.data.packetId) {
+});
+function handleObject(obj) {
+  if (obj.packetId) {
     return;
   }
-  if (!evt.data.action) {
+  if (!obj.action) {
     return;
   }
-  switch (evt.data.action) {
+  switch (obj.action) {
     case "port": {
       console.log("Creating rps...");
       rps = Messaging.createRemoteProcedureSocket({
         messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
         messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
-      });
-      rps.register({
-        functionName: "serviceWorkerExists",
-        handlerFunc: () => {
-          if (pingSource) {
-            pingSource.postMessage({ stage: "activate", pingObj });
-          }
-          return pingObj;
-        },
       });
       rps.register({
         functionName: "skipWaiting",
@@ -128,7 +149,7 @@ self.addEventListener("message", (evt) => {
     default:
       console.error("Unrecognized command", evt);
   }
-});
+}
 
 
 (async () => {
