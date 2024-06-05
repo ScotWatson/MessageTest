@@ -291,7 +291,12 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      obj.registration.installing.postMessage("ping");
+      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      (async () => {
+        for await (const message of socket.message) {
+          console.log(message);
+        }
+      })();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 1 error");
@@ -307,7 +312,12 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      obj.registration.installing.postMessage("ping");
+      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      (async () => {
+        for await (const message of socket.message) {
+          console.log(message);
+        }
+      })();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 2 error");
@@ -323,7 +333,12 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      obj.registration.installing.postMessage("ping");
+      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      (async () => {
+        for await (const message of socket.message) {
+          console.log(message);
+        }
+      })();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register parse fail error");
@@ -339,7 +354,12 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      obj.registration.installing.postMessage("ping");
+      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      (async () => {
+        for await (const message of socket.message) {
+          console.log(message);
+        }
+      })();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register install fail error");
@@ -355,7 +375,12 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      obj.registration.installing.postMessage("ping");
+      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      (async () => {
+        for await (const message of socket.message) {
+          console.log(message);
+        }
+      })();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register activate fail error");
