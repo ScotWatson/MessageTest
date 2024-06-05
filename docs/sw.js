@@ -40,8 +40,7 @@ function analyzeObject(obj) {
 let rps = null;
 function newClientInfo() {
   return {
-    ports: new Set(),
-    sockets: new Set(),
+    socket: null,
   };
 }
 self.addEventListener("message", (evt) => {
@@ -61,9 +60,12 @@ self.addEventListener("message", (evt) => {
               thisClientInfo = newClientInfo();
               clientInfo.set(evt.source.id, thisClientInfo);
             }
-            thisClientInfo.ports.add(evt.data);
             const socket = Messaging.MessageSocket.forMessagePort(evt.data);
-            thisClientInfo.sockets.add(socket);
+            if (thisClientInfo.socket) {
+              // Send undefined to indicate the socket is no longer used
+              thisClientInfo.socket.send();
+            }
+            thisClientInfo.socket = socket;
             socket.send({
               data: "newClient",
               transfer: [],
@@ -151,7 +153,6 @@ function handleObject(obj) {
   }
 }
 
-
 (async () => {
   for await (const info of Messaging.newClientMessage) {
     const newSource = Messaging.createClientSource({
@@ -179,9 +180,6 @@ const selfUrl = new URL(self.location);
 
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
-  if (pingSource) {
-    pingSource.postMessage({ stage: "install", pingObj });
-  }
   const installing = (() => {
     if (searchParams.get("fail") === "install") {
       return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 3000); });
@@ -195,9 +193,6 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
-  if (pingSource) {
-    pingSource.postMessage({ stage: "activate", pingObj });
-  }
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
       throw "instant activate fail";
