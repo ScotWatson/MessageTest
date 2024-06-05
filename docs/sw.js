@@ -200,6 +200,7 @@ self.addEventListener("activate", (e) => {
   }
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
+      throw "instant activate fail";
       return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
     }
     return new Promise((resolve) => { setTimeout(resolve, 3000); });
