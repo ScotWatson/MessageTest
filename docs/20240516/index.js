@@ -290,9 +290,9 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
-    }).then((registration) => {
-      registration.installing.postMessage("ping");
-      newRegistration(registration);
+    }).then((obj) => {
+      obj.registration.installing.postMessage("ping");
+      newRegistration(obj.registration);
     }, (e) => {
       console.log("register 1 error");
       console.error(e);
@@ -306,9 +306,9 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
-    }).then((registration) => {
-      registration.installing.postMessage("ping");
-      newRegistration(registration);
+    }).then((obj) => {
+      obj.registration.installing.postMessage("ping");
+      newRegistration(obj.registration);
     }, (e) => {
       console.log("register 2 error");
       console.error(e);
@@ -322,9 +322,9 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
-    }).then((registration) => {
-      registration.installing.postMessage("ping");
-      newRegistration(registration);
+    }).then((obj) => {
+      obj.registration.installing.postMessage("ping");
+      newRegistration(obj.registration);
     }, (e) => {
       console.log("register parse fail error");
       console.error(e);
@@ -338,9 +338,9 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
-    }).then((registration) => {
-      registration.installing.postMessage("ping");
-      newRegistration(registration);
+    }).then((obj) => {
+      obj.registration.installing.postMessage("ping");
+      newRegistration(obj.registration);
     }, (e) => {
       console.log("register install fail error");
       console.error(e);
@@ -354,9 +354,9 @@ if (windowURL.hash === "#sub") {
     Init.registerServiceWorker({
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
-    }).then((registration) => {
-      registration.installing.postMessage("ping");
-      newRegistration(registration);
+    }).then((obj) => {
+      obj.registration.installing.postMessage("ping");
+      newRegistration(obj.registration);
     }, (e) => {
       console.log("register activate fail error");
       console.error(e);
