@@ -69,7 +69,7 @@ self.addEventListener("message", (evt) => {
             }
             thisClientInfo.socket = socket;
             socket.send({
-              data: "newClient",
+              data: state,
               transfer: [],
             });
           }
