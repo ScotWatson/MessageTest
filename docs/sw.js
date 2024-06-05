@@ -72,6 +72,7 @@ self.addEventListener("message", (evt) => {
               data: state,
               transfer: [],
             });
+            socket.start();
           }
             break;
           default: {
