@@ -3,8 +3,10 @@
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+// Exceptions thrown during parsing cause register promise to reject
 console.log("sw.js: Start Parsing");
 
+let state = "parsing";
 const searchParams = (new URL(self.location.toString())).searchParams;
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
@@ -63,7 +65,7 @@ self.addEventListener("message", (evt) => {
             const socket = Messaging.MessageSocket.forMessagePort(evt.data);
             if (thisClientInfo.socket) {
               // Send undefined to indicate the socket is no longer used
-              thisClientInfo.socket.send();
+              thisClientInfo.socket.send({});
             }
             thisClientInfo.socket = socket;
             socket.send({
@@ -178,8 +180,10 @@ function handleObject(obj) {
 
 const selfUrl = new URL(self.location);
 
+// Exceptions thrown from install cause state to become "redundant"
 self.addEventListener("install", (e) => {
   console.log("sw.js: Start Installing");
+  state = "installing";
   const installing = (() => {
     if (searchParams.get("fail") === "install") {
       return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 3000); });
@@ -187,20 +191,23 @@ self.addEventListener("install", (e) => {
     return new Promise((resolve) => { setTimeout(resolve, 3000); });
   })();
   e.waitUntil(installing.then(() => {
+    state = "installed";
     console.log("sw.js: End Installing");
   }));
 });
 
+// Exceptions thrown from activate do NOT cause state to become "redundant" (continues to "activated")
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
+  state = "activating";
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
-      throw "instant activate fail";
       return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
     }
     return new Promise((resolve) => { setTimeout(resolve, 3000); });
   })();
   e.waitUntil(activating.then(() => {
+    state = "activated";
     console.log("sw.js: End Activating");
   }));
 });
