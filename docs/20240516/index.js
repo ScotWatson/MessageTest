@@ -297,6 +297,7 @@ if (windowURL.hash === "#sub") {
           console.log(message);
         }
       })();
+      socket.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 1 error");
@@ -318,6 +319,7 @@ if (windowURL.hash === "#sub") {
           console.log(message);
         }
       })();
+      socket.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 2 error");
@@ -339,6 +341,7 @@ if (windowURL.hash === "#sub") {
           console.log(message);
         }
       })();
+      socket.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register parse fail error");
@@ -360,6 +363,7 @@ if (windowURL.hash === "#sub") {
           console.log(message);
         }
       })();
+      socket.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register install fail error");
@@ -381,6 +385,7 @@ if (windowURL.hash === "#sub") {
           console.log(message);
         }
       })();
+      socket.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register activate fail error");
