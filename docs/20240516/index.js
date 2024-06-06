@@ -9,6 +9,7 @@ const initPageTime = performance.now();
 import * as Common from "https://scotwatson.github.io/WebInterface/common.mjs";
 import * as Interface from "https://scotwatson.github.io/WebInterface/20240316/interface.mjs";
 import * as Messaging from "https://scotwatson.github.io/WebInterface/20240316/window-messaging.mjs";
+import RemoteProcedureSocket from "https://scotwatson.github.io/WebInterface/RemoteProcedureSocket.mjs";
 
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
@@ -19,17 +20,13 @@ if (windowURL.hash === "#sub") {
     const window = info.window;
     const origin = info.origin;
     Messaging.addTrustedOrigin(info.origin);
-    const parentSource = Messaging.createMessageSourceForWindowOrigin({
+    const parentSocket = Messaging.forWindowOrigin({
       window: info.source,
       origin: info.origin,
     });
-    const parentSink = Messaging.createMessageSinkForWindowOrigin({
-      window: info.source,
-      origin: info.origin,
-    });
-    const parentRPS = Messaging.createRemoteProcedureSocket({
-      messageSource: parentSource,
-      messageSink: parentSink,
+    const parentRPS = new RemoteProcedureSocket({
+      messageSource: parentSocket,
+      messageSink: parentSocket,
       timeout: 500,
     });
     parentRPS.register({
@@ -49,17 +46,13 @@ if (windowURL.hash === "#sub") {
   thisIframe.src = subURL;
   thisIframe.style.display = "block";
   thisIframe.style.visibility = "hidden";
-  const iframeSource = Messaging.createMessageSourceForWindowOrigin({
+  const iframeSocket = Messaging.forWindowOrigin({
     window: thisIframe.contentWindow,
     origin: subFullURL.origin,
   });
-  const iframeSink = Messaging.createMessageSinkForWindowOrigin({
-    window: thisIframe.contentWindow,
-    origin: subFullURL.origin,
-  });
-  const iframeRPS = Messaging.createRemoteProcedureSocket({
-    messageSource: iframeSource,
-    messageSink: iframeSink,
+  const iframeRPS = new RemoteProcedureSocket({
+    messageSource: iframeSocket,
+    messageSink: iframeSocket,
     timeout: 500,
   });
   Messaging.untrustedOrigin.next().then(function () {
@@ -87,15 +80,12 @@ if (windowURL.hash === "#sub") {
   myMessageQueue.addEventListener("message", Messaging.messageHandler);
   myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
-  const workerSource = Messaging.createMessageSourceForWorker({
+  const workerSocket = Messaging.forWorker({
     worker: thisWorker,
   });
-  const workerSink = Messaging.createMessageSinkForWorker({
-    worker: thisWorker,
-  });
-  const workerRPS = Messaging.createRemoteProcedureSocket({
-    messageSource: workerSource,
-    messageSink: workerSink,
+  const workerRPS = new RemoteProcedureSocket({
+    messageSource: workerSocket,
+    messageSink: workerSocket,
     timeout: 250,
   });
   workerRPC();
@@ -291,7 +281,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      const socket = Messaging.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.message) {
           console.log(message);
@@ -313,7 +303,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      const socket = Messaging.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.message) {
           console.log(message);
@@ -357,7 +347,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      const socket = Messaging.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.message) {
           console.log(message);
@@ -379,7 +369,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Messaging.MessageSocket.forMessagePort(obj.port);
+      const socket = Messaging.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.message) {
           console.log(message);
@@ -481,18 +471,17 @@ if (windowURL.hash === "#sub") {
       portBtnsSpan.innerHTML = "";
       obj.port = (() => {
         const channel = new MessageChannel();
-        const messageSource = Messaging.createMessageSourceForMessagePort(channel.port1);
-        const messageSink = Messaging.createMessageSinkForMessagePort(channel.port1);
+        const messageSocket = Messaging.forMessagePort(channel.port1);
         obj.serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
         return {
-          messageSource,
-          messageSink,
+          messageSource: messageSocket,
+          messageSink: messageSocket,
           start() {
             channel.port1.start();
           },
         }
       })();
-      obj.rps = Messaging.createRemoteProcedureSocket({
+      obj.rps = new RemoteProcedureSocket({
         messageSource: obj.port.messageSource,
         messageSink: obj.port.messageSink,
         timeout: 1000,
@@ -566,9 +555,9 @@ if (windowURL.hash === "#sub") {
     for await (const controller of Messaging.controllerchange) {
       console.log("controllerchange");
       scanForServiceWorkers();
-      controllerRPS = Messaging.createRemoteProcedureSocket({
-        messageSource: controller.messageSource,
-        messageSink: controller.messageSink,
+      controllerRPS = new RemoteProcedureSocket({
+        messageSource: controller.messageSocket,
+        messageSink: controller.messageSocket,
         timeout: 500,
       });
       controllerRPC();
