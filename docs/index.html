@@ -11,6 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <meta name="robots" content="noindex, nofollow">
     <!-- init.js must be loaded classically to ensure capture of page load events -->
     <script id="Init" src="https://scotwatson.github.io/WebInterface/init.js"></script>
+    <!-- messageQueue.js must be loaded classically to ensure the queue is created before the page load event -->
     <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
     <script>
 const Init = document.getElementById("Init").exports;
@@ -24,13 +25,6 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
   Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
   Init.addIcon(new URL("./favicon.ico", Init.selfUrl));
   // Load version.mjs to load the correct version of the application
-  /*
-  Init.addScript({
-    url: "https://scotwatson.github.io/WebInterface/version.mjs",
-    defer: false,
-    asModule: true,
-  }).loading.then(loadVersion);
-  */
   import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
   // Function Definitions
   function loadVersion(Version) {
@@ -42,7 +36,6 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         return selfURL.origin + pathSegments[0] + "/index";
       },
     });
-    console.log(versionBaseUrl);
     Init.addStyleSheet(new URL("./style.css", versionBaseUrl));
     Init.addScript({
       url: new URL("./index.js", versionBaseUrl),
