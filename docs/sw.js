@@ -6,13 +6,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 // Exceptions thrown during parsing cause register promise to reject
 console.log("sw.js: Start Parsing");
 
-let state = "parsing";
 const searchParams = (new URL(self.location.toString())).searchParams;
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
-const Messaging = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-messaging.js");
+const Global = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-global.js");
 
 // On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
+if (!self.serviceWorker) {
+  self.serviceWorker = {
+    scriptURL: self.location.toString(),
+    state: "parsing",
+    postMessage() {
+      throw "Unable to send messages to service workers";
+    },
+  };
+  self.addEventListener("install", (e) => {
+    self.serviceWorker.state = "installing";
+  });
+  self.addEventListener("activate", (e) => {
+    self.serviceWorker.state = "activating";
+  });
+}
 
 const clientInfo = new Map();
 
@@ -62,17 +76,19 @@ self.addEventListener("message", (evt) => {
               thisClientInfo = newClientInfo();
               clientInfo.set(evt.source.id, thisClientInfo);
             }
-            const socket = Messaging.MessageSocket.forMessagePort(evt.data);
+            const socket = Global.Common.MessageNode.forMessagePort(evt.data);
             if (thisClientInfo.socket) {
               // Send undefined to indicate the socket is no longer used
-              thisClientInfo.socket.send({});
+              thisClientInfo.socket.send(undefined);
             }
             thisClientInfo.socket = socket;
-            socket.send({
+            const send = socket.input.callback;
+            send({
               data: state,
               transfer: [],
             });
-            socket.start();
+            send.unlock();
+            evt.data.start();
           }
             break;
           default: {
@@ -106,10 +122,10 @@ function handleObject(obj) {
   switch (obj.action) {
     case "port": {
       console.log("Creating rps...");
-      rps = Messaging.createRemoteProcedureSocket({
-        messageSource: Messaging.createMessageSourceForMessagePort(evt.data.port),
-        messageSink: Messaging.createMessageSinkForMessagePort(evt.data.port),
+      rps = new Global.Common.RemoteProcedureSocket({
       });
+      const clientNode = MessageNode.forMessagePort(evt.data.port);
+      new Global.Common.Streams.Pipe(clientNode.output, rps.input);
       rps.register({
         functionName: "skipWaiting",
         handlerFunc: async () => {
@@ -156,30 +172,23 @@ function handleObject(obj) {
   }
 }
 
-(async () => {
-  for await (const info of Messaging.newClientMessage) {
-    const newSource = Messaging.createClientSource({
-      client: info.source,
-    });
-    const newSink = Messaging.createClientSink({
-      client: info.source,
-    });
-    const newRPS = Messaging.createRemoteProcedureSocket({
-      messageSource: newSource,
-      messageSink: newSink,
-    });
-    newRPS.register({
-      functionName: "ping",
-      handlerFunc: function () {
-        return "Hello from Service Worker!";
-      },
-    });
-    console.log("controller ready for ping");
-    Messaging.enqueueMessage(info);
-  }
-})();
-
-const selfUrl = new URL(self.location);
+new Global.Common.Streams.Pipe(Global.newClientMessage, new Global.Common.Streams.SinkNode((info) => {
+  const newNode = Global.createClientNode({
+    client: info.source,
+  });
+  const newRPS = Global.Common.RemoteProcedureSocket({
+  });
+  new Global.Common.Streams.Pipe(newNode.output, newRPS.input);
+  new Global.Common.Streams.Pipe(newRPS.output, newNode.input);
+  newRPS.register({
+    functionName: "ping",
+    handlerFunc: function () {
+      return "Hello from Service Worker!";
+    },
+  });
+  console.log("controller ready for ping");
+  Global.enqueueMessage(info);
+}));
 
 // Exceptions thrown from install cause state to become "redundant"
 self.addEventListener("install", (e) => {
