@@ -26,10 +26,10 @@ if (windowURL.hash === "#sub") {
       origin: info.origin,
     });
     const parentRPS = new RemoteProcedureSocket({
-      messageSource: parentSocket,
-      messageSink: parentSocket,
       timeout: 500,
     });
+    Streams.pipe(parentSocket.output, parentRPS.input);
+    Streams.pipe(parentRPS.output, parentSocket.input);
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
@@ -52,10 +52,10 @@ if (windowURL.hash === "#sub") {
     origin: subFullURL.origin,
   });
   const iframeRPS = new RemoteProcedureSocket({
-    messageSource: iframeSocket,
-    messageSink: iframeSocket,
     timeout: 500,
   });
+  Streams.pipe(iframeSocket.output, iframeRPS.input);
+  Streams.pipe(iframeRPS.output, iframeSocket.input);
   Global.untrustedOrigin.next().then(function () {
     throw "Received message from unrecognized source";
   });
@@ -85,10 +85,10 @@ if (windowURL.hash === "#sub") {
     worker: thisWorker,
   });
   const workerRPS = new RemoteProcedureSocket({
-    messageSource: workerSocket,
-    messageSink: workerSocket,
     timeout: 250,
   });
+  Streams.pipe(workerSocket.output, workerRPS.input);
+  Streams.pipe(workerRPS.output, workerSocket.input);
   workerRPC();
   async function workerRPC() {
     console.log("worker RPC");
@@ -284,7 +284,7 @@ if (windowURL.hash === "#sub") {
     }).then((obj) => {
       const socket = Global.forMessagePort(obj.port);
       (async () => {
-        for await (const message of socket.message) {
+        for await (const message of socket.output) {
           console.log(message);
         }
       })();
@@ -306,7 +306,7 @@ if (windowURL.hash === "#sub") {
     }).then((obj) => {
       const socket = Global.forMessagePort(obj.port);
       (async () => {
-        for await (const message of socket.message) {
+        for await (const message of socket.output) {
           console.log(message);
         }
       })();
@@ -326,7 +326,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.MessageSocket.forMessagePort(obj.port);
+      const socket = Global.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.message) {
           console.log(message);
@@ -350,7 +350,7 @@ if (windowURL.hash === "#sub") {
     }).then((obj) => {
       const socket = Global.forMessagePort(obj.port);
       (async () => {
-        for await (const message of socket.message) {
+        for await (const message of socket.output) {
           console.log(message);
         }
       })();
@@ -474,19 +474,16 @@ if (windowURL.hash === "#sub") {
         const channel = new MessageChannel();
         const messageSocket = Global.forMessagePort(channel.port1);
         obj.serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
-        return {
-          messageSource: messageSocket,
-          messageSink: messageSocket,
-          start() {
-            channel.port1.start();
-          },
-        }
+        messageSocket.start = () {
+          channel.port1.start();
+        };
+        return messageSocket;
       })();
       obj.rps = new RemoteProcedureSocket({
-        messageSource: obj.port.messageSource,
-        messageSink: obj.port.messageSink,
         timeout: 1000,
       });
+      Streams.pipe(obj.port.output, obj.rps.input);
+      Streams.pipe(obj.rps.output, obj.port.input);
       obj.rps.register({
         functionName: "ping",
         handlerFunc: (args) => { console.log(args); },
@@ -557,10 +554,10 @@ if (windowURL.hash === "#sub") {
       console.log("controllerchange");
       scanForServiceWorkers();
       controllerRPS = new RemoteProcedureSocket({
-        messageSource: controller.messageSocket,
-        messageSink: controller.messageSocket,
         timeout: 500,
       });
+      Streams.pipe(controller.messageSocket.output, controllerRPS.input);
+      Streams.pipe(controllerRPS.output, controller.messageSocket.input);
       controllerRPC();
     }
   })();
