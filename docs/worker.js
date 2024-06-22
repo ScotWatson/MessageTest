@@ -18,13 +18,20 @@ function print() {
   console.log("Worker is running.");
 }
 
-import("https://scotwatson.github.io/WebInterface/20240316/worker-messaging.mjs").then(function (Messaging) {
+const moduleUrls = [
+  "https://scotwatson.github.io/WebInterface/worker-global.mjs",
+  "https://scotwatson.github.io/WebInterface/streams.mjs",
+];
+const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
+
+loading.then(([ Messaging, Streams ]) => {
   const parentSource = Messaging.createMessageSourceForMessagePort(myMessageQueue);
   const parentSink = Messaging.createMessageSinkForMessagePort(self);
   const parentRPS = Messaging.createRemoteProcedureSocket({
     messageSource: parentSource,
     messageSink: parentSink,
   });
+  
   parentRPS.register({
     functionName: "ping",
     handlerFunc: function ping() {
