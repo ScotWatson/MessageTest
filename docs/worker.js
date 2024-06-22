@@ -20,16 +20,15 @@ function print() {
 
 const moduleUrls = [
   "https://scotwatson.github.io/WebInterface/worker-global.mjs",
-  "https://scotwatson.github.io/WebInterface/streams.mjs",
 ];
 const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 
-loading.then(([ Global, Streams ]) => {
-  const parentSocket = Global.forMessagePort(myMessageQueue);
-  const parentRPS = new RemoteProcedureSocket({
+loading.then(([ Global ]) => {
+  const parentSocket = Global.Common.MessageSocket.forMessagePort(myMessageQueue);
+  const parentRPS = new Global.Common.RemoteProcedureSocket({
   });
-  Streams.pipe(Global.parentSocket, parentRPS);
-  Streams.pipe(parentRPS, Global.parentSocket);
+  new Global.Common.Streams.Pipe(Global.parentSocket.output, parentRPS.input);
+  new Global.Common.Streams.Pipe(parentRPS.output, Global.parentSocket.input);
   parentRPS.register({
     functionName: "ping",
     handlerFunc: function ping() {
@@ -37,5 +36,5 @@ loading.then(([ Global, Streams ]) => {
     },
   });
   console.log("worker ready for ping");
-  parentSocket.start();
+  myMessageQueue.start();
 });
