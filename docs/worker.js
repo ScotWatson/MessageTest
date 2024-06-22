@@ -24,14 +24,12 @@ const moduleUrls = [
 ];
 const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 
-loading.then(([ Messaging, Streams ]) => {
-  const parentSource = Messaging.createMessageSourceForMessagePort(myMessageQueue);
-  const parentSink = Messaging.createMessageSinkForMessagePort(self);
-  const parentRPS = Messaging.createRemoteProcedureSocket({
-    messageSource: parentSource,
-    messageSink: parentSink,
+loading.then(([ Global, Streams ]) => {
+  const parentSocket = Global.forMessagePort(myMessageQueue);
+  const parentRPS = new RemoteProcedureSocket({
   });
-  
+  Streams.pipe(Global.parentSocket, parentRPS);
+  Streams.pipe(parentRPS, Global.parentSocket);
   parentRPS.register({
     functionName: "ping",
     handlerFunc: function ping() {
@@ -39,5 +37,5 @@ loading.then(([ Messaging, Streams ]) => {
     },
   });
   console.log("worker ready for ping");
-  myMessageQueue.start();
+  parentSocket.start();
 });
