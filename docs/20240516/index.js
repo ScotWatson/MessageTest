@@ -6,11 +6,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 "use strict";
 
 const initPageTime = performance.now();
-import * as Common from "https://scotwatson.github.io/WebInterface/common.mjs";
-import * as Interface from "https://scotwatson.github.io/WebInterface/20240316/interface.mjs";
-import * as Global from "https://scotwatson.github.io/WebInterface/20240316/window-global.mjs";
-import RemoteProcedureSocket from "https://scotwatson.github.io/WebInterface/RemoteProcedureSocket.mjs";
-import * as Streams from "https://scotwatson.github.io/WebInterface/streams.mjs";
+import * as Interface from "https://scotwatson.github.io/WebInterface/interface.mjs";
+import * as Global from "https://scotwatson.github.io/WebInterface/window-global.mjs";
 
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
@@ -25,11 +22,11 @@ if (windowURL.hash === "#sub") {
       window: info.source,
       origin: info.origin,
     });
-    const parentRPS = new RemoteProcedureSocket({
+    const parentRPS = new Global.Common.RemoteProcedureSocket({
       timeout: 500,
     });
-    Streams.pipe(parentSocket.output, parentRPS.input);
-    Streams.pipe(parentRPS.output, parentSocket.input);
+    Global.Common.Streams.pipe(parentSocket.output, parentRPS.input);
+    Global.Common.pipe(parentRPS.output, parentSocket.input);
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
@@ -51,11 +48,11 @@ if (windowURL.hash === "#sub") {
     window: thisIframe.contentWindow,
     origin: subFullURL.origin,
   });
-  const iframeRPS = new RemoteProcedureSocket({
+  const iframeRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 500,
   });
-  Streams.pipe(iframeSocket.output, iframeRPS.input);
-  Streams.pipe(iframeRPS.output, iframeSocket.input);
+  Global.Common.Streams.pipe(iframeSocket.output, iframeRPS.input);
+  Global.Common.Streams.pipe(iframeRPS.output, iframeSocket.input);
   Global.untrustedOrigin.next().then(function () {
     throw "Received message from unrecognized source";
   });
@@ -84,11 +81,11 @@ if (windowURL.hash === "#sub") {
   const workerSocket = Global.forWorker({
     worker: thisWorker,
   });
-  const workerRPS = new RemoteProcedureSocket({
+  const workerRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 250,
   });
-  Streams.pipe(workerSocket.output, workerRPS.input);
-  Streams.pipe(workerRPS.output, workerSocket.input);
+  Global.Common.Streams.pipe(workerSocket.output, workerRPS.input);
+  Global.Common.Streams.pipe(workerRPS.output, workerSocket.input);
   workerRPC();
   async function workerRPC() {
     console.log("worker RPC");
@@ -304,13 +301,9 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.forMessagePort(obj.port);
-      (async () => {
-        for await (const message of socket.output) {
-          console.log(message);
-        }
-      })();
-      socket.start();
+      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 2 error");
@@ -326,13 +319,9 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.forMessagePort(obj.port);
-      (async () => {
-        for await (const message of socket.message) {
-          console.log(message);
-        }
-      })();
-      socket.start();
+      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register parse fail error");
@@ -348,13 +337,9 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.forMessagePort(obj.port);
-      (async () => {
-        for await (const message of socket.output) {
-          console.log(message);
-        }
-      })();
-      socket.start();
+      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register install fail error");
@@ -370,13 +355,9 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.forMessagePort(obj.port);
-      (async () => {
-        for await (const message of socket.message) {
-          console.log(message);
-        }
-      })();
-      socket.start();
+      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register activate fail error");
@@ -471,19 +452,19 @@ if (windowURL.hash === "#sub") {
     obj.addPort = () => {
       portBtnsSpan.innerHTML = "";
       obj.port = (() => {
-        const channel = new MessageChannel();
-        const messageSocket = Global.forMessagePort(channel.port1);
+        const channel = new self.MessageChannel();
+        const messageSocket = Global.Common.MessageSocket.forMessagePort(channel.port1);
         obj.serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
         messageSocket.start = () {
           channel.port1.start();
         };
         return messageSocket;
       })();
-      obj.rps = new RemoteProcedureSocket({
+      obj.rps = new Global.Common.RemoteProcedureSocket({
         timeout: 1000,
       });
-      Streams.pipe(obj.port.output, obj.rps.input);
-      Streams.pipe(obj.rps.output, obj.port.input);
+      new Global.Common.Streams.Pipe(obj.port.output, obj.rps.input);
+      new Global.Common.Streams.Pipe(obj.rps.output, obj.port.input);
       obj.rps.register({
         functionName: "ping",
         handlerFunc: (args) => { console.log(args); },
@@ -553,11 +534,11 @@ if (windowURL.hash === "#sub") {
     for await (const controller of Global.controllerchange) {
       console.log("controllerchange");
       scanForServiceWorkers();
-      controllerRPS = new RemoteProcedureSocket({
+      controllerRPS = new Global.Common.RemoteProcedureSocket({
         timeout: 500,
       });
-      Streams.pipe(controller.messageSocket.output, controllerRPS.input);
-      Streams.pipe(controllerRPS.output, controller.messageSocket.input);
+      new Global.Common.Streams.Pipe(controller.messageSocket.output, controllerRPS.input);
+      new Global.Common.Streams.Pipe(controllerRPS.output, controller.messageSocket.input);
       controllerRPC();
     }
   })();
