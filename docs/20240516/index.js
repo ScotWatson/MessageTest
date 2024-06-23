@@ -13,7 +13,7 @@ const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
 if (windowURL.hash === "#sub") {
-  Global.untrustedOrigin.next().then(function (iterator) {
+  const parentAdder = new Global.Common.Streams.SinkNode((iterator) => {
     const info = iterator.value;
     const window = info.window;
     const origin = info.origin;
@@ -25,8 +25,8 @@ if (windowURL.hash === "#sub") {
     const parentRPS = new Global.Common.RemoteProcedureSocket({
       timeout: 500,
     });
-    Global.Common.Streams.pipe(parentSocket.output, parentRPS.input);
-    Global.Common.pipe(parentRPS.output, parentSocket.input);
+    new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input);
+    new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input);
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
@@ -35,6 +35,7 @@ if (windowURL.hash === "#sub") {
     });
     Global.enqueueMessage(info);
   });
+  new Global.Common.Streams.Pipe(Global.untrustedOrigin, parentAdder);
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
 } else {
@@ -53,9 +54,8 @@ if (windowURL.hash === "#sub") {
   });
   new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input);
   new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
-  Global.untrustedOrigin.next().then(function () {
-    throw "Received message from unrecognized source";
-  });
+  const sourceAdder = new Global.Common.Streams.SinkNode(() => { throw "Received message from unrecognized source"; });
+  new Global.Common.Streams.Pipe(Global.untrustedOrigin, sourceAdder);
 //    thisIframe.contentWindow.addEventListener("load", function () {
   thisIframe.addEventListener("load", function () {
     RPC();
