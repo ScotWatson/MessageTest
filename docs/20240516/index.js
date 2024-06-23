@@ -77,6 +77,7 @@ if (windowURL.hash === "#sub") {
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
+  /*
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
@@ -100,6 +101,7 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
+  */
   let serviceWorkerRegistration = null;
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
