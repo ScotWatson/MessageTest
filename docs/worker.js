@@ -24,7 +24,7 @@ const moduleUrls = [
 const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 
 loading.then(([ Global ]) => {
-  const parentSocket = Global.Common.MessageSocket.forMessagePort(myMessageQueue);
+  const parentSocket = Global.Common.MessageNode.forMessagePort(myMessageQueue);
   const parentRPS = new Global.Common.RemoteProcedureSocket({
   });
   new Global.Common.Streams.Pipe(Global.parentSocket.output, parentRPS.input);
