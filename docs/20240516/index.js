@@ -4,7 +4,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 "use strict";
-/*
+
 const initPageTime = performance.now();
 import * as Interface from "https://scotwatson.github.io/WebInterface/interface.mjs";
 import * as Global from "https://scotwatson.github.io/WebInterface/window-global.mjs";
@@ -554,4 +554,3 @@ if (windowURL.hash === "#sub") {
     }
   }
 }
-*/
