@@ -82,8 +82,8 @@ if (windowURL.hash === "#sub") {
   const workerRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 250,
   });
-  Global.Common.Streams.pipe(workerSocket.output, workerRPS.input);
-  Global.Common.Streams.pipe(workerRPS.output, workerSocket.input);
+  new Global.Common.Streams.Pipe(workerSocket.output, workerRPS.input);
+  new Global.Common.Streams.Pipe(workerRPS.output, workerSocket.input);
   workerRPC();
   async function workerRPC() {
     console.log("worker RPC");
