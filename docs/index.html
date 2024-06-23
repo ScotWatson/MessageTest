@@ -41,7 +41,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       url: new URL("./index.js", versionBaseUrl),
       defer: true,
       asModule: true,
-    }).catch((error) => {
+    }).loading.catch((error) => {
       document.getElementById("appError").style.display = "block";
       console.error(error);
     });
