@@ -83,7 +83,8 @@ if (windowURL.hash === "#sub") {
       functionName: "ping",
       args: {},
     });
-    return ret.then(console.log, function () {
+    return ret.then(console.log, (e) => {
+      console.error(e);
       console.log("iframe ping failed");
     });
   });
