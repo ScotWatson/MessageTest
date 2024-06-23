@@ -47,11 +47,11 @@ if (windowURL.hash === "#sub") {
   thisIframe.src = subURL;
   thisIframe.style.display = "block";
   thisIframe.style.visibility = "hidden";
-/*
   const iframeSocket = Global.forWindowOrigin({
     window: thisIframe.contentWindow,
     origin: subFullURL.origin,
   });
+/*
   const iframeRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 500,
   });
