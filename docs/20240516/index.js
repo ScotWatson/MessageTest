@@ -24,8 +24,14 @@ if (windowURL.hash === "#sub") {
     const parentRPS = new Global.Common.RemoteProcedureSocket({
       timeout: 500,
     });
-    new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input);
-    new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input);
+    (new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input)).catch((e) => {
+      console.error("inward pipe inside iframe");
+      console.error(e);
+    });
+    (new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input)).catch((e) => {
+      console.error("outward pipe inside iframe");
+      console.error(e);
+    });
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
@@ -34,10 +40,13 @@ if (windowURL.hash === "#sub") {
     });
     Global.enqueueMessage(info);
   });
-  new Global.Common.Streams.Pipe({
+  (new Global.Common.Streams.Pipe({
     source: Global.untrustedOrigin,
     sink: parentAdder,
     noCopy: true,
+  })).catch((e) => {
+    console.error("untrusted origin handling inside iframe");
+    console.error(e);
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
@@ -55,13 +64,22 @@ if (windowURL.hash === "#sub") {
   const iframeRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 250,
   });
-  new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input);
-  new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
+  (new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input)).catch((e) => {
+    console.error("inward pipe inside parent window");
+    console.error(e);
+  });
+  (new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input)).catch((e) => {
+    console.error("outward pipe inside parent window");
+    console.error(e);
+  });
   const sourceAdder = new Global.Common.Streams.SinkNode(() => { throw "Received message from unrecognized source"; });
-  new Global.Common.Streams.Pipe({
+  (new Global.Common.Streams.Pipe({
     source: Global.untrustedOrigin,
     sink: sourceAdder,
     noCopy: true,
+  })).catch((e) => {
+    console.error("untrusted origin handling inside parent window");
+    console.error(e);
   });
 //    thisIframe.contentWindow.addEventListener("load", function () {
   thisIframe.addEventListener("load", function () {
