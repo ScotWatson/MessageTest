@@ -27,7 +27,8 @@ loading.then(([ Global ]) => {
   const parentSocket = Global.Common.MessageNode.forMessagePort(myMessageQueue);
   const parentRPS = new Global.Common.RemoteProcedureSocket({
   });
-  new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input);
+  const consoleLog = new Global.Common.Streams.SinkNode(console.log);
+  new Global.Common.Streams.Pipe(parentSocket.output, consoleLog /* parentRPS.input */ );
   new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input);
   parentRPS.register({
     functionName: "ping",
