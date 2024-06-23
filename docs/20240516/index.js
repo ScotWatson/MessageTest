@@ -80,7 +80,7 @@ if (windowURL.hash === "#sub") {
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
-    timeout: 250,
+    timeout: 1000,
   });
   new Global.Common.Streams.Pipe(workerSocket.output, workerRPS.input);
   new Global.Common.Streams.Pipe(workerRPS.output, workerSocket.input);
