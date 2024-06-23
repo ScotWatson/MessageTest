@@ -53,7 +53,6 @@ function analyzeObject(obj) {
   };
 }
 
-let rps = null;
 function newClientInfo() {
   return {
     messageNode: null,
@@ -70,7 +69,7 @@ self.addEventListener("message", (evt) => {
       } else {
         switch (evt.data.constructor.name) {
           case "Object": {
-            // No response
+            handleObject(obj);
           }
             break;
           case "MessagePort": {
@@ -91,32 +90,32 @@ self.addEventListener("message", (evt) => {
             });
             thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(clientNode.output, rps.input);
             thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(rps.output, clientNode.input);
-            rps.register({
+            thisClientInfo.rps.register({
               functionName: "skipWaiting",
               handlerFunc: async () => {
                 await self.skipWaiting();
               },
             });
-            rps.register({
+            thisClientInfo.rps.register({
               functionName: "claimClients",
               handlerFunc: async () => {
                 await self.clients.claim();
               },
             });
-            rps.register({
+            thisClientInfo.rps.register({
               functionName: "unregister",
               handlerFunc: async () => {
                 const success = await self.registration.unregister();
                 return success;
               }
             });
-            rps.register({
+            thisClientInfo.rps.register({
               functionName: "update",
               handlerFunc: async () => {
                 const newRegistration = await self.registration.update();
               }
             });
-            rps.register({
+            thisClientInfo.rps.register({
               functionName: "ping",
               handlerFunc: async () => {
                 return "Hello through port!";
@@ -162,9 +161,6 @@ function handleObject(obj) {
     return;
   }
   switch (obj.action) {
-    case "port": {
-    }
-      break;
     default:
       console.error("Unrecognized command", evt);
   }
