@@ -54,9 +54,9 @@ if (windowURL.hash === "#sub") {
   const iframeRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 1000,
   });
-/*
   new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input);
   new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
+/*
   const sourceAdder = new Global.Common.Streams.SinkNode(() => { throw "Received message from unrecognized source"; });
   new Global.Common.Streams.Pipe(Global.untrustedOrigin, sourceAdder);
 //    thisIframe.contentWindow.addEventListener("load", function () {
