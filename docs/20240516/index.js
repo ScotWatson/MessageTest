@@ -35,7 +35,11 @@ if (windowURL.hash === "#sub") {
     });
     Global.enqueueMessage(info);
   });
-  new Global.Common.Streams.Pipe(Global.untrustedOrigin, parentAdder);
+  new Global.Common.Streams.Pipe({
+    source: Global.untrustedOrigin,
+    sink: parentAdder,
+    noCopy: true,
+  });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
 } else {
