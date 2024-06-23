@@ -60,6 +60,7 @@ if (windowURL.hash === "#sub") {
   new Global.Common.Streams.Pipe(Global.untrustedOrigin, sourceAdder);
 //    thisIframe.contentWindow.addEventListener("load", function () {
   thisIframe.addEventListener("load", function () {
+    /*
     RPC();
     async function RPC() {
       console.log("RPC");
@@ -76,6 +77,15 @@ if (windowURL.hash === "#sub") {
         });
       }
     }
+    */
+    console.log("try to ping iframe");
+    const ret = iframeRPS.call({
+      functionName: "ping",
+      args: {},
+    });
+    return ret.then(console.log, function () {
+      console.log("iframe ping failed");
+    });
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
