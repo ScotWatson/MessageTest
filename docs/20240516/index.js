@@ -12,6 +12,7 @@ import * as Global from "https://scotwatson.github.io/WebInterface/window-global
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
+/*
 if (windowURL.hash === "#sub") {
   const parentAdder = new Global.Common.Streams.SinkNode((iterator) => {
     const info = iterator.value;
@@ -554,3 +555,4 @@ if (windowURL.hash === "#sub") {
     }
   }
 }
+*/
