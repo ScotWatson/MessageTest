@@ -58,7 +58,11 @@ if (windowURL.hash === "#sub") {
   new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input);
   new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
   const sourceAdder = new Global.Common.Streams.SinkNode(() => { throw "Received message from unrecognized source"; });
-  new Global.Common.Streams.Pipe(Global.untrustedOrigin, sourceAdder);
+  new Global.Common.Streams.Pipe({
+    source: Global.untrustedOrigin,
+    sink: sourceAdder,
+    noCopy: true,
+  });
 //    thisIframe.contentWindow.addEventListener("load", function () {
   thisIframe.addEventListener("load", function () {
     RPC();
