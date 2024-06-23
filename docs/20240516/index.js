@@ -455,7 +455,7 @@ if (windowURL.hash === "#sub") {
         const channel = new self.MessageChannel();
         const messageSocket = Global.Common.MessageSocket.forMessagePort(channel.port1);
         obj.serviceWorker.postMessage({ action: "port", port: channel.port2 }, [ channel.port2 ] );
-        messageSocket.start = () {
+        messageSocket.start = () => {
           channel.port1.start();
         };
         return messageSocket;
