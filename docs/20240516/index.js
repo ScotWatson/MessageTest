@@ -78,9 +78,7 @@ if (windowURL.hash === "#sub") {
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
-  const workerSocket = Global.forWorker({
-    worker: thisWorker,
-  });
+  const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
     timeout: 250,
   });
