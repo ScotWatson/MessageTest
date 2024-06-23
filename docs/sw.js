@@ -56,7 +56,10 @@ function analyzeObject(obj) {
 let rps = null;
 function newClientInfo() {
   return {
-    socket: null,
+    messageNode: null,
+    rps: null,
+    inputPipe: null,
+    outputPipe: null,
   };
 }
 self.addEventListener("message", (evt) => {
@@ -77,17 +80,56 @@ self.addEventListener("message", (evt) => {
               clientInfo.set(evt.source.id, thisClientInfo);
             }
             const socket = Global.Common.MessageNode.forMessagePort(evt.data);
-            if (thisClientInfo.socket) {
+            if (thisClientInfo.messageNode) {
+              // Disconnects rps from message node
+              thisClientInfo.inputPipe.return();
               // Send undefined to indicate the socket is no longer used
-              thisClientInfo.socket.send(undefined);
+              thisClientInfo.outputPipe.return();
             }
-            thisClientInfo.socket = socket;
-            const send = socket.input.callback;
-            send({
-              data: state,
-              transfer: [],
+            thisClientInfo.messageNode = MessageNode.forMessagePort(evt.data.port);
+            thisClientInfo.rps = new Global.Common.RemoteProcedureSocket({
             });
-            send.unlock();
+            thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(clientNode.output, rps.input);
+            thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(rps.output, clientNode.input);
+            rps.register({
+              functionName: "skipWaiting",
+              handlerFunc: async () => {
+                await self.skipWaiting();
+              },
+            });
+            rps.register({
+              functionName: "claimClients",
+              handlerFunc: async () => {
+                await self.clients.claim();
+              },
+            });
+            rps.register({
+              functionName: "unregister",
+              handlerFunc: async () => {
+                const success = await self.registration.unregister();
+                return success;
+              }
+            });
+            rps.register({
+              functionName: "update",
+              handlerFunc: async () => {
+                const newRegistration = await self.registration.update();
+              }
+            });
+            rps.register({
+              functionName: "ping",
+              handlerFunc: async () => {
+                return "Hello through port!";
+              }
+            });
+            console.log("All Registered");
+            evt.data.port.start();
+            setInterval(() => {
+              rps.call({
+                functionName: "ping",
+                args: "Ping through Port!",
+              });
+            }, 2000);
             evt.data.start();
           }
             break;
@@ -121,50 +163,6 @@ function handleObject(obj) {
   }
   switch (obj.action) {
     case "port": {
-      console.log("Creating rps...");
-      rps = new Global.Common.RemoteProcedureSocket({
-      });
-      const clientNode = MessageNode.forMessagePort(evt.data.port);
-      new Global.Common.Streams.Pipe(clientNode.output, rps.input);
-      rps.register({
-        functionName: "skipWaiting",
-        handlerFunc: async () => {
-          await self.skipWaiting();
-        },
-      });
-      rps.register({
-        functionName: "claimClients",
-        handlerFunc: async () => {
-          await self.clients.claim();
-        },
-      });
-      rps.register({
-        functionName: "unregister",
-        handlerFunc: async () => {
-          const success = await self.registration.unregister();
-          return success;
-        }
-      });
-      rps.register({
-        functionName: "update",
-        handlerFunc: async () => {
-          const newRegistration = await self.registration.update();
-        }
-      });
-      rps.register({
-        functionName: "ping",
-        handlerFunc: async () => {
-          return "Hello through port!";
-        }
-      });
-      console.log("All Registered");
-      evt.data.port.start();
-      setInterval(() => {
-        rps.call({
-          functionName: "ping",
-          args: "Ping through Port!",
-        });
-      }, 2000);
     }
       break;
     default:
@@ -201,7 +199,7 @@ self.addEventListener("install", (e) => {
     return new Promise((resolve) => { setTimeout(resolve, 3000); });
   })();
   e.waitUntil(installing.then(() => {
-    state = "installed";
+//    state = "installed";
     console.log("sw.js: End Installing");
   }));
 });
@@ -209,7 +207,6 @@ self.addEventListener("install", (e) => {
 // Exceptions thrown from activate do NOT cause state to become "redundant" (continues to "activated")
 self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
-  state = "activating";
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
       return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
@@ -217,7 +214,7 @@ self.addEventListener("activate", (e) => {
     return new Promise((resolve) => { setTimeout(resolve, 3000); });
   })();
   e.waitUntil(activating.then(() => {
-    state = "activated";
+//    state = "activated";
     console.log("sw.js: End Activating");
   }));
 });
