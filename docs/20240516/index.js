@@ -12,8 +12,8 @@ import * as Global from "https://scotwatson.github.io/WebInterface/window-global
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
-/*
 if (windowURL.hash === "#sub") {
+/*
   const parentAdder = new Global.Common.Streams.SinkNode((iterator) => {
     const info = iterator.value;
     const window = info.window;
@@ -39,6 +39,7 @@ if (windowURL.hash === "#sub") {
   new Global.Common.Streams.Pipe(Global.untrustedOrigin, parentAdder);
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
+*/
 } else {
   Global.addTrustedOrigin(windowURL.origin);
   const thisIframe = document.createElement("iframe");
@@ -46,6 +47,7 @@ if (windowURL.hash === "#sub") {
   thisIframe.src = subURL;
   thisIframe.style.display = "block";
   thisIframe.style.visibility = "hidden";
+/*
   const iframeSocket = Global.forWindowOrigin({
     window: thisIframe.contentWindow,
     origin: subFullURL.origin,
@@ -554,5 +556,5 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
-}
 */
+}
