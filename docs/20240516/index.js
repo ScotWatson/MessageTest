@@ -58,7 +58,6 @@ if (windowURL.hash === "#sub") {
   new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
   const sourceAdder = new Global.Common.Streams.SinkNode(() => { throw "Received message from unrecognized source"; });
   new Global.Common.Streams.Pipe(Global.untrustedOrigin, sourceAdder);
-/*
 //    thisIframe.contentWindow.addEventListener("load", function () {
   thisIframe.addEventListener("load", function () {
     RPC();
@@ -80,6 +79,7 @@ if (windowURL.hash === "#sub") {
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
+/*
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
