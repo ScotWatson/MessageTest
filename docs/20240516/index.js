@@ -13,7 +13,6 @@ const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
 if (windowURL.hash === "#sub") {
-/*
   const parentAdder = new Global.Common.Streams.SinkNode((iterator) => {
     const info = iterator.value;
     const window = info.window;
@@ -39,7 +38,6 @@ if (windowURL.hash === "#sub") {
   new Global.Common.Streams.Pipe(Global.untrustedOrigin, parentAdder);
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
-*/
 } else {
   Global.addTrustedOrigin(windowURL.origin);
   const thisIframe = document.createElement("iframe");
@@ -52,7 +50,7 @@ if (windowURL.hash === "#sub") {
     origin: subFullURL.origin,
   });
   const iframeRPS = new Global.Common.RemoteProcedureSocket({
-    timeout: 1000,
+    timeout: 250,
   });
   new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input);
   new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input);
@@ -76,17 +74,6 @@ if (windowURL.hash === "#sub") {
         });
       }
     }
-    /*
-    console.log("try to ping iframe");
-    const ret = iframeRPS.call({
-      functionName: "ping",
-      args: {},
-    });
-    return ret.then(console.log, (e) => {
-      console.error(e);
-      console.log("iframe ping failed");
-    });
-    */
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
