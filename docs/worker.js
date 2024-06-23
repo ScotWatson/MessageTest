@@ -24,6 +24,7 @@ const moduleUrls = [
 const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 
 loading.then(([ Global ]) => {
+  console.log("Worker modules loaded. Starting worker...");
   const parentSocket = Global.Common.MessageNode.forMessagePort(myMessageQueue);
   const parentRPS = new Global.Common.RemoteProcedureSocket({
   });
