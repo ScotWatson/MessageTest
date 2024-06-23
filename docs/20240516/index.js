@@ -13,8 +13,7 @@ const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
 if (windowURL.hash === "#sub") {
-  const parentAdder = new Global.Common.Streams.SinkNode((iterator) => {
-    const info = iterator.value;
+  const parentAdder = new Global.Common.Streams.SinkNode((info) => {
     const window = info.window;
     const origin = info.origin;
     Global.addTrustedOrigin(info.origin);
