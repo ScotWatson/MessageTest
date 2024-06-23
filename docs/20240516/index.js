@@ -4,7 +4,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 "use strict";
-
+/*
 const initPageTime = performance.now();
 import * as Interface from "https://scotwatson.github.io/WebInterface/interface.mjs";
 import * as Global from "https://scotwatson.github.io/WebInterface/window-global.mjs";
@@ -77,7 +77,6 @@ if (windowURL.hash === "#sub") {
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
-  /*
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
@@ -101,7 +100,6 @@ if (windowURL.hash === "#sub") {
       });
     }
   }
-  */
   let serviceWorkerRegistration = null;
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
@@ -401,12 +399,10 @@ if (windowURL.hash === "#sub") {
       console.log("registration.active not present");
     }
   }
-    /*
-    Global.setServiceWorkerHeartbeat({
-      serviceWorker,
-      interval: 5000,
-    });
-    */
+//    Global.setServiceWorkerHeartbeat({
+//      serviceWorker,
+//      interval: 5000,
+//    });
   function addServiceWorker(serviceWorker) {
     const obj = {
       serviceWorker,
@@ -558,3 +554,4 @@ if (windowURL.hash === "#sub") {
     }
   }
 }
+*/
