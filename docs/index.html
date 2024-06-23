@@ -41,11 +41,15 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       url: new URL("./index.js", versionBaseUrl),
       defer: true,
       asModule: true,
+    }).catch((error) => {
+      document.getElementById("appError").style.display = "block";
+      console.error(error);
     });
   }
 })();
     </script>
   </head>
   <body>
+    <p id="appError" style="display:none">This app encountered an error and cannot run.</p>
   </body>
 </html>
