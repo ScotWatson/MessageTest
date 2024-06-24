@@ -28,10 +28,12 @@ if (windowURL.hash === "#sub") {
       console.error("inward pipe inside iframe");
       console.error(e);
     });
+    /*
     (new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input)).catch((e) => {
       console.error("outward pipe inside iframe");
       console.error(e);
     });
+    */
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
