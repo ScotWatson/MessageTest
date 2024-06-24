@@ -293,7 +293,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.forMessagePort(obj.port);
+      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
       (async () => {
         for await (const message of socket.output) {
           console.log(message);
@@ -315,7 +315,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
       new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
@@ -333,7 +333,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
       new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
@@ -351,7 +351,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
       new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
@@ -369,7 +369,7 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageSocket.forMessagePort(obj.port);
+      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
       new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
