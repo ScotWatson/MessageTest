@@ -55,6 +55,7 @@ if (windowURL.hash === "#sub") {
   document.body.appendChild(thisIframe);
   thisIframe.src = subURL;
   thisIframe.style.display = "block";
+  thisIframe.style.position = "absolute";
   thisIframe.style.visibility = "hidden";
   const iframeSocket = Global.forWindowOrigin({
     window: thisIframe.contentWindow,
