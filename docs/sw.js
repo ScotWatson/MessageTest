@@ -87,7 +87,7 @@ self.addEventListener("message", (evt) => {
               // Send undefined to indicate the socket is no longer used
               thisClientInfo.outputPipe.return();
             }
-            thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(evt.data.port);
+            thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(evt.data);
             thisClientInfo.rps = new Global.Common.RemoteProcedureSocket({
             });
             thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(clientNode.output, rps.input);
@@ -124,9 +124,8 @@ self.addEventListener("message", (evt) => {
               }
             });
             console.log("All Registered");
-            evt.data.port.start();
             setInterval(() => {
-              rps.call({
+              thisClientInfo.rps.call({
                 functionName: "ping",
                 args: "Ping through Port!",
               });
