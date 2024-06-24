@@ -22,18 +22,15 @@ if (windowURL.hash === "#sub") {
       origin: info.origin,
     });
     const parentRPS = new Global.Common.RemoteProcedureSocket({
-      timeout: 500,
     });
     (new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input)).catch((e) => {
       console.error("inward pipe inside iframe");
       console.error(e);
     });
-    /*
     (new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input)).catch((e) => {
       console.error("outward pipe inside iframe");
       console.error(e);
     });
-    */
     parentRPS.register({
       functionName: "ping",
       handlerFunc: function (args) {
@@ -64,7 +61,6 @@ if (windowURL.hash === "#sub") {
     origin: subFullURL.origin,
   });
   const iframeRPS = new Global.Common.RemoteProcedureSocket({
-    timeout: 250,
   });
   (new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input)).catch((e) => {
     console.error("inward pipe inside parent window");
