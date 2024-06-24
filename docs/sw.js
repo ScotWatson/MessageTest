@@ -80,7 +80,6 @@ self.addEventListener("message", (evt) => {
               thisClientInfo = newClientInfo();
               clientInfo.set(evt.source.id, thisClientInfo);
             }
-            const socket = Global.Common.MessageNode.forMessagePort(evt.data);
             if (thisClientInfo.messageNode) {
               // Disconnects rps from message node
               thisClientInfo.inputPipe.return();
@@ -90,8 +89,8 @@ self.addEventListener("message", (evt) => {
             thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(evt.data);
             thisClientInfo.rps = new Global.Common.RemoteProcedureSocket({
             });
-            thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(clientNode.output, rps.input);
-            thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(rps.output, clientNode.input);
+            thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(thisClientInfo.messageNode.output, rps.input);
+            thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(rps.output, thisClientInfo.messageNode.input);
             thisClientInfo.rps.register({
               functionName: "skipWaiting",
               handlerFunc: async () => {
