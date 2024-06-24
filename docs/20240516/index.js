@@ -293,13 +293,9 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
-      (async () => {
-        for await (const message of socket.output) {
-          console.log(message);
-        }
-      })();
-      socket.start();
+      const messageNode = Global.Common.MessageNode.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(messageNode.output, new Global.Common.Streams.SinkNode(console.log));
+      obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
       console.log("register 1 error");
@@ -315,8 +311,8 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
-      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      const messageNode = Global.Common.MessageNode.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(messageNode.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
@@ -333,8 +329,8 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
-      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      const messageNode = Global.Common.MessageNode.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(messageNode.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
@@ -351,8 +347,8 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
-      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      const messageNode = Global.Common.MessageNode.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(messageNode.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
@@ -369,8 +365,8 @@ if (windowURL.hash === "#sub") {
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
-      const socket = Global.Common.MessageNode.forMessagePort(obj.port);
-      new Global.Common.Streams.Pipe(socket.output, new Global.Common.Streams.SinkNode(console.log));
+      const messageNode = Global.Common.MessageNode.forMessagePort(obj.port);
+      new Global.Common.Streams.Pipe(messageNode.output, new Global.Common.Streams.SinkNode(console.log));
       obj.port.start();
       newRegistration(obj.registration);
     }, (e) => {
