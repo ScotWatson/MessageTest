@@ -83,11 +83,11 @@ if (windowURL.hash === "#sub") {
   thisIframe.addEventListener("load", async () => {
     try {
       console.log("try to ping iframe");
-      await iframeRPS.call({
+      const reply = await iframeRPS.call({
         functionName: "ping",
         args: {},
       });
-      console.log("iframe ping success");
+      console.log(reply);
     } catch (e) {
       console.error(e);
       console.log("iframe ping failed");
@@ -105,11 +105,11 @@ if (windowURL.hash === "#sub") {
   async function workerRPC() {
     try {
       console.log("try to ping worker");
-      await workerRPS.call({
+      const reply = await workerRPS.call({
         functionName: "ping",
         args: {},
       });
-      console.log("worker ping success");
+      console.log(reply);
     } catch (e) {
       console.error(e);
       console.log("worker ping failed");
