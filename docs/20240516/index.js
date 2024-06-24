@@ -115,7 +115,6 @@ if (windowURL.hash === "#sub") {
       console.log("worker ping failed");
     }
   }
-/*
   let serviceWorkerRegistration = null;
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
@@ -541,6 +540,7 @@ if (windowURL.hash === "#sub") {
     };
     return obj;
   }
+/*
   let controllerRPS = null;
   (async () => {
     for await (const controller of Global.controllerchange) {
