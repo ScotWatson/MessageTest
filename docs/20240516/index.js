@@ -80,50 +80,42 @@ if (windowURL.hash === "#sub") {
     console.error(e);
   });
 //    thisIframe.contentWindow.addEventListener("load", function () {
-  thisIframe.addEventListener("load", function () {
-    RPC();
-    async function RPC() {
-      console.log("RPC");
-      pinging();
-      function pinging() {
-        console.log("try to ping iframe");
-        const ret = iframeRPS.call({
-          functionName: "ping",
-          args: {},
-        });
-        return ret.then(console.log, function () {
-          console.log("iframe ping failed, retry");
-          return pinging();
-        });
-      }
+  thisIframe.addEventListener("load", async () => {
+    try {
+      console.log("try to ping iframe");
+      await iframeRPS.call({
+        functionName: "ping",
+        args: {},
+      });
+      console.log("iframe ping success");
+    } catch (e) {
+      console.error(e);
+      console.log("iframe ping failed");
     }
   });
   myMessageQueue.addEventListener("message", Global.messageHandler);
   myMessageQueue.start();
-/*
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
-    timeout: 1000,
   });
   new Global.Common.Streams.Pipe(workerSocket.output, workerRPS.input);
   new Global.Common.Streams.Pipe(workerRPS.output, workerSocket.input);
   workerRPC();
   async function workerRPC() {
-    console.log("worker RPC");
-    pinging();
-    function pinging() {
+    try {
       console.log("try to ping worker");
-      const ret = workerRPS.call({
+      await workerRPS.call({
         functionName: "ping",
         args: {},
       });
-      return ret.then(console.log, function () {
-        console.log("worker ping failed, retry");
-        return pinging();
-      });
+      console.log("worker ping success");
+    } catch (e) {
+      console.error(e);
+      console.log("worker ping failed");
     }
   }
+/*
   let serviceWorkerRegistration = null;
   const serviceWorkerObjects = [];
   const serviceWorkerDiv = document.createElement("div");
