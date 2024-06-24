@@ -12,6 +12,7 @@ importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js
 const Global = self.importScript("https://scotwatson.github.io/WebInterface/service-worker-global.js");
 
 // On Firefox, self.serviceWorker does not exist for serviceWorkerGlobalScope, despite Section 4.1.3 of W3C Service Workers
+/*
 if (!self.serviceWorker) {
   self.serviceWorker = {
     scriptURL: self.location.toString(),
@@ -27,6 +28,7 @@ if (!self.serviceWorker) {
     self.serviceWorker.state = "activating";
   });
 }
+*/
 
 const clientInfo = new Map();
 
