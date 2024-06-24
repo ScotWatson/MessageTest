@@ -29,7 +29,7 @@ loading.then(([ Global ]) => {
   const parentRPS = new Global.Common.RemoteProcedureSocket({
   });
   const consoleLog = new Global.Common.Streams.SinkNode(console.log);
-  new Global.Common.Streams.Pipe(parentSocket.output, consoleLog /* parentRPS.input */ );
+  new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input);
   new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input);
   parentRPS.register({
     functionName: "ping",
