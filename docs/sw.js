@@ -168,23 +168,28 @@ function handleObject(obj) {
   }
 }
 
-new Global.Common.Streams.Pipe(Global.newClientMessage, new Global.Common.Streams.SinkNode((info) => {
-  const newNode = Global.createClientNode({
-    client: info.source,
-  });
-  const newRPS = Global.Common.RemoteProcedureSocket({
-  });
-  new Global.Common.Streams.Pipe(newNode.output, newRPS.input);
-  new Global.Common.Streams.Pipe(newRPS.output, newNode.input);
-  newRPS.register({
-    functionName: "ping",
-    handlerFunc: function () {
-      return "Hello from Service Worker!";
-    },
-  });
-  console.log("controller ready for ping");
-  Global.enqueueMessage(info);
-}));
+new Global.Common.Streams.Pipe({
+  source: Global.newClientMessage,
+  sink: new Global.Common.Streams.SinkNode((info) => {
+    console.log(info);
+    const newNode = Global.createClientNode({
+      client: info.source,
+    });
+    const newRPS = Global.Common.RemoteProcedureSocket({
+    });
+    new Global.Common.Streams.Pipe(newNode.output, newRPS.input);
+    new Global.Common.Streams.Pipe(newRPS.output, newNode.input);
+    newRPS.register({
+      functionName: "ping",
+      handlerFunc: function () {
+        return "Hello from Service Worker!";
+      },
+    });
+    console.log("controller ready for ping");
+    Global.enqueueMessage(info);
+  }),
+  noCopy: true,
+});
 
 // Exceptions thrown from install cause state to become "redundant"
 self.addEventListener("install", (e) => {
