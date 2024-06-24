@@ -87,7 +87,7 @@ self.addEventListener("message", (evt) => {
               // Send undefined to indicate the socket is no longer used
               thisClientInfo.outputPipe.return();
             }
-            thisClientInfo.messageNode = MessageNode.forMessagePort(evt.data.port);
+            thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(evt.data.port);
             thisClientInfo.rps = new Global.Common.RemoteProcedureSocket({
             });
             thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(clientNode.output, rps.input);
