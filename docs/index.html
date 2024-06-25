@@ -18,6 +18,8 @@ const Init = document.getElementById("Init").exports;
 const MessageQueue = document.getElementById("MessageQueue").exports;
 // Create MessageQueue for self to capture messages until ready
 const myMessageQueue = new MessageQueue.default(self);
+const swMessageQueue = new MessageQueue.default(self.navigator.serviceWorker);
+self.navigator.serviceWorker.startMessages();
 const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
 const serviceWorkerScope = new URL("./", Init.selfUrl);
 //IIFE to prevent polluting the global namespace
