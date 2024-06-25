@@ -67,7 +67,7 @@ self.addEventListener("message", (evt) => {
   switch (typeof evt.data) {
     case "object": {
       if (evt.data === null) {
-        // No response
+        // Heartbeat, no response
       } else {
         switch (evt.data.constructor.name) {
           case "Object": {
@@ -91,18 +91,6 @@ self.addEventListener("message", (evt) => {
             });
             thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(thisClientInfo.messageNode.output, thisClientInfo.rps.input);
             thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(thisClientInfo.rps.output, thisClientInfo.messageNode.input);
-            thisClientInfo.rps.register({
-              functionName: "skipWaiting",
-              handlerFunc: async () => {
-                await self.skipWaiting();
-              },
-            });
-            thisClientInfo.rps.register({
-              functionName: "claimClients",
-              handlerFunc: async () => {
-                await self.clients.claim();
-              },
-            });
             thisClientInfo.rps.register({
               functionName: "unregister",
               handlerFunc: async () => {
@@ -140,11 +128,24 @@ self.addEventListener("message", (evt) => {
     }
       break;
     case "string": {
-      if (evt.data === "ping") {
-        console.log("ping");
-      }
-      if (evt.data === "heartbeat") {
-        console.log("internal keep-alive");
+      switch (evt.data) {
+        case "ping": {
+          console.log("ping");
+        }
+          break;
+        case "skipWaiting": {
+          self.skipWaiting();
+        }
+          break;
+        case "claimClients": {
+          self.clients.claim();
+        }
+          break;
+        default: {
+          // Unrecognized command
+          console.eror("Unrecognized command");
+        }
+          break;
       }
     }
       break;
