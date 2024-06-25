@@ -15,15 +15,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
     <script>
 const Init = document.getElementById("Init").exports;
-const MessageQueue = document.getElementById("MessageQueue").exports;
+const MessageQueue = document.getElementById("MessageQueue").exports.default;
 // Create MessageQueue for self to capture messages until ready
-const myMessageQueue = new MessageQueue.default(self);
-const swMessageQueue = new MessageQueue.default(self.navigator.serviceWorker);
+const myMessageQueue = new MessageQueue(self);
+const swMessageQueue = new MessageQueue(self.navigator.serviceWorker);
 self.navigator.serviceWorker.startMessages();
 const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
 const serviceWorkerScope = new URL("./", Init.selfUrl);
 //IIFE to prevent polluting the global namespace
-(function () {
+(() => {
   Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
   Init.addIcon(new URL("./favicon.ico", Init.selfUrl));
   // Load version.mjs to load the correct version of the application
@@ -34,7 +34,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
     const pathSegments = selfURL.pathname.split("/");
     const versionBaseUrl = Version.getVersionBaseUrl({
       latestVersion: "20240516",
-      siteURI: function () {
+      siteURI: () => {
         return selfURL.origin + pathSegments[0] + "/index";
       },
     });
