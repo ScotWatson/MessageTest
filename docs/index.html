@@ -10,35 +10,44 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <!-- init.js must be loaded classically to ensure capture of page load events -->
-    <script id="Init" src="https://scotwatson.github.io/WebInterface/init.js"></script>
-    <!-- messageQueue.js must be loaded classically to ensure the queue is created before the page load event -->
-    <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
+    <script id="Init" src="https://scotwatson.github.io/WebInterface/window-init.js"></script>
     <script>
 const Init = document.getElementById("Init").exports;
-const MessageQueue = document.getElementById("MessageQueue").exports.default;
-// Create MessageQueue for self to capture messages until ready
-const myMessageQueue = new MessageQueue(self);
-const swMessageQueue = new MessageQueue(self.navigator.serviceWorker);
-self.navigator.serviceWorker.startMessages();
-const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
-const serviceWorkerScope = new URL("./", Init.selfUrl);
 //IIFE to prevent polluting the global namespace
 (() => {
-  Init.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
-  Init.addIcon(new URL("./favicon.ico", Init.selfUrl));
-  // Load version.mjs to load the correct version of the application
-  import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
-  // Function Definitions
-  function loadVersion(Version) {
-    const selfURL = Init.selfUrl;
-    const pathSegments = selfURL.pathname.split("/");
-    const versionBaseUrl = Version.getVersionBaseUrl({
-      latestVersion: "20240516",
-      siteURI: () => {
-        return selfURL.origin + pathSegments[0] + "/index";
-      },
+  const pathSegments = Init.selfUrl.pathname.split("/");
+  if (pathSegments.length !== 0) {
+    pathSegments[pathSegments.length - 1] = "";
+  }
+  const siteURI = selfURL.origin + pathSegments.join("/");
+  (async () => {
+    const SiteStorage = (await import("https://scotwatson.github.io/WebInterface/SiteStorage.mjs")).default;
+    const siteSessionStorage = new SiteStorage({
+      uri: siteURI,
+      storage: window.sessionStorage,
     });
-    Init.addStyleSheet(new URL("./style.css", versionBaseUrl));
+    const storedVersion = window.siteSessionStorage.get("version");
+    try {
+      const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
+      const serviceWorkerScope = new URL("./", Init.selfUrl);
+      const registration = await self.navigator.serviceWorker.getRegistration();
+      self.navigator.serviceWorker.addEventListener("message", initControllerMessage);
+      if (registration) {
+        self.navigator.serviceWorker.postMessage("getVersion");
+      } else {
+        const registration = await self.navigator.serviceWorker.register(serviceWorkerUrl, { scope: serviceWorkerScope });
+      }
+      await self.navigator.serviceWorker.ready
+      self.navigator.serviceWorker.removeEventListener("message", initControllerMessage);
+      function initControllerMessage(evt) {
+        
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+    
+    Global.addStyleSheet(new URL("./style.css", versionBaseUrl));
     Init.addScript({
       url: new URL("./index.js", versionBaseUrl),
       defer: true,
@@ -46,6 +55,17 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
     }).loading.catch((error) => {
       document.getElementById("appError").style.display = "block";
       console.error(error);
+    });
+  });
+  import("https://scotwatson.github.io/WebInterface/window-global.mjs").then(loadVersion);
+  import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
+  // Function Definitions
+  function loadVersion(Version) {
+    Global.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
+    Global.addIcon(new URL("./favicon.ico", Init.selfUrl));
+    const versionBaseUrl = Version.getVersionBaseUrl({
+      latestVersion: "20240516",
+      siteURI,
     });
   }
 })();
