@@ -6,6 +6,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 // Exceptions thrown during parsing cause register promise to reject
 console.log("sw.js: Start Parsing");
 
+const version = "20240516";
+
 const searchParams = (new URL(self.location.toString())).searchParams;
 
 importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js");
@@ -58,133 +60,135 @@ function analyzeObject(obj) {
 function newClientInfo() {
   return {
     messageNode: null,
-    rps: null,
-    inputPipe: null,
-    outputPipe: null,
+    messageRpcNode: null,
+    messageInputPipe: null,
+    messageOutputPipe: null,
   };
 }
-self.addEventListener("message", (evt) => {
-  switch (typeof evt.data) {
-    case "object": {
-      if (evt.data === null) {
-        // Heartbeat, no response
-      } else {
-        switch (evt.data.constructor.name) {
-          case "Object": {
-            handleObject(obj);
+
+function nonCallHandler(clientId) {
+  return (data) => {
+    switch (typeof data) {
+      case "object": {
+        if (data === null) {
+          // Heartbeat, no response
+        } else {
+          switch (evt.data.constructor.name) {
+            case "Object": {
+              handleObject(obj);
+            }
+              break;
+            case "MessagePort": {
+              let thisClientInfo = clientInfo.get(clientId);
+              if (thisClientInfo.messageNode) {
+                // Disconnects rps from message node
+                thisClientInfo.messageInputPipe.return();
+                // Send undefined to indicate the socket is no longer used
+                thisClientInfo.messageOutputPipe.return();
+              }
+              thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(data);
+              thisClientInfo.messageRpsNode = new Global.Common.RemoteProcedureSocket({
+              });
+              thisClientInfo.messageInputPipe = new Global.Common.Streams.Pipe(thisClientInfo.messageNode.output, thisClientInfo.messageRpsNode.input);
+              thisClientInfo.messageOutputPipe = new Global.Common.Streams.Pipe(thisClientInfo.messageRpsNode.output, thisClientInfo.messageNode.input);
+              thisClientInfo.messageRpsNode.register({
+                verb: "unregister",
+                handlerFunc: async () => {
+                  const success = await self.registration.unregister();
+                  return success;
+                }
+              });
+              thisClientInfo.messageRpsNode.register({
+                verb: "update",
+                handlerFunc: async () => {
+                  const newRegistration = await self.registration.update();
+                }
+              });
+              thisClientInfo.messageRpsNode.register({
+                verb: "ping",
+                handlerFunc: async () => {
+                  return "Hello through port!";
+                }
+              });
+              console.log("All Registered");
+              setInterval(() => {
+                thisClientInfo.messageRpsNode.call({
+                  verb: "ping",
+                  args: "Ping through Port!",
+                });
+              }, 2000);
+              evt.data.start();
+            }
+              break;
+            default: {
+              // No response
+            }
+          }
+        }
+      }
+        break;
+      case "string": {
+        switch (evt.data) {
+          case "ping": {
+            console.log("ping");
           }
             break;
-          case "MessagePort": {
-            let thisClientInfo = clientInfo.get(evt.source.id);
-            if (!thisClientInfo) {
-              thisClientInfo = newClientInfo();
-              clientInfo.set(evt.source.id, thisClientInfo);
-            }
-            if (thisClientInfo.messageNode) {
-              // Disconnects rps from message node
-              thisClientInfo.inputPipe.return();
-              // Send undefined to indicate the socket is no longer used
-              thisClientInfo.outputPipe.return();
-            }
-            thisClientInfo.messageNode = Global.Common.MessageNode.forMessagePort(evt.data);
-            thisClientInfo.rps = new Global.Common.RemoteProcedureSocket({
-            });
-            thisClientInfo.inputPipe = new Global.Common.Streams.Pipe(thisClientInfo.messageNode.output, thisClientInfo.rps.input);
-            thisClientInfo.outputPipe = new Global.Common.Streams.Pipe(thisClientInfo.rps.output, thisClientInfo.messageNode.input);
-            thisClientInfo.rps.register({
-              functionName: "unregister",
-              handlerFunc: async () => {
-                const success = await self.registration.unregister();
-                return success;
-              }
-            });
-            thisClientInfo.rps.register({
-              functionName: "update",
-              handlerFunc: async () => {
-                const newRegistration = await self.registration.update();
-              }
-            });
-            thisClientInfo.rps.register({
-              functionName: "ping",
-              handlerFunc: async () => {
-                return "Hello through port!";
-              }
-            });
-            console.log("All Registered");
-            setInterval(() => {
-              thisClientInfo.rps.call({
-                functionName: "ping",
-                args: "Ping through Port!",
-              });
-            }, 2000);
-            evt.data.start();
+          case "skipWaiting": {
+            self.skipWaiting();
+          }
+            break;
+          case "claimClients": {
+            self.clients.claim();
           }
             break;
           default: {
-            // No response
+            // Unrecognized command
+            console.eror("Unrecognized command");
           }
+            break;
         }
       }
-    }
-      break;
-    case "string": {
-      switch (evt.data) {
-        case "ping": {
-          console.log("ping");
-        }
-          break;
-        case "skipWaiting": {
-          self.skipWaiting();
-        }
-          break;
-        case "claimClients": {
-          self.clients.claim();
-        }
-          break;
-        default: {
-          // Unrecognized command
-          console.eror("Unrecognized command");
-        }
-          break;
+        break;
+      default: {
+        // No response
       }
     }
-      break;
-    default: {
-      // No response
+  };
+  function handleObject(obj) {
+    if (!obj.action) {
+      return;
     }
-  }
-});
-function handleObject(obj) {
-  if (obj.packetId) {
-    return;
-  }
-  if (!obj.action) {
-    return;
-  }
-  switch (obj.action) {
-    default:
-      console.error("Unrecognized command", evt);
+    switch (obj.action) {
+      default:
+        console.error("Unrecognized command", evt);
+    }
   }
 }
 
 new Global.Common.Streams.Pipe({
   source: Global.newClientMessage,
   sink: new Global.Common.Streams.SinkNode((info) => {
-    console.log(info);
-    const newNode = Global.createClientNode({
+    thisClientInfo.clientNode = new Global.ClientNode({
       client: info.source,
     });
-    const newRPS = new Global.Common.RemoteProcedureSocket({
+    thisClientInfo.clientRpcNode = new Global.Common.RPCNode({
     });
-    new Global.Common.Streams.Pipe(newNode.output, newRPS.input);
-    new Global.Common.Streams.Pipe(newRPS.output, newNode.input);
-    newRPS.register({
-      functionName: "ping",
-      handlerFunc: function () {
+    thisClientInfo.clientInputPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientNode.output, thisClientInfo.clientRpcNode.input);
+    thisClientInfo.clientOutputPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientRpcNode.output, thisClientInfo.clientNode.input);
+    thisClientInfo.clientRpcNode.register({
+      verb: "ping",
+      handlerFunc: () => {
         return "Hello from Service Worker!";
       },
     });
-    console.log("controller ready for ping");
+    thisClientInfo.clientRpcNode.register({
+      verb: "getVersion",
+      handlerFunc: () => {
+        return version;
+      },
+    });
+    thisClientInfo.clientNonCallPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientRpcNode.nonCall, new Global.Common.Streams.SinkNode(nonCallHandler(info.source.id));
+    clientInfo.set(info.source.id, thisClientInfo);
     Global.enqueueMessage(info);
   }),
   noCopy: true,
