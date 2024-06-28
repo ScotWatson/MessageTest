@@ -31,7 +31,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
   if (pathSegments.length !== 0) {
     pathSegments[pathSegments.length - 1] = "";
   }
-  const scopeURI = selfURL.origin + pathSegments.join("/");
+  const scopeURI = Init.selfURL.origin + pathSegments.join("/");
   (async () => {
     function getRequestedVersion() {
       const version = Init.selfUrl.searchParams.get("version");
