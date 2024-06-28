@@ -9,9 +9,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <title>Message Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <!-- init.js must be loaded classically to ensure capture of page load events -->
+    <style>
+@keyframes loading {
+  from: { opacity: 0 }
+  to: { opacity: 1 }
+}
+    </style>
+    <!-- window-init.js must be loaded classically to ensure capture of page load events -->
     <script id="Init" src="https://scotwatson.github.io/WebInterface/window-init.js"></script>
     <script>
+const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
+const serviceWorkerScope = new URL("./", Init.selfUrl);
 const Init = document.getElementById("Init").exports;
 //IIFE to prevent polluting the global namespace
 (() => {
@@ -19,59 +27,100 @@ const Init = document.getElementById("Init").exports;
   if (pathSegments.length !== 0) {
     pathSegments[pathSegments.length - 1] = "";
   }
-  const siteURI = selfURL.origin + pathSegments.join("/");
+  const scopeURI = selfURL.origin + pathSegments.join("/");
   (async () => {
-    const SiteStorage = (await import("https://scotwatson.github.io/WebInterface/SiteStorage.mjs")).default;
-    const siteSessionStorage = new SiteStorage({
-      uri: siteURI,
-      storage: window.sessionStorage,
-    });
-    const storedVersion = window.siteSessionStorage.get("version");
+    function getRequestedVersion() {
+      const version = Init.selfUrl.searchParams.get("version");
+      Init.selfUrl.searchParams.delete("version")
+      window.history.replaceState(Init.selfUrl);
+      return version;
+    }
+    async function getStoredVersion() {
+      const SiteStorage = (await import("https://scotwatson.github.io/WebInterface/SiteStorage.mjs")).default;
+      const scopedSessionStorage = new SiteStorage({
+        uri: scopeURI,
+        storage: window.sessionStorage,
+      });
+      return window.scopedSessionStorage.get("version");
+    }
+    async function getLatestVersion() {
+      const [ ServiceWorkers, Streams, RPCNode ] = await Promise.all([
+        import("https://scotwatson.github.io/WebInterface/service-workers.mjs").then(installServiceWorker),
+        import("https://scotwatson.github.io/WebInterface/streams.mjs"),
+        import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
+      ]);
+      async function installServiceWorker(ServiceWorkers) {
+        const newestWorker = await (async () => {
+          const installing = ServiceWorkers.getInstalling();
+          if (installing) { return installing; }
+          const waiting = ServiceWorkers.getWaiting();
+          if (waiting) { return waiting; }
+          const active = ServiceWorkers.getActive();
+          if (active) { return active; }
+          return await ServiceWorkers.installNew({
+            url: serviceWorkerUrl,
+            scope: serviceWorkerScope,
+          });
+        });
+        await (async () => {
+          if (newestWorker.state === "activated") {
+            return;
+          }
+          const noFail = (async () => {
+            function throwOnRedundant(evt) {
+              switch (newestWorker.state) {
+                case "redundant":
+                  newestWorker.removeEventListener("statechange", throwOnRedundant);
+                  throw Error("Newest Service Worker failed to load.");
+                  break;
+                case "activated":
+                  newestWorker.removeEventListener("statechange", throwOnRedundant);
+                  break;
+              }
+            }
+            newestWorker.addEventListener("statechange", throwOnRedundant);
+          })();
+          await Promise.race([ noFail, self.navigator.serviceWorker.ready ]);
+        })();
+        return ServiceWorkers;
+      }
+      const controllerRPCNode = new RPCNode({});
+      new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input);
+      new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink);
+      return await controllerRPCNode.call({
+        verb: "getVersion",
+        args: {}
+      });
+    }
     try {
-      const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
-      const serviceWorkerScope = new URL("./", Init.selfUrl);
-      const registration = await self.navigator.serviceWorker.getRegistration();
-      self.navigator.serviceWorker.addEventListener("message", initControllerMessage);
-      if (registration) {
-        self.navigator.serviceWorker.postMessage("getVersion");
-      } else {
-        const registration = await self.navigator.serviceWorker.register(serviceWorkerUrl, { scope: serviceWorkerScope });
-      }
-      await self.navigator.serviceWorker.ready
-      self.navigator.serviceWorker.removeEventListener("message", initControllerMessage);
-      function initControllerMessage(evt) {
-        
-      }
+      const [ requestedVersion, storedVersion, latestVersion ] = await Promise.all([ getRequestedVersion, getStoredVersion, getLatestVersion ]);
+      const version = (() => {
+        if (requestedVersion) { return requestedVersion; }
+        if (storedVersion) { return storedVersion; }
+        return latestVersion;
+      })();
+      const versionBaseUrl = new URL("./" + version, Init.selfUrl);
+      await Promise.all([
+        Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)).loading,
+        Resources.addScript({
+          url: new URL("./index.js", versionBaseUrl),
+          defer: true,
+          asModule: true,
+        }).loading,
+        Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)).loading,
+        Resources.addIcon(new URL("./favicon.ico", Init.selfUrl)).loading,
+      ]);
     } catch (e) {
       console.error(e);
+      document.getElementById("appLoading").style.display = "none";
+      document.getElementById("appError").style.display = "block";
     }
   })();
-    
-    Global.addStyleSheet(new URL("./style.css", versionBaseUrl));
-    Init.addScript({
-      url: new URL("./index.js", versionBaseUrl),
-      defer: true,
-      asModule: true,
-    }).loading.catch((error) => {
-      document.getElementById("appError").style.display = "block";
-      console.error(error);
-    });
-  });
-  import("https://scotwatson.github.io/WebInterface/window-global.mjs").then(loadVersion);
-  import("https://scotwatson.github.io/WebInterface/version.mjs").then(loadVersion);
-  // Function Definitions
-  function loadVersion(Version) {
-    Global.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl));
-    Global.addIcon(new URL("./favicon.ico", Init.selfUrl));
-    const versionBaseUrl = Version.getVersionBaseUrl({
-      latestVersion: "20240516",
-      siteURI,
-    });
-  }
 })();
     </script>
   </head>
   <body>
+    <p id="appLoading" style="font-size:24pt;animation loading 1s">Loading app ...</p>
     <p id="appError" style="display:none">This app encountered an error and cannot run.</p>
   </body>
 </html>
