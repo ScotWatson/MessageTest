@@ -20,6 +20,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <!-- MessageQueue.js must be loaded classically to ensure capture of page load events -->
     <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
     <script>
+const appLoading = document.createElement("p");
+appLoading.style.fontSize = "24pt";
+appLoading.style.animation = "loading 1s";
+document.body.append(appLoading);
+const appError = document.createElement("p");
+appError.style.display = "none";
+document.body.append(appError);
 const Init = document.getElementById("Init").exports;
 const MessageQueue = document.getElementById("MessageQueue").exports.default;
 Init.createQueues(MessageQueue);
@@ -120,15 +127,13 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       });
     } catch (e) {
       console.error(e);
-      document.getElementById("appLoading").style.display = "none";
-      document.getElementById("appError").style.display = "block";
+      appLoading.style.display = "none";
+      appError.style.display = "block";
     }
   })();
 })();
     </script>
   </head>
   <body>
-    <p id="appLoading" style="font-size:24pt;animation loading 1s">Loading app ...</p>
-    <p id="appError" style="display:none">This app encountered an error and cannot run.</p>
   </body>
 </html>
