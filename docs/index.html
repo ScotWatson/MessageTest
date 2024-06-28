@@ -97,7 +97,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       });
     }
     try {
-      const [ requestedVersion, storedVersion, latestVersion ] = await Promise.all([ getRequestedVersion, getStoredVersion, getLatestVersion ]);
+      const [ requestedVersion, storedVersion, latestVersion ] = await Promise.all([ getRequestedVersion(), getStoredVersion(), getLatestVersion() ]);
       const version = (() => {
         if (requestedVersion) { return requestedVersion; }
         if (storedVersion) { return storedVersion; }
