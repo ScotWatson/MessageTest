@@ -103,7 +103,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         if (storedVersion) { return storedVersion; }
         return latestVersion;
       })();
-      const versionBaseUrl = new URL("./" + version, Init.selfUrl);
+      const versionBaseUrl = new URL("./" + version + "/", Init.selfUrl);
       await import("https://scotwatson.github.io/WebInterface/resources.mjs").then(async (Resources) => {
         Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)),
         Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)),
