@@ -17,10 +17,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </style>
     <!-- window-init.js must be loaded classically to ensure capture of page load events -->
     <script id="Init" src="https://scotwatson.github.io/WebInterface/window-init.js"></script>
+    <!-- MessageQueue.js must be loaded classically to ensure capture of page load events -->
+    <script id="MessageQueue" src=""https://scotwatson.github.io/WebInterface/MessageQueue.js""></script>
     <script>
+const Init = document.getElementById("Init").exports;
+const MessageQueue = document.getElementById("MessageQueue").exports.default;
+Init.createQueues(MessageQueue);
 const serviceWorkerUrl = new URL("./sw.js", Init.selfUrl);
 const serviceWorkerScope = new URL("./", Init.selfUrl);
-const Init = document.getElementById("Init").exports;
 //IIFE to prevent polluting the global namespace
 (() => {
   const pathSegments = Init.selfUrl.pathname.split("/");
