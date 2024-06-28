@@ -44,11 +44,6 @@ const Init = document.getElementById("Init").exports;
       return window.scopedSessionStorage.get("version");
     }
     async function getLatestVersion() {
-      const [ ServiceWorkers, Streams, RPCNode ] = await Promise.all([
-        import("https://scotwatson.github.io/WebInterface/service-workers.mjs").then(installServiceWorker),
-        import("https://scotwatson.github.io/WebInterface/streams.mjs"),
-        import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
-      ]);
       async function installServiceWorker(ServiceWorkers) {
         const newestWorker = await (async () => {
           const installing = ServiceWorkers.getInstalling();
@@ -84,6 +79,11 @@ const Init = document.getElementById("Init").exports;
         })();
         return ServiceWorkers;
       }
+      const [ ServiceWorkers, Streams, RPCNode ] = await Promise.all([
+        import("https://scotwatson.github.io/WebInterface/service-workers.mjs").then(installServiceWorker),
+        import("https://scotwatson.github.io/WebInterface/streams.mjs"),
+        import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
+      ]);
       const controllerRPCNode = new RPCNode({});
       new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input);
       new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink);
@@ -100,16 +100,18 @@ const Init = document.getElementById("Init").exports;
         return latestVersion;
       })();
       const versionBaseUrl = new URL("./" + version, Init.selfUrl);
-      await Promise.all([
-        Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)).loading,
-        Resources.addScript({
-          url: new URL("./index.js", versionBaseUrl),
-          defer: true,
-          asModule: true,
-        }).loading,
-        Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)).loading,
-        Resources.addIcon(new URL("./favicon.ico", Init.selfUrl)).loading,
-      ]);
+      await import("https://scotwatson.github.io/WebInterface/resources.mjs").then(async (Resources) => {
+        Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)),
+        Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)),
+        Resources.addIcon(new URL("./favicon.ico", Init.selfUrl)),
+        await Promise.all([
+          Resources.addScript({
+            url: new URL("./index.js", versionBaseUrl),
+            defer: true,
+            asModule: true,
+          }).loading,
+        ]);
+      });
     } catch (e) {
       console.error(e);
       document.getElementById("appLoading").style.display = "none";
