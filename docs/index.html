@@ -19,6 +19,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <script id="Init" src="https://scotwatson.github.io/WebInterface/window-init.js"></script>
     <!-- MessageQueue.js must be loaded classically to ensure capture of page load events -->
     <script id="MessageQueue" src="https://scotwatson.github.io/WebInterface/MessageQueue.js"></script>
+  </head>
+  <body>
     <script>
 const appLoading = document.createElement("p");
 appLoading.style.fontSize = "24pt";
@@ -133,7 +135,5 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
   })();
 })();
     </script>
-  </head>
-  <body>
   </body>
 </html>
