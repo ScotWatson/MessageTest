@@ -61,20 +61,22 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
     async function getLatestVersion() {
       async function installServiceWorker(ServiceWorkers) {
         const newestWorker = await (async () => {
-          const installing = ServiceWorkers.getInstalling();
+          const installing = await ServiceWorkers.getInstalling();
           if (installing) {
             console.log("installing");
             console.log(installing);
             return installing;
           }
-          const waiting = ServiceWorkers.getWaiting();
+          const waiting = await ServiceWorkers.getWaiting();
           if (waiting) {
             console.log("waiting");
+            console.log(waiting);
             return waiting;
           }
-          const active = ServiceWorkers.getActive();
+          const active = await ServiceWorkers.getActive();
           if (active) {
             console.log("active");
+            console.log(active);
             return active;
           }
           console.log("installNew");
