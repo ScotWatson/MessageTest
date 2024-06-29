@@ -62,11 +62,21 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       async function installServiceWorker(ServiceWorkers) {
         const newestWorker = await (async () => {
           const installing = ServiceWorkers.getInstalling();
-          if (installing) { return installing; }
+          if (installing) {
+            console.log("installing");
+            return installing;
+          }
           const waiting = ServiceWorkers.getWaiting();
-          if (waiting) { return waiting; }
+          if (waiting) {
+            console.log("waiting");
+            return waiting;
+          }
           const active = ServiceWorkers.getActive();
-          if (active) { return active; }
+          if (active) {
+            console.log("active");
+            return active;
+          }
+          console.log("installNew");
           return await ServiceWorkers.installNew({
             url: serviceWorkerUrl,
             scope: serviceWorkerScope,
