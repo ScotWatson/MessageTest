@@ -168,6 +168,11 @@ function nonCallHandler(clientId) {
 new Global.Common.Streams.Pipe({
   source: Global.newClientMessage,
   sink: new Global.Common.Streams.SinkNode((info) => {
+    let thisClientInfo = clientInfo.get(info.source.id);
+    if (!thisClientInfo) {
+      thisClientInfo = newClientInfo();
+      clientInfo.set(info.source.id, thisClientInfo);
+    }
     thisClientInfo.clientNode = new Global.ClientNode({
       client: info.source,
     });
