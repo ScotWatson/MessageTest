@@ -76,20 +76,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           if (newestWorker.state === "activated") {
             return;
           }
-          const noFail = (async () => {
-            function throwOnRedundant(evt) {
-              switch (newestWorker.state) {
-                case "redundant":
-                  newestWorker.removeEventListener("statechange", throwOnRedundant);
-                  throw Error("Newest Service Worker failed to load.");
-                  break;
-                case "activated":
-                  newestWorker.removeEventListener("statechange", throwOnRedundant);
-                  break;
-              }
-            }
-            newestWorker.addEventListener("statechange", throwOnRedundant);
-          })();
+          const noFail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
           await Promise.race([ noFail, self.navigator.serviceWorker.ready ]);
         })();
         return ServiceWorkers;
