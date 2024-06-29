@@ -76,6 +76,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           if (newestWorker.state === "activated") {
             return;
           }
+          console.log(newestWorker);
           const noFail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
           await Promise.race([ noFail, self.navigator.serviceWorker.ready ]);
         })();
