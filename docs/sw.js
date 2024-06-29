@@ -128,7 +128,7 @@ function nonCallHandler(clientId) {
       }
         break;
       case "string": {
-        switch (evt.data) {
+        switch (data) {
           case "ping": {
             console.log("ping");
           }
@@ -143,7 +143,7 @@ function nonCallHandler(clientId) {
             break;
           default: {
             // Unrecognized command
-            console.eror("Unrecognized command");
+            console.error("Unrecognized command");
           }
             break;
         }
@@ -160,7 +160,7 @@ function nonCallHandler(clientId) {
     }
     switch (obj.action) {
       default:
-        console.error("Unrecognized command", evt);
+        console.error("Unrecognized command", obj);
     }
   }
 }
