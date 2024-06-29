@@ -47,7 +47,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
       console.log(Init.selfUrl.searchParams);
       const version = Init.selfUrl.searchParams.get("version");
       Init.selfUrl.searchParams.delete("version")
-      window.history.replaceState(Init.selfUrl);
+      window.history.replaceState(null, "", Init.selfUrl);
       return version;
     }
     async function getStoredVersion() {
