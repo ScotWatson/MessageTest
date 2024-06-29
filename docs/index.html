@@ -101,6 +101,10 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
               resolve();
             }
           });
+          self.navigator.serviceWorker.ready.then(() => {
+            newestWorker.input.callback("claimClients");
+            newestWorker.input.unlock();
+          });
           await Promise.race([ success, fail ]);
         })();
         return ServiceWorkers;
