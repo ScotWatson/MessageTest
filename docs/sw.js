@@ -187,7 +187,7 @@ new Global.Common.Streams.Pipe({
         return version;
       },
     });
-    thisClientInfo.clientNonCallPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientRpcNode.nonCall, new Global.Common.Streams.SinkNode(nonCallHandler(info.source.id));
+    thisClientInfo.clientNonCallPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientRpcNode.nonCall, new Global.Common.Streams.SinkNode(nonCallHandler(info.source.id)));
     clientInfo.set(info.source.id, thisClientInfo);
     Global.enqueueMessage(info);
   }),
