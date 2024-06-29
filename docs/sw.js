@@ -178,8 +178,16 @@ new Global.Common.Streams.Pipe({
     });
     thisClientInfo.clientRpcNode = new Global.Common.RPCNode({
     });
-    thisClientInfo.clientInputPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientNode.output, thisClientInfo.clientRpcNode.input);
-    thisClientInfo.clientOutputPipe = new Global.Common.Streams.Pipe(thisClientInfo.clientRpcNode.output, thisClientInfo.clientNode.input);
+    thisClientInfo.clientInputPipe = new Global.Common.Streams.Pipe({
+      source: thisClientInfo.clientNode.output,
+      sink: thisClientInfo.clientRpcNode.input,
+      noCopy: true,
+    });
+    thisClientInfo.clientOutputPipe = new Global.Common.Streams.Pipe({
+      source: thisClientInfo.clientRpcNode.output,
+      sink: thisClientInfo.clientNode.input,
+      noCopy: true,
+    });
     thisClientInfo.clientRpcNode.register({
       verb: "ping",
       handlerFunc: () => {
