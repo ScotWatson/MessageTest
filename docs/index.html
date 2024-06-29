@@ -64,19 +64,16 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           const installing = await ServiceWorkers.getInstalling();
           if (installing) {
             console.log("installing");
-            console.log(installing);
             return installing;
           }
           const waiting = await ServiceWorkers.getWaiting();
           if (waiting) {
             console.log("waiting");
-            console.log(waiting);
             return waiting;
           }
           const active = await ServiceWorkers.getActive();
           if (active) {
             console.log("active");
-            console.log(active);
             return active;
           }
           console.log("installNew");
@@ -89,9 +86,15 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           if (newestWorker.state === "activated") {
             return;
           }
-          console.log(newestWorker);
-          const noFail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
-          await Promise.race([ noFail, self.navigator.serviceWorker.ready ]);
+          const fail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
+          const success = new Promise((resolve, reject) => {
+            self.navigator.serviceWorker.addEventListener("controllerchange", watchForController);
+            function watchForController() {
+              self.navigator.serviceWorker.removeEventListener("controllerchange", watchForController);
+              resolve();
+            }
+          });
+          await Promise.race([ success, fail ]);
         })();
         return ServiceWorkers;
       }
