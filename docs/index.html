@@ -115,8 +115,14 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
       ]);
       const controllerRPCNode = new RPCNode({});
-      new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input);
-      new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink);
+      new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
+        console.log("Error on controller input pipe in window");
+        console.error(e);
+      });
+      new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
+        console.log("Error on controller output pipe in window");
+        console.error(e);
+      });
       return await controllerRPCNode.call({
         verb: "getVersion",
         args: {}
