@@ -71,7 +71,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
             url: serviceWorkerUrl,
             scope: serviceWorkerScope,
           });
-        });
+        })();
         await (async () => {
           if (newestWorker.state === "activated") {
             return;
