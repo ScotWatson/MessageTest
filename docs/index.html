@@ -43,6 +43,8 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
   const scopeURI = Init.selfUrl.origin + pathSegments.join("/");
   (async () => {
     function getRequestedVersion() {
+      console.log(Init.selfUrl);
+      console.log(Init.selfUrl.searchParams);
       const version = Init.selfUrl.searchParams.get("version");
       Init.selfUrl.searchParams.delete("version")
       window.history.replaceState(Init.selfUrl);
