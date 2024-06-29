@@ -64,6 +64,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           const installing = ServiceWorkers.getInstalling();
           if (installing) {
             console.log("installing");
+            console.log(installing);
             return installing;
           }
           const waiting = ServiceWorkers.getWaiting();
