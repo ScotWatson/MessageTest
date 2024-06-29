@@ -11,8 +11,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <meta name="robots" content="noindex, nofollow">
     <style>
 @keyframes loading {
-  from: { opacity: 0 }
-  to: { opacity: 1 }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
     </style>
     <!-- window-init.js must be loaded classically to ensure capture of page load events -->
@@ -23,7 +27,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   <body>
     <script>
 const appLoading = document.createElement("p");
-appLoading.style.opacity = "0";
+//appLoading.style.opacity = "0";
 appLoading.style.fontSize = "24pt";
 appLoading.style.animation = "loading 1s";
 appLoading.innerHTML = "Loading App...";
