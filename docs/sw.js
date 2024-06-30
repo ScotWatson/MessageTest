@@ -68,6 +68,7 @@ function newClientInfo() {
 
 function nonCallHandler(clientId) {
   return (data) => {
+    console.log(data);
     switch (typeof data) {
       case "object": {
         if (data === null) {
@@ -183,6 +184,7 @@ new Global.Common.Streams.Pipe({
     thisClientInfo.clientRpcNode.register({
       verb: "ping",
       handlerFunc: () => {
+        console.log("Service Worker pinged");
         return "Hello from Service Worker!";
       },
     });
