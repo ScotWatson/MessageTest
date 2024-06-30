@@ -139,7 +139,11 @@ if (windowURL.hash === "#sub") {
       serviceWorkerDiv.appendChild(p);
     }
   }
-  addServiceWorker(Global.ServiceWorkers.getActive());
+  const initialController = Global.ServiceWorkers.getActive();
+  console.log(initialController);
+  console.log(initialController.scriptURL);
+  console.log(initialController.state);
+  addServiceWorker(initialController);
   refreshServiceWorkerList();
   updateController();
   self.navigator.serviceWorker.addEventListener("controllerchange", updateController);
