@@ -129,6 +129,7 @@ if (windowURL.hash === "#sub") {
   const serviceWorkerDiv = document.createElement("div");
   function refreshServiceWorkerList() {
     console.log("refreshServiceWorkerList");
+    console.log(serviceWorkers);
     for (const obj of serviceWorkers) {
       obj.dom.remove();
     }
