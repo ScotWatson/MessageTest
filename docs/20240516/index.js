@@ -139,6 +139,10 @@ if (windowURL.hash === "#sub") {
       serviceWorkerDiv.appendChild(p);
     }
   }
+  addServiceWorker(Global.ServiceWorkers.getActive());
+  refreshServiceWorkerList();
+  updateController();
+  self.navigator.serviceWorker.addEventListener("controllerchange", updateController);
   const register1Btn = document.createElement("button");
   register1Btn.innerHTML = "Register 1";
   document.body.appendChild(register1Btn);
