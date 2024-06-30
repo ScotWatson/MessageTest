@@ -119,7 +119,7 @@ if (windowURL.hash === "#sub") {
   const controllerDiv = document.createElement("p");
   document.body.appendChild(controllerDiv);
   function updateController() {
-    if (Global.Common.ServiceWorkers.hasController()) {
+    if (Global.ServiceWorkers.hasController()) {
       controllerDiv.innerHTML = "Has Controller";
     } else {
       controllerDiv.innerHTML = "No controller";
@@ -352,11 +352,11 @@ if (windowURL.hash === "#sub") {
   }
   const controllerRPCNode = new Global.Common.RPCNode({
   });
-  new Global.Common.Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
+  new Global.Common.Streams.Pipe(Global.ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
     console.log("Error on controller input pipe");
     console.error(e);
   });
-  new Global.Common.Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
+  new Global.Common.Streams.Pipe(controllerRPCNode.output, Global.ServiceWorkers.controllerSink).catch((e) => {
     console.log("Error on controller output pipe");
     console.error(e);
   });
