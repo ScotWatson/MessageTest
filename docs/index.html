@@ -27,7 +27,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   <body>
     <script>
 const appLoading = document.createElement("p");
-//appLoading.style.opacity = "0";
 appLoading.style.fontSize = "24pt";
 appLoading.style.animation = "loading 1s";
 appLoading.innerHTML = "Loading App...";
@@ -87,7 +86,15 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           if (newestWorker.state === "activated") {
             return;
           }
-          const fail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
+          let newestWorkerInstalled = false;
+          const fail = newestWorker.redundant.then(() => {
+            if (!newestWorkerInstalled) {
+              throw Error("Newest Service Worker failed to install.");
+            }
+          });
+          newestWorker.installed.then(() => {
+            newestWorkerInstalled = true;
+          });
           newestWorker.activating.then(() => {
             newestWorker.input.callback("claimClients");
             newestWorker.input.unlock();
@@ -102,17 +109,23 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
       ]);
       const controllerRPCNode = new RPCNode({});
-      new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
+      const inputPipe = new Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
         console.log("Error on controller input pipe in window");
         console.error(e);
       });
-      new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
+      const outputPipe = new Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
         console.log("Error on controller output pipe in window");
         console.error(e);
       });
+      Init.controllerMessages.start();
       return await controllerRPCNode.call({
         verb: "getVersion",
         args: {}
+      }).then((version) => {
+        inputPipe.return();
+        outputPipe.return();
+        Init.controllerMessages.stop();
+        return version;
       });
     }
     try {
