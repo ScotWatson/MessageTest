@@ -17,21 +17,21 @@ if (windowURL.hash === "#sub") {
     const window = info.window;
     const origin = info.origin;
     Global.addTrustedOrigin(info.origin);
-    const parentSocket = Global.forWindowOrigin({
+    const parentSocket = Global.MessageNodeforWindowOrigin({
       window: info.source,
       origin: info.origin,
     });
-    const parentRPS = new Global.Common.RemoteProcedureSocket({
+    const parentRPCNode = new Global.Common.RPCNode({
     });
-    (new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input)).catch((e) => {
+    (new Global.Common.Streams.Pipe(parentSocket.output, parentRPCNode.input)).catch((e) => {
       console.error("inward pipe inside iframe");
       console.error(e);
     });
-    (new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input)).catch((e) => {
+    (new Global.Common.Streams.Pipe(parentRPCNode.output, parentSocket.input)).catch((e) => {
       console.error("outward pipe inside iframe");
       console.error(e);
     });
-    parentRPS.register({
+    parentRPCNode.register({
       functionName: "ping",
       handlerFunc: function (args) {
         return "Hello from iframe!";
@@ -47,8 +47,8 @@ if (windowURL.hash === "#sub") {
     console.error("untrusted origin handling inside iframe");
     console.error(e);
   });
-  myMessageQueue.addEventListener("message", Global.messageHandler);
-  myMessageQueue.start();
+  Init.myMessageQueue.addEventListener("message", Global.messageHandler);
+  Init.myMessageQueue.start();
 } else {
   Global.addTrustedOrigin(windowURL.origin);
   const thisIframe = document.createElement("iframe");
@@ -97,15 +97,15 @@ if (windowURL.hash === "#sub") {
   Init.myMessageQueue.addEventListener("message", Global.messageHandler);
   Init.myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
-  const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
-  const workerRPS = new Global.Common.RemoteProcedureSocket({
+  const workerMessageNode = Global.Common.MessageNode.forMessagePort(thisWorker);
+  const workerRPCNode = new Global.Common.RPCNode({
   });
-  new Global.Common.Streams.Pipe(workerSocket.output, workerRPS.input);
-  new Global.Common.Streams.Pipe(workerRPS.output, workerSocket.input);
+  new Global.Common.Streams.Pipe(workerMessageNode.output, workerRPCNode.input);
+  new Global.Common.Streams.Pipe(workerRPCNode.output, workerMessageNode.input);
   (async () => {
     try {
       console.log("try to ping worker");
-      const reply = await workerRPS.call({
+      const reply = await workerRPCNode.call({
         functionName: "ping",
         args: {},
       });
@@ -158,7 +158,6 @@ if (windowURL.hash === "#sub") {
   const updateBtn = document.createElement("button");
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
-
 
   self.navigator.serviceWorker.getRegistration().then(newRegistration);
   register1Btn.disabled = false;
