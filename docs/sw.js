@@ -205,9 +205,9 @@ self.addEventListener("install", (e) => {
   state = "installing";
   const installing = (() => {
     if (searchParams.get("fail") === "install") {
-      return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 3000); });
+      return new Promise((_, reject) => { setTimeout(() => { reject("install fail"); }, 2000); });
     }
-    return new Promise((resolve) => { setTimeout(resolve, 3000); });
+    return new Promise((resolve) => { setTimeout(resolve, 2000); });
   })();
   e.waitUntil(installing.then(() => {
 //    state = "installed";
@@ -220,9 +220,9 @@ self.addEventListener("activate", (e) => {
   console.log("sw.js: Start Activating");
   const activating = (() => {
     if (searchParams.get("fail") === "activate") {
-      return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 3000); });
+      return new Promise((_, reject) => { setTimeout(() => { reject("activate fail"); }, 2000); });
     }
-    return new Promise((resolve) => { setTimeout(resolve, 3000); });
+    return new Promise((resolve) => { setTimeout(resolve, 2000); });
   })();
   e.waitUntil(activating.then(() => {
 //    state = "activated";
