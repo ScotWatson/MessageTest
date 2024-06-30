@@ -193,7 +193,7 @@ if (windowURL.hash === "#sub") {
     Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
-    }).then((obj) => {
+    }).then((serviceWorker) => {
       addServiceWorker(serviceWorker);
       refreshServiceWorkerList();
     }, (e) => {
@@ -209,7 +209,7 @@ if (windowURL.hash === "#sub") {
     Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
-    }).then((obj) => {
+    }).then((serviceWorker) => {
       addServiceWorker(serviceWorker);
       refreshServiceWorkerList();
     }, (e) => {
@@ -225,7 +225,7 @@ if (windowURL.hash === "#sub") {
     Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
-    }).then((obj) => {
+    }).then((serviceWorker) => {
       addServiceWorker(serviceWorker);
       refreshServiceWorkerList();
     }, (e) => {
@@ -241,7 +241,7 @@ if (windowURL.hash === "#sub") {
     Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
-    }).then((obj) => {
+    }).then((serviceWorker) => {
       addServiceWorker(serviceWorker);
       refreshServiceWorkerList();
     }, (e) => {
