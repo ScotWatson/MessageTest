@@ -262,8 +262,6 @@ if (windowURL.hash === "#sub") {
       serviceWorker,
     }
     serviceWorkers.push(obj);
-    obj.commandSourceNode = new Global.ServiceWorkers.CommandSourceNode();
-    obj.commandPipe = new Global.Common.Streams.Pipe(obj.commandSourceNode, obj.serviceWorker.input);
     obj.dom = document.createElement("span");
     const idSpan = document.createElement("span");
     idSpan.append(self.crypto.randomUUID());
@@ -292,16 +290,19 @@ if (windowURL.hash === "#sub") {
     });
     stateSpan.innerHTML = serviceWorker.state;
     heartbeatBtn.addEventListener("click", (evt) => {
-      obj.commandSourceNode.heartbeat();
+      obj.serviceWorker.input.callback(null);
+      obj.serviceWorker.input.unlock();
     });
     portBtn.addEventListener("click", (evt) => {
       obj.addPort();
     });
     skipWaitingBtn.addEventListener("click", (evt) => {
-      obj.commandSourceNode.skipWaiting();
+      obj.serviceWorker.input.callback("skipWaiting");
+      obj.serviceWorker.input.unlock();
     });
     claimClientsBtn.addEventListener("click", (evt) => {
-      obj.commandSourceNode.claimClients();
+      obj.serviceWorker.input.callback("claimClients");
+      obj.serviceWorker.input.unlock();
     });
     serviceWorker.addEventListener("error", console.error);
     obj.addPort = () => {
@@ -310,13 +311,16 @@ if (windowURL.hash === "#sub") {
         obj.inputPipe.return();
         obj.outputPipe.return();
       }
-      obj.port = obj.commandSourceNode.openPort();
-      obj.rpNode = new Global.Common.RemoteProcedureSocket({
+      const messageChannel = new MessageChannel();
+      obj.port = messageChannel.port1;
+      obj.serviceWorker.input.callback(messageChannel.port2);
+      obj.serviceWorker.input.unlock();
+      obj.rpcNode = new Global.Common.RPCNode({
       });
-      obj.inputPipe = new Global.Common.Streams.Pipe(obj.port.output, obj.rpNode.input);
-      obj.outputPipe = new Global.Common.Streams.Pipe(obj.rpNode.output, obj.port.input);
+      obj.inputPipe = new Global.Common.Streams.Pipe(obj.port.output, obj.rpcNode.input);
+      obj.outputPipe = new Global.Common.Streams.Pipe(obj.rpcNode.output, obj.port.input);
       obj.rpNode.register({
-        functionName: "ping",
+        verb: "ping",
         handlerFunc: (args) => { console.log(args); },
       });
       obj.port.start();
@@ -330,21 +334,21 @@ if (windowURL.hash === "#sub") {
       pingBtn.innerHTML = "Ping";
       portBtnsSpan.appendChild(pingBtn);
       unregisterBtn.addEventListener("click", (evt) => {
-        obj.rpNode.call({
-          functionName: "unregister",
+        obj.rpcNode.call({
+          verb: "unregister",
           args: {},
         }).then(console.log, console.error);
       });
       updateBtn.addEventListener("click", (evt) => {
-        obj.rpNode.call({
-          functionName: "update",
+        obj.rpcNode.call({
+          verb: "update",
           args: {},
         }).then(console.log, console.error);
       });
       pingBtn.addEventListener("click", (evt) => {
         console.log("ping");
-        obj.rpNode.call({
-          functionName: "ping",
+        obj.rpcNode.call({
+          verb: "ping",
           args: {},
         }).then(console.log, console.error);
       });
