@@ -57,17 +57,17 @@ if (windowURL.hash === "#sub") {
   thisIframe.style.display = "block";
   thisIframe.style.position = "absolute";
   thisIframe.style.visibility = "hidden";
-  const iframeSocket = Global.forWindowOrigin({
+  const iframeSocket = Global.MessageNodeforWindowOrigin({
     window: thisIframe.contentWindow,
     origin: subFullURL.origin,
   });
-  const iframeRPS = new Global.Common.RemoteProcedureSocket({
+  const iframeRPCNode = new Global.Common.RPCNode({
   });
-  (new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPS.input)).catch((e) => {
+  (new Global.Common.Streams.Pipe(iframeSocket.output, iframeRPCNode.input)).catch((e) => {
     console.error("inward pipe inside parent window");
     console.error(e);
   });
-  (new Global.Common.Streams.Pipe(iframeRPS.output, iframeSocket.input)).catch((e) => {
+  (new Global.Common.Streams.Pipe(iframeRPCNode.output, iframeSocket.input)).catch((e) => {
     console.error("outward pipe inside parent window");
     console.error(e);
   });
@@ -84,7 +84,7 @@ if (windowURL.hash === "#sub") {
   thisIframe.addEventListener("load", async () => {
     try {
       console.log("try to ping iframe");
-      const reply = await iframeRPS.call({
+      const reply = await iframeRPCNode.call({
         functionName: "ping",
         args: {},
       });
