@@ -85,7 +85,7 @@ if (windowURL.hash === "#sub") {
     try {
       console.log("try to ping iframe");
       const reply = await iframeRPCNode.call({
-        functionName: "ping",
+        verb: "ping",
         args: {},
       });
       console.log(reply);
@@ -106,7 +106,7 @@ if (windowURL.hash === "#sub") {
     try {
       console.log("try to ping worker");
       const reply = await workerRPCNode.call({
-        functionName: "ping",
+        verb: "ping",
         args: {},
       });
       console.log(reply);
