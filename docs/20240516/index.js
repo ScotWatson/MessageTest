@@ -350,34 +350,18 @@ if (windowURL.hash === "#sub") {
     };
     return obj;
   }
-/*
-  let controllerRPS = null;
-  (async () => {
-    for await (const controller of Global.controllerchange) {
-      console.log("controllerchange");
-      scanForServiceWorkers();
-      controllerRPS = new Global.Common.RemoteProcedureSocket({
-        timeout: 500,
-      });
-      new Global.Common.Streams.Pipe(controller.messageSocket.output, controllerRPS.input);
-      new Global.Common.Streams.Pipe(controllerRPS.output, controller.messageSocket.input);
-      controllerRPC();
-    }
-  })();
-  async function controllerRPC() {
-    console.log("controller RPC");
-    pinging();
-    function pinging() {
-      console.log("try to ping controller");
-      const ret = controllerRPS.call({
-        functionName: "ping",
-        args: {},
-      });
-      return ret.then(console.log, function () {
-        console.log("controller ping failed, retry");
-        return pinging();
-      });
-    }
-  }
-*/
+  let controllerRPCNode = null;
+  const controllerRPCNode = new Global.Common.RPCNode({
+  });
+  new Global.Common.Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input);
+  new Global.Common.Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink);
+  console.log("try to ping controller");
+  const ret = controllerRPCNode.call({
+    verb: "ping",
+    args: {},
+  });
+  return ret.then(console.log, (e) => {
+    console.log("controller ping failed");
+    console.error(e);
+  });
 }
