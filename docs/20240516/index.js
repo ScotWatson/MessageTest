@@ -353,7 +353,7 @@ if (windowURL.hash === "#sub") {
   }
   const controllerRPCNode = new Global.Common.RPCNode({
   });
-  new Global.Common.Streams.Pipe(Global.ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
+  new Global.Common.Streams.Pipe(controllerSource, controllerRPCNode.input).catch((e) => {
     console.log("Error on controller input pipe");
     console.error(e);
   });
