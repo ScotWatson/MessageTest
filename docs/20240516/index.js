@@ -159,7 +159,6 @@ if (windowURL.hash === "#sub") {
   updateBtn.innerHTML = "Update";
   document.body.appendChild(updateBtn);
 
-  self.navigator.serviceWorker.getRegistration().then(newRegistration);
   register1Btn.disabled = false;
   register1Btn.addEventListener("click", () => {
     register1Btn.disabled = true;
