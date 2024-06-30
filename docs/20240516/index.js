@@ -357,7 +357,7 @@ if (windowURL.hash === "#sub") {
     console.error(e);
   });
   new Global.Common.Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
-    console.log("Error on controller input pipe");
+    console.log("Error on controller output pipe");
     console.error(e);
   });
   console.log("try to ping controller");
@@ -365,7 +365,7 @@ if (windowURL.hash === "#sub") {
     verb: "ping",
     args: {},
   });
-  return ret.then(console.log, (e) => {
+  ret.then(console.log, (e) => {
     console.log("controller ping failed");
     console.error(e);
   });
