@@ -362,6 +362,7 @@ if (windowURL.hash === "#sub") {
     console.error(e);
   });
   console.log("try to ping controller");
+  Init.controllerMessages.start();
   const ret = controllerRPCNode.call({
     verb: "ping",
     args: {},
