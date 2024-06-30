@@ -305,7 +305,6 @@ if (windowURL.hash === "#sub") {
       serviceWorker.input.callback("claimClients");
       serviceWorker.input.unlock();
     });
-    serviceWorker.addEventListener("error", console.error);
     obj.addPort = () => {
       portBtnsSpan.innerHTML = "";
       if (obj.port) {
