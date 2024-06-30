@@ -94,8 +94,8 @@ if (windowURL.hash === "#sub") {
       console.log("iframe ping failed");
     }
   });
-  myMessageQueue.addEventListener("message", Global.messageHandler);
-  myMessageQueue.start();
+  Init.myMessageQueue.addEventListener("message", Global.messageHandler);
+  Init.myMessageQueue.start();
   const thisWorker = new Worker("worker.js");
   const workerSocket = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPS = new Global.Common.RemoteProcedureSocket({
