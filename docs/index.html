@@ -122,6 +122,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         verb: "getVersion",
         args: {}
       }).then((version) => {
+        console.log(inputPipe);
         inputPipe.return();
         outputPipe.return();
         Init.controllerMessages.stop();
