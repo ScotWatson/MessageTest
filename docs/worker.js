@@ -26,7 +26,7 @@ const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 loading.then(([ Global ]) => {
   console.log("Worker modules loaded. Starting worker...");
   const parentMessageNode = Global.Common.MessageNode.forMessagePort(workerMessages);
-  const parentRPCNode = new Global.Common.RPSNode({
+  const parentRPCNode = new Global.Common.RPCNode({
   });
   const consoleLog = new Global.Common.Streams.SinkNode(console.log);
   new Global.Common.Streams.Pipe(parentMessageNode.output, parentRPCNode.input);
