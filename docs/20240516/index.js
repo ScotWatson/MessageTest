@@ -47,8 +47,8 @@ if (windowURL.hash === "#sub") {
     console.error("untrusted origin handling inside iframe");
     console.error(e);
   });
-  Init.myMessageQueue.addEventListener("message", Global.messageHandler);
-  Init.myMessageQueue.start();
+  Init.windowMessages.addEventListener("message", Global.messageHandler);
+  Init.windowMessages.start();
 } else {
   Global.addTrustedOrigin(windowURL.origin);
   const thisIframe = document.createElement("iframe");
@@ -94,8 +94,8 @@ if (windowURL.hash === "#sub") {
       console.log("iframe ping failed");
     }
   });
-  Init.myMessageQueue.addEventListener("message", Global.messageHandler);
-  Init.myMessageQueue.start();
+  Init.windowMessages.addEventListener("message", Global.messageHandler);
+  Init.windowMessages.start();
   const thisWorker = new Worker("worker.js");
   const workerMessageNode = Global.Common.MessageNode.forMessagePort(thisWorker);
   const workerRPCNode = new Global.Common.RPCNode({
