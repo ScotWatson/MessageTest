@@ -9,7 +9,7 @@ console.log("worker start");
 
 self.importScripts("https://scotwatson.github.io/WebInterface/worker-import-script.js")
 const MessageQueue = self.importScript("https://scotwatson.github.io/WebInterface/MessageQueue.js").default;
-const myMessageQueue = new MessageQueue(self);
+const workerMessages = new MessageQueue(self);
 self.addEventListener("message", console.log)
 
 setInterval(print, 1000);
@@ -25,18 +25,18 @@ const loading = Promise.all(moduleUrls.map((url) => { return import(url); }));
 
 loading.then(([ Global ]) => {
   console.log("Worker modules loaded. Starting worker...");
-  const parentSocket = Global.Common.MessageNode.forMessagePort(myMessageQueue);
-  const parentRPS = new Global.Common.RemoteProcedureSocket({
+  const parentMessageNode = Global.Common.MessageNode.forMessagePort(workerMessages);
+  const parentRPCNode = new Global.Common.RPSNode({
   });
   const consoleLog = new Global.Common.Streams.SinkNode(console.log);
-  new Global.Common.Streams.Pipe(parentSocket.output, parentRPS.input);
-  new Global.Common.Streams.Pipe(parentRPS.output, parentSocket.input);
-  parentRPS.register({
+  new Global.Common.Streams.Pipe(parentMessageNode.output, parentRPCNode.input);
+  new Global.Common.Streams.Pipe(parentRPCNode.output, parentMessageNode.input);
+  parentRPCNode.register({
     functionName: "ping",
     handlerFunc: function ping() {
       return "Hello from Worker!";
     },
   });
   console.log("worker ready for ping");
-  myMessageQueue.start();
+  workerMessages.start();
 });
