@@ -163,7 +163,7 @@ if (windowURL.hash === "#sub") {
   register1Btn.disabled = false;
   register1Btn.addEventListener("click", () => {
     register1Btn.disabled = true;
-    Global.ServiceWorker.installNew({
+    Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?v=1",
       scope: serviceWorkerScope,
     }).then((serviceWorker) => {
@@ -179,7 +179,7 @@ if (windowURL.hash === "#sub") {
   register2Btn.disabled = false;
   register2Btn.addEventListener("click", () => {
     register2Btn.disabled = true;
-    Init.registerServiceWorker({
+    Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?v=2",
       scope: serviceWorkerScope,
     }).then((obj) => {
@@ -195,7 +195,7 @@ if (windowURL.hash === "#sub") {
   registerParseFailBtn.disabled = false;
   registerParseFailBtn.addEventListener("click", () => {
     registerParseFailBtn.disabled = true;
-    Init.registerServiceWorker({
+    Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=parse",
       scope: serviceWorkerScope,
     }).then((obj) => {
@@ -211,7 +211,7 @@ if (windowURL.hash === "#sub") {
   registerInstallFailBtn.disabled = false;
   registerInstallFailBtn.addEventListener("click", () => {
     registerInstallFailBtn.disabled = true;
-    Init.registerServiceWorker({
+    Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=install",
       scope: serviceWorkerScope,
     }).then((obj) => {
@@ -227,7 +227,7 @@ if (windowURL.hash === "#sub") {
   registerActivateFailBtn.disabled = false;
   registerActivateFailBtn.addEventListener("click", () => {
     registerActivateFailBtn.disabled = true;
-    Init.registerServiceWorker({
+    Global.ServiceWorkers.installNew({
       url: serviceWorkerUrl + "?fail=activate",
       scope: serviceWorkerScope,
     }).then((obj) => {
