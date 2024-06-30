@@ -127,13 +127,12 @@ if (windowURL.hash === "#sub") {
     }
   }
   const serviceWorkerDiv = document.createElement("div");
+  document.body.appendChild(serviceWorkerDiv);
   function refreshServiceWorkerList() {
     console.log("refreshServiceWorkerList");
-    console.log(serviceWorkers);
     for (const obj of serviceWorkers) {
       obj.dom.remove();
     }
-    console.log(serviceWorkers);
     for (const obj of serviceWorkers) {
       const p = document.createElement("p");
       p.appendChild(obj.dom);
