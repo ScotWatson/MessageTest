@@ -9,6 +9,7 @@ const initPageTime = performance.now();
 import * as Interface from "https://scotwatson.github.io/WebInterface/interface.mjs";
 import * as Global from "https://scotwatson.github.io/WebInterface/window-global.mjs";
 
+const controllerSource = Global.ServiceWorkers.createControllerSource(Init.controllerMessages);
 const windowURL = new URL(window.location);
 const subURL = "./index.html#sub";
 const subFullURL = new URL(subURL, windowURL);
