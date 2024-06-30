@@ -32,7 +32,7 @@ loading.then(([ Global ]) => {
   new Global.Common.Streams.Pipe(parentMessageNode.output, parentRPCNode.input);
   new Global.Common.Streams.Pipe(parentRPCNode.output, parentMessageNode.input);
   parentRPCNode.register({
-    functionName: "ping",
+    verb: "ping",
     handlerFunc: function ping() {
       return "Hello from Worker!";
     },
