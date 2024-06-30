@@ -285,24 +285,25 @@ if (windowURL.hash === "#sub") {
     obj.dom.appendChild(claimClientsBtn);
     const portBtnsSpan = document.createElement("span");
     obj.dom.appendChild(portBtnsSpan);
-    serviceWorker.addEventListener("statechange", (evt) => {
-      stateSpan.innerHTML = serviceWorker.state;
-    });
+    serviceWorker.installed.then(() => { stateSpan.innerHTML = "installed"; });
+    serviceWorker.activating.then(() => { stateSpan.innerHTML = "activating"; });
+    serviceWorker.activated.then(() => { stateSpan.innerHTML = "activated"; });
+    serviceWorker.redundant.then(() => { stateSpan.innerHTML = "redundant"; });
     stateSpan.innerHTML = serviceWorker.state;
     heartbeatBtn.addEventListener("click", (evt) => {
-      obj.serviceWorker.input.callback(null);
-      obj.serviceWorker.input.unlock();
+      serviceWorker.input.callback(null);
+      serviceWorker.input.unlock();
     });
     portBtn.addEventListener("click", (evt) => {
       obj.addPort();
     });
     skipWaitingBtn.addEventListener("click", (evt) => {
-      obj.serviceWorker.input.callback("skipWaiting");
-      obj.serviceWorker.input.unlock();
+      serviceWorker.input.callback("skipWaiting");
+      serviceWorker.input.unlock();
     });
     claimClientsBtn.addEventListener("click", (evt) => {
-      obj.serviceWorker.input.callback("claimClients");
-      obj.serviceWorker.input.unlock();
+      serviceWorker.input.callback("claimClients");
+      serviceWorker.input.unlock();
     });
     serviceWorker.addEventListener("error", console.error);
     obj.addPort = () => {
