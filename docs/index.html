@@ -94,18 +94,11 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
             return;
           }
           const fail = newestWorker.redundant.then(() => { throw Error("Newest Service Worker failed to load."); });
-          const success = new Promise((resolve, reject) => {
-            self.navigator.serviceWorker.addEventListener("controllerchange", watchForController);
-            function watchForController() {
-              self.navigator.serviceWorker.removeEventListener("controllerchange", watchForController);
-              resolve();
-            }
-          });
-          self.navigator.serviceWorker.ready.then(() => {
+          newestWorker.activating.then(() => {
             newestWorker.input.callback("claimClients");
             newestWorker.input.unlock();
           });
-          await Promise.race([ success, fail ]);
+          await Promise.race([ Init.controller, fail ]);
         })();
         return ServiceWorkers;
       }
