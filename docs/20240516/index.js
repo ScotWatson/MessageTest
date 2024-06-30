@@ -350,11 +350,16 @@ if (windowURL.hash === "#sub") {
     };
     return obj;
   }
-  let controllerRPCNode = null;
   const controllerRPCNode = new Global.Common.RPCNode({
   });
-  new Global.Common.Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input);
-  new Global.Common.Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink);
+  new Global.Common.Streams.Pipe(ServiceWorkers.controllerSource, controllerRPCNode.input).catch((e) => {
+    console.log("Error on controller input pipe");
+    console.error(e);
+  });
+  new Global.Common.Streams.Pipe(controllerRPCNode.output, ServiceWorkers.controllerSink).catch((e) => {
+    console.log("Error on controller input pipe");
+    console.error(e);
+  });
   console.log("try to ping controller");
   const ret = controllerRPCNode.call({
     verb: "ping",
