@@ -32,7 +32,7 @@ if (windowURL.hash === "#sub") {
       console.error(e);
     });
     parentRPCNode.register({
-      functionName: "ping",
+      verb: "ping",
       handlerFunc: function (args) {
         return "Hello from iframe!";
       },
