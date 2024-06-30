@@ -261,7 +261,7 @@ if (windowURL.hash === "#sub") {
     const obj = {
       serviceWorker,
     }
-    serviceWorkerObjects.push(obj);
+    serviceWorkers.push(obj);
     obj.commandSourceNode = new Global.ServiceWorkers.CommandSourceNode();
     obj.commandPipe = new Global.Common.Streams.Pipe(obj.commandSourceNode, obj.serviceWorker.input);
     obj.dom = document.createElement("span");
