@@ -121,7 +121,7 @@ if (windowURL.hash === "#sub") {
   document.body.appendChild(controllerDiv);
   function updateController() {
     if (Global.ServiceWorkers.hasController()) {
-      controllerDiv.innerHTML = "Has Controller";
+      controllerDiv.innerHTML = "Has Controller: " + self.navigator.serviceWorker.controller.scriptURL;
     } else {
       controllerDiv.innerHTML = "No controller";
     }
