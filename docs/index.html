@@ -99,7 +99,11 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
             newestWorker.input.callback("claimClients");
             newestWorker.input.unlock();
           });
-          await Promise.race([ Init.controller, fail ]);
+          await Promise.race([ Init.controller.then(() => {
+            console.log("Init.controller");
+            console.log(newestWorker.state);
+            console.log(self.navigator.serviceWorker.controller);
+          }), fail ]);
         })();
         return ServiceWorkers;
       }
