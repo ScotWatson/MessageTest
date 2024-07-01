@@ -83,12 +83,14 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           });
         })();
         await (async () => {
+          console.log("watch");
           if (newestWorker.state === "activated") {
             return;
           }
           let newestWorkerInstalled = false;
           const fail = newestWorker.redundant.then(() => {
             if (!newestWorkerInstalled) {
+              console.log("Newest Service Worker failed to install.");
               throw Error("Newest Service Worker failed to install.");
             }
           });
