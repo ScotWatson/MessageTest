@@ -103,7 +103,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
             console.log("Init.controller");
             console.log(newestWorker.state);
             console.log(self.navigator.serviceWorker.controller);
-          }), fail ]);
+          }), fail.then(() => { console.log("fail then"); }, () => { console.log("fail catch"); }) ]);
         })();
         return ServiceWorkers;
       }
