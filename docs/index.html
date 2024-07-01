@@ -88,6 +88,8 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           console.log(self.navigator.serviceWorker.controller);
           if (newestWorker.state === "activated") {
             return;
+          } else {
+            
           }
           let newestWorkerInstalled = false;
           const fail = newestWorker.redundant.then(() => {
