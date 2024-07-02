@@ -83,14 +83,6 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           });
         })();
         await (async () => {
-          console.log("watch");
-          console.log(newestWorker.state);
-          console.log(self.navigator.serviceWorker.controller);
-          if (newestWorker.state === "activated") {
-            return;
-          } else {
-            
-          }
           let newestWorkerInstalled = false;
           const fail = newestWorker.redundant.then(() => {
             if (!newestWorkerInstalled) {
