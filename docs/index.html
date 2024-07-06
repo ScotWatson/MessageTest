@@ -96,6 +96,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           newestWorker.activating.then(() => {
             newestWorker.input.callback("claimClients");
             newestWorker.input.unlock();
+            console.log("claimClients");
           });
           await Promise.race([ Init.controller.then(() => {
             console.log("Init.controller");
