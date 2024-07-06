@@ -156,6 +156,9 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         ]).then(() => {
           appLoading.style.display = "none";
           appError.style.display = "none";
+        }, (e) => {
+          console.log("Error on loading index.js");
+          console.error(e);
         });
         console.log("checkpoint 3");
       });
