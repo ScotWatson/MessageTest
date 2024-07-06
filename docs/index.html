@@ -111,6 +111,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         import("https://scotwatson.github.io/WebInterface/streams.mjs"),
         import("https://scotwatson.github.io/WebInterface/RPCNode.mjs").then((x) => { return x.default; }),
       ]);
+      console.log("checkpoint 1");
       const controllerSource = ServiceWorkers.createControllerSource(Init.controllerMessages);
       const controllerRPCNode = new RPCNode({});
       const inputPipe = new Streams.Pipe(controllerSource, controllerRPCNode.input);
@@ -123,6 +124,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         console.log("Error on controller output pipe in window");
         console.error(e);
       });
+      console.log("checkpoint 2");
       Init.controllerMessages.start();
       return await controllerRPCNode.call({
         verb: "getVersion",
@@ -133,8 +135,10 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         Init.controllerMessages.stop();
         return version;
       });
+      console.log("checkpoint 3");
     }
     try {
+      console.log("checkpoint 4");
       const [ requestedVersion, storedVersion, latestVersion ] = await Promise.all([ getRequestedVersion(), getStoredVersion(), getLatestVersion() ]);
       const version = (() => {
         if (requestedVersion) { return requestedVersion; }
@@ -142,6 +146,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         return latestVersion;
       })();
       const versionBaseUrl = new URL("./" + version + "/", Init.selfUrl);
+      console.log("checkpoint 5");
       await import("https://scotwatson.github.io/WebInterface/resources.mjs").then(async (Resources) => {
         Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)),
         Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)),
