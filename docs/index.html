@@ -96,7 +96,6 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           newestWorker.activating.then(() => {
             newestWorker.input.callback("claimClients");
             newestWorker.input.unlock();
-            console.log("claimClients");
           });
           await Promise.race([ Init.controller.then(() => {
             console.log("Init.controller");
@@ -124,30 +123,27 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
         console.error(e);
       });
       Init.controllerMessages.start();
-      console.log("checkpoint 1");
       return await controllerRPCNode.call({
         verb: "getVersion",
         args: {}
       }).then((version) => {
-        console.log("checkpoint 2");
         inputPipe.return();
         outputPipe.return();
         Init.controllerMessages.stop();
-        console.log("checkpoint 3");
         return version;
       });
     }
     try {
-      console.log("checkpoint 4");
       const [ requestedVersion, storedVersion, latestVersion ] = await Promise.all([ getRequestedVersion(), getStoredVersion(), getLatestVersion() ]);
-      console.log("checkpoint 5");
       const version = (() => {
         if (requestedVersion) { return requestedVersion; }
         if (storedVersion) { return storedVersion; }
         return latestVersion;
       })();
       const versionBaseUrl = new URL("./" + version + "/", Init.selfUrl);
+      console.log("checkpoint 1");
       await import("https://scotwatson.github.io/WebInterface/resources.mjs").then(async (Resources) => {
+        console.log("checkpoint 2");
         Resources.addStyleSheet(new URL("./style.css", versionBaseUrl)),
         Resources.addShortcutIcon(new URL("./favicon.ico", Init.selfUrl)),
         Resources.addIcon(new URL("./favicon.ico", Init.selfUrl)),
@@ -161,6 +157,7 @@ const serviceWorkerScope = new URL("./", Init.selfUrl);
           appLoading.style.display = "none";
           appError.style.display = "none";
         });
+        console.log("checkpoint 3");
       });
     } catch (e) {
       console.error(e);
